@@ -5,371 +5,589 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RESET Client Tracker</title>
   <style>
-    /* Basic resets & body styling */
-    * { box-sizing: border-box; } /* Makes layout easier */
-    body {
-      background-color: #EAF6FF; /* light blueish tone */
-      font-family: sans-serif;
-      margin: 20px auto;
-      max-width: 720px;
-      padding: 0 10px;
-      line-height: 1.4; /* Improve readability */
-    }
-    h1, h2 {
-      margin-bottom: 0.5em;
-    }
-    h3 {
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
-    }
-    select, input[type="date"], input[type="text"], textarea, button {
-      font-size: 1em; /* Consistent font size for controls */
-      padding: 0.4em;
-      margin: 0.2em 0; /* Consistent small margin */
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    textarea {
-       width: 100%; /* Make textarea take full width */
-    }
-    input[type="text"], input[type="date"] {
-      min-width: 150px; /* Ensure text/date inputs have reasonable width */
-    }
-    .btn {
-      cursor: pointer;
-      padding: 0.4em 0.8em;
-      margin: 0.3em 0.3em 0.3em 0;
-      background-color: #f5f5f5;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .btn:hover {
-      background-color: #eee;
-    }
-    /* Title bar */
-    .title-bar {
-      background-color: #BCDDFE;
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 1.5em; /* Increased spacing */
-      text-align: center;
-    }
-    .title-bar h1 {
-        margin: 0;
-        color: #1A4A73; /* Darker blue for title */
-    }
-    /* Controls bar */
-    .controls {
-      margin-bottom: 1.5em;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.8em; /* Slightly more gap */
-    }
-    .controls label {
-      font-weight: bold;
-      margin-right: 0.2em;
-    }
-    /* Client Info Section */
-    .client-info {
-      background-color: #f0f8ff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 15px;
-      margin-bottom: 1em;
-    }
-    .client-info .info-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .client-info label {
-      font-weight: bold;
-      min-width: 100px; /* Align labels */
-    }
-    .client-info input[type="text"] {
-      flex-grow: 1; /* Allow inputs to grow */
-      min-width: 200px;
-    }
-    #bigGoalDisplay {
-      font-size: 1.3em; /* Make Big Goal more prominent */
-      font-weight: bold;
-      margin: 0.5em 0 1em 0; /* Spacing around Big Goal */
-      color: #0056b3; /* Make goal stand out */
-      padding: 10px;
-      background-color: #fff;
-      border: 1px dashed #0056b3;
-      border-radius: 4px;
-      text-align: center;
-    }
-    .external-links {
-        margin-bottom: 1em;
-        padding: 5px 0;
-    }
-    .external-links a {
-        margin-right: 15px;
-        text-decoration: none;
-        color: #007bff;
-        font-weight: bold;
-    }
-    .external-links a:hover {
-        text-decoration: underline;
-    }
-    /* Task Adding Section */
-    .add-task-section {
-        background-color: #fff;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        margin-bottom: 1em;
-    }
-    .add-task-section h2 { margin-top: 0;}
-    .time-duration-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-    .time-duration-container > div { flex: 1; min-width: 150px; } /* Allow time/duration to stack on small screens */
-    #activityInput {
-        width: 100%; /* Full width activity */
-        margin-bottom: 10px;
-    }
-    #taskSearch {
-        width: clamp(200px, 50%, 300px); /* Responsive search width */
-        margin-bottom: 10px;
+    /* === Reset & Base Styles === */
+    :root {
+        --font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --bg-main: #F4F7FC; /* Lighter, softer background */
+        --bg-card: #FFFFFF;
+        --bg-card-secondary: #F8F9FA;
+        --bg-title-bar: linear-gradient(135deg, #6B C5FF 0%, #4A90E2 100%); /* Gradient Title */
+        --text-primary: #2D3748; /* Dark grayish blue */
+        --text-secondary: #4A5568; /* Medium gray */
+        --text-light: #718096; /* Lighter gray */
+        --text-on-primary: #FFFFFF;
+        --border-color: #E2E8F0;
+        --border-color-light: #EDF2F7;
+        --primary-blue: #4A90E2;
+        --primary-blue-dark: #357ABD;
+        --primary-blue-light: #EBF4FF;
+        --accent-green: #48BB78;
+        --accent-green-dark: #38A169;
+        --accent-red: #F56565;
+        --accent-red-dark: #E53E3E;
+        --accent-yellow: #ECC94B;
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+        --border-radius: 6px;
+        --spacing-unit: 1rem; /* Base spacing unit (approx 16px) */
     }
 
-    /* Table styling */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      font-family: var(--font-family-sans);
+      color: var(--text-primary);
+      margin: 0 auto; /* Remove default margin */
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .container { /* Added a wrapper div around main content for padding */
+       max-width: 780px; /* Slightly wider */
+       margin: calc(var(--spacing-unit) * 1.5) auto;
+       padding: 0 var(--spacing-unit);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-bottom: calc(var(--spacing-unit) * 0.5);
+      line-height: 1.3;
+      font-weight: 600; /* Semibold */
+    }
+    h1 { font-size: 1.8rem; color: var(--text-on-primary); margin: 0; }
+    h2 { font-size: 1.4rem; margin-top: calc(var(--spacing-unit) * 2); border-bottom: 1px solid var(--border-color); padding-bottom: calc(var(--spacing-unit) * 0.4); }
+    h3 { font-size: 1.15rem; margin-top: calc(var(--spacing-unit) * 1.5); color: var(--primary-blue); }
+    h4 { font-size: 1rem; font-weight: 600; }
+
+    p { margin-bottom: var(--spacing-unit); }
+    a { color: var(--primary-blue); text-decoration: none; transition: color 0.2s ease; }
+    a:hover { color: var(--primary-blue-dark); text-decoration: underline; }
+
+    hr { border: none; border-top: 1px solid var(--border-color); margin: calc(var(--spacing-unit) * 2) 0; }
+
+    label {
+        display: block; /* Better block layout for labels */
+        font-weight: 500; /* Medium weight */
+        margin-bottom: calc(var(--spacing-unit) * 0.25);
+        color: var(--text-secondary);
+        font-size: 0.9em;
+    }
+
+    select, input[type="date"], input[type="text"], textarea {
+      font-family: inherit;
+      font-size: 1em;
+      padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 0.75);
+      margin-bottom: calc(var(--spacing-unit) * 0.5); /* Consistent bottom margin */
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      background-color: var(--bg-card);
+      width: 100%; /* Make inputs full width by default */
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a0aec0'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-blue);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+    textarea { min-height: 80px; width: 100%;} /* Ensure textarea width */
+
+    /* === Buttons === */
+    .btn {
+      display: inline-block; /* Correct display */
+      font-family: inherit;
+      font-size: 0.95em;
+      font-weight: 600;
+      padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
+      margin: calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.25) 0;
+      border: 1px solid transparent; /* Start with transparent border */
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+      line-height: 1.5; /* Ensure text vertical alignment */
+    }
+    .btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+    }
+     .btn:active {
+        transform: translateY(1px); /* Subtle press effect */
+    }
+
+    /* Default/Secondary Button Style */
+    .btn {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .btn:hover {
+      background-color: var(--bg-card-secondary);
+      border-color: #CBD5E0; /* Slightly darker border on hover */
+    }
+
+    /* Primary Button Style */
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: var(--text-on-primary);
+      border-color: var(--primary-blue);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+    }
+    /* Apply primary style to key actions */
+    #addBtn, #saveClientBtn, #saveClientInfoBtn, #savePlanBtn, #saveWeeklyBtn, #saveImageBtn {
+        background-color: var(--primary-blue);
+        color: var(--text-on-primary);
+        border-color: var(--primary-blue);
+    }
+     #addBtn:hover, #saveClientBtn:hover, #saveClientInfoBtn:hover, #savePlanBtn:hover, #saveWeeklyBtn:hover, #saveImageBtn:hover {
+        background-color: var(--primary-blue-dark);
+        border-color: var(--primary-blue-dark);
+    }
+
+
+    /* Danger Button Style */
+    .btn-danger {
+        background-color: var(--accent-red);
+        color: var(--text-on-primary);
+        border-color: var(--accent-red);
+    }
+    .btn-danger:hover {
+        background-color: var(--accent-red-dark);
+        border-color: var(--accent-red-dark);
+    }
+    /* Apply danger style */
+    #clearTasksBtn {
+        background-color: #FFF5F5; /* Light red background */
+        color: var(--accent-red-dark);
+        border-color: #FED7D7; /* Light red border */
+    }
+     #clearTasksBtn:hover {
+        background-color: var(--accent-red); /* Use solid red on hover */
+        border-color: var(--accent-red);
+        color: var(--text-on-primary);
+    }
+    /* Small icon-like buttons in table/gallery */
+    .task-row .btn, .gallery-item .btn, .weekly-task-row .btn {
+        padding: calc(var(--spacing-unit) * 0.2) calc(var(--spacing-unit) * 0.5);
+        font-size: 0.85em;
+        line-height: 1.2; /* Adjust for smaller size */
+    }
+     .task-row .btn:last-child, .gallery-item .btn:last-child, .weekly-task-row .btn:last-child { /* Make delete buttons red */
+        background-color: #FFF5F5; color: var(--accent-red-dark); border-color: #FED7D7;
+     }
+     .task-row .btn:last-child:hover, .gallery-item .btn:last-child:hover, .weekly-task-row .btn:last-child:hover {
+        background-color: var(--accent-red); color: var(--text-on-primary); border-color: var(--accent-red);
+     }
+
+
+    /* === Page Structure === */
+    .title-bar {
+      background: var(--bg-title-bar);
+      padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      text-align: center;
+      border-radius: 0 0 var(--border-radius) var(--border-radius); /* Rounded bottom corners */
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Section Card Styling */
+    .card { /* This class isn't used directly, but applied to other selectors below */
+        background-color: var(--bg-card);
+        padding: calc(var(--spacing-unit) * 1.5);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        border: 1px solid var(--border-color-light);
+    }
+    /* Apply card style to sections */
+    .controls, .client-info, .add-task-section, .reflection-section, #progressDashboard, #imageGallery, .google-embed-container > div, #newClientForm {
+        background-color: var(--bg-card);
+        padding: calc(var(--spacing-unit) * 1.25);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        border: 1px solid var(--border-color-light);
+    }
+     .google-embed-container h2 { /* Adjust heading spacing inside card */
+        margin-top: 0;
+     }
+     .google-embed-container > div { /* Placeholder/iframe specific */
+        padding: calc(var(--spacing-unit) * 0.5); /* Less padding for containers holding just iframe/text */
+     }
+
+
+    /* Controls Bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacing-unit);
+    }
+    .controls > div { /* Wrap label/select pairs */
+        display: flex;
+        align-items: center;
+        gap: calc(var(--spacing-unit) * 0.5);
+    }
+    .controls label {
+        margin-bottom: 0; /* Remove bottom margin for inline labels */
+        white-space: nowrap; /* Prevent label wrapping */
+    }
+     .controls select, .controls input[type="date"] {
+        width: auto; /* Allow select/date to size naturally */
+        min-width: 140px;
+        margin-bottom: 0;
+    }
+     .controls button { margin: 0; } /* Reset button margin within controls */
+
+    /* New Client Form */
+     #newClientForm { border-left: 4px solid var(--primary-blue); }
+     #newClientForm label { margin-bottom: 0; margin-right: calc(var(--spacing-unit) * 0.5); }
+     #newClientForm input[type="text"] { width: auto; flex-grow: 1; margin-bottom: 0; } /* Adjusted input */
+     #newClientForm { display: none; align-items: center; gap: var(--spacing-unit);} /* Use flex */
+
+
+    /* Client Info Section */
+    .client-info .info-row {
+      display: grid; /* Use grid for better alignment */
+      grid-template-columns: auto 1fr; /* Label column auto, input takes rest */
+      align-items: center;
+      gap: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+      margin-bottom: calc(var(--spacing-unit) * 0.75);
+    }
+    .client-info label {
+      text-align: right; /* Align labels right */
+      margin-bottom: 0;
+      color: var(--text-primary); /* Make labels slightly darker */
+      font-weight: 600;
+    }
+    .client-info input[type="text"] { margin-bottom: 0; }
+    #saveClientInfoBtn { margin-top: var(--spacing-unit); }
+
+    /* Big Goal Display */
+    #bigGoalDisplay {
+      font-size: 1.4em;
+      font-weight: 600;
+      margin: var(--spacing-unit) 0 calc(var(--spacing-unit) * 1.5) 0;
+      color: var(--primary-blue-dark);
+      padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+      background-color: var(--primary-blue-light);
+      border: 1px solid var(--primary-blue);
+      border-left: 5px solid var(--primary-blue); /* Accent border */
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* External Links */
+    .external-links { margin-bottom: calc(var(--spacing-unit) * 1.5); padding: 0;} /* No padding needed */
+    .external-links a {
+        margin-right: var(--spacing-unit);
+        font-weight: 500;
+        display: inline-flex; /* Use flex for icon alignment */
+        align-items: center;
+        gap: 4px;
+     }
+    .external-links a:before { /* Add link icon */
+        content: '';
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background-color: currentColor; /* Match link color */
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 M8 12a2 2 0 00-2.828 0l-3 3a2 2 0 102.828 2.828l3-3a2 2 0 000-2.828z' clip-rule='evenodd' /%3E%3Cpath fill-rule='evenodd' d='M12.293 7.293a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414zM7.707 12.707a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z' clip-rule='evenodd' /%3E%3C/svg%3E");
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+     }
+
+
+    /* Add Task Section */
+    .add-task-section h2 { margin-top: 0; color: var(--text-primary); }
+    .time-duration-container {
+      display: grid; /* Grid layout */
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+      gap: var(--spacing-unit);
+      margin-bottom: var(--spacing-unit);
+    }
+    #taskSearch {
+        width: clamp(200px, 60%, 350px); /* Control search width */
+        margin-bottom: var(--spacing-unit);
+    }
+
+    /* === Table Styling === */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1em;
-      background-color: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+      margin-top: var(--spacing-unit);
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      border-radius: var(--border-radius);
+      overflow: hidden; /* Clip corners */
+      border: 1px solid var(--border-color-light);
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 0.6em; /* Slightly more padding */
+      border: none; /* Remove internal borders */
+      border-bottom: 1px solid var(--border-color-light); /* Use bottom borders */
+      padding: calc(var(--spacing-unit) * 0.75);
       text-align: left;
       vertical-align: middle;
     }
     th {
-      background-color: #fafafa;
-      font-weight: bold;
+      background-color: var(--bg-card-secondary);
+      font-weight: 600;
+      font-size: 0.8em; /* Smaller header text */
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      white-space: nowrap;
     }
-    /* Completed-task styling */
-    .completed-task td:not(:last-child) { /* Don't style actions cell */
+    tbody tr:last-child td { border-bottom: none; } /* Remove border from last row */
+    tbody tr { transition: background-color 0.15s ease-in-out; }
+    tbody tr:nth-child(even) { /* Subtle zebra */
+       background-color: #fdfdff;
+    }
+    tbody tr:hover {
+        background-color: var(--primary-blue-light); /* Highlight row on hover */
+    }
+    td:nth-child(3) { text-align: center; } /* Center 'Done?' checkbox */
+    td:nth-child(4) select { width: auto; min-width: 60px; font-size: 0.9em; padding: calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.5); background-position: right 0.3rem center; } /* Make rating select smaller */
+    td:nth-child(4) { vertical-align: middle; } /* Ensure rating select aligns */
+
+
+    /* Completed task styling */
+    .completed-task td:not(:last-child) {
       text-decoration: line-through;
-      color: #888;
-      background-color: #f8f8f8;
+      color: var(--text-light);
     }
-    .task-row .btn { /* Smaller buttons in table */
-        padding: 0.2em 0.5em;
-        font-size: 0.9em;
+    .completed-task td:first-child, .completed-task td:nth-child(2) { /* Less emphasis on completed time/activity */
+        opacity: 0.7;
     }
-    /* Reflection Section */
-    .reflection-section {
-        margin-top: 2em; /* Space above reflection */
-        padding: 15px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    .reflection-section h3 { margin-top: 0; }
-    .reflection-item { margin-bottom: 1em; }
-    .reflection-item label { font-weight: bold; display: block; margin-bottom: 0.3em;}
 
-    /* Image gallery */
-    #imageGallery {
-      margin-top: 1.5em;
-      padding: 15px;
-      background-color: #fefefe;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    /* Task Type Indicator */
+    .weekly-indicator {
+        font-size: 0.75em;
+        color: var(--primary-blue);
+        font-weight: 500;
+        display: block; /* Put on new line */
+        margin-top: 2px;
     }
+
+
+    /* === Reflection Section === */
+    .reflection-section h3 { margin-top: 0; color: var(--text-primary);}
+    .reflection-item { margin-bottom: var(--spacing-unit); }
+
+
+    /* === Image gallery === */
+     #imageGallery h3 { margin-top: 0; color: var(--text-primary); }
     .gallery-item {
-      display: flex; /* Use flex for alignment */
+      display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      padding: 5px;
-      border-bottom: 1px solid #eee;
+      gap: var(--spacing-unit);
+      margin-bottom: calc(var(--spacing-unit) * 0.75);
+      padding: calc(var(--spacing-unit) * 0.5);
+      border-radius: var(--border-radius);
+      transition: background-color 0.2s ease;
     }
-    .gallery-item:last-child { border-bottom: none; }
-    .gallery-item img {
-      max-width: 100px; /* Smaller thumbnails */
-      max-height: 60px;
-      margin-right: 10px;
-      vertical-align: middle;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .gallery-item .title {
-      font-weight: bold;
-      flex-grow: 1; /* Title takes remaining space */
-    }
-    .gallery-item .btn { /* Smaller button in gallery */
-         padding: 0.2em 0.5em;
-         font-size: 0.9em;
-    }
+     .gallery-item:hover { background-color: var(--bg-card-secondary); }
+     .gallery-item:not(:last-child) { border-bottom: 1px solid var(--border-color-light); }
 
-    /* Progress Dashboard */
-    #progressDashboard {
-      margin-top: 2em; /* More space above dashboard */
-      padding: 15px;
-      border: 1px solid #ddd;
-      background-color: #fefefe;
-      border-radius: 4px;
+    .gallery-item img {
+      width: 80px; /* Fixed width */
+      height: 50px; /* Fixed height */
+      border-radius: calc(var(--border-radius) / 2);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      object-fit: cover; /* Ensure image covers area */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .gallery-item img:hover { transform: scale(1.05); box-shadow: var(--shadow-md); }
+    .gallery-item .title { font-weight: 500; flex-grow: 1; }
+    .gallery-item .btn { margin-left: auto; /* Push delete button right */ }
+
+    /* === Progress Dashboard === */
+    #progressDashboard h3 { margin-top: 0; color: var(--text-primary); }
+    #progressDashboard p { margin-bottom: calc(var(--spacing-unit)*0.5); font-size: 0.95em; }
+    #progressDashboard strong { font-weight: 600; }
     .progress-bar-container {
       width: 100%;
-      background-color: #f1f1f1;
-      border-radius: 4px;
-      margin: 5px 0 15px 0; /* Add margin below bar */
-      overflow: hidden; /* Ensure bar stays within bounds */
+      background-color: var(--border-color-light);
+      border-radius: var(--border-radius);
+      margin: 5px 0 var(--spacing-unit) 0;
+      overflow: hidden;
     }
     .progress-bar {
-      height: 20px;
-      background-color: #4CAF50;
-      border-radius: 4px 0 0 4px; /* Rounded only on left */
-      text-align: center;
+      height: 18px; /* Slightly thinner bar */
+      background-color: var(--accent-green);
+      border-radius: var(--border-radius); /* Fully rounded bar */
+      text-align: center; /* Center text */
+      padding: 0 8px; /* Padding for text */
       color: white;
-      font-weight: bold;
-      font-size: 0.8em;
-      line-height: 20px;
-      white-space: nowrap; /* Prevent text wrapping */
-      transition: width 0.3s ease-in-out; /* Smooth transition */
+      font-weight: 600;
+      font-size: 0.75em;
+      line-height: 18px;
+      white-space: nowrap;
+      transition: width 0.4s ease-in-out;
+      box-shadow: inset 0 -1px 1px rgba(0,0,0,0.1); /* Subtle inner shadow */
     }
-    .progress-bar.avg-rating { background-color: #2196F3; }
+    .progress-bar.avg-rating { background-color: var(--primary-blue); }
 
-    /* New client form */
-    #newClientForm {
-      display: none;
-      margin: 1em 0;
-      padding: 15px;
-      background-color: #f0f8ff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    #newClientForm label { font-weight: bold; margin-right: 5px;}
 
-    /* Modals */
+    /* === Modals === */
     #plannerModal, #weeklyModal, #imageModal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6); /* Darker overlay */
-      z-index: 1000; /* Ensure modals are on top */
-      padding: 20px; /* Add padding for small screens */
-      overflow-y: auto; /* Allow modal itself to scroll if content overflows viewport */
+      background-color: rgba(45, 55, 72, 0.75); /* Darker overlay using var(--text-primary) base */
+      z-index: 1000;
+      padding: var(--spacing-unit);
+      overflow-y: auto;
+      backdrop-filter: blur(3px); /* Subtle blur effect */
     }
     .modal-content, .weekly-modal-content, .image-modal-content {
-      background-color: #fff;
-      margin: 5% auto; /* Use percentage margin for vertical centering */
-      padding: 25px;
+      background-color: var(--bg-card);
+      margin: 5vh auto; /* Vertical centering with margin */
+      padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
       width: 90%;
       max-width: 700px;
-      border-radius: 5px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      /* Remove max-height and overflow-y here, handled by modal wrapper */
+      border-radius: calc(var(--border-radius) * 1.5); /* Slightly larger radius */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-    .weekly-modal-content { max-width: 800px; }
-    /* Day plan block inside multi-day modal */
-    .day-plan {
-      margin-bottom: 15px;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border: 1px solid #eee;
-      border-radius: 4px;
-    }
-    .day-plan h4 { margin-top: 0; }
-    .task-entry { /* Group time/dur/activity in modals */
-        border-bottom: 1px dashed #ccc;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
-    }
-    .task-entry:last-of-type { border-bottom: none; }
+    .weekly-modal-content { max-width: 850px; } /* Wider weekly */
+    .modal-content h3, .weekly-modal-content h3, .image-modal-content h3 { margin-top: 0; color: var(--text-primary); }
 
-    /* Weekly day sections */
-    .weekly-day-section {
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      padding: 15px;
-      background-color: #fafafa;
-      border-radius: 4px;
-    }
-    .weekly-day-section h4 { margin-top: 0; }
-    .weekly-task-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px;}
-    .weekly-task-row span { flex-grow: 1;}
+    /* Modal Footer needs explicit class or selection */
+     #plannerModal > .modal-content > div:last-child,
+     #weeklyModal > .weekly-modal-content > div:last-child,
+     #imageModal > .image-modal-content > div:last-child {
+         margin-top: calc(var(--spacing-unit) * 1.5);
+         padding-top: var(--spacing-unit);
+         border-top: 1px solid var(--border-color);
+         text-align: right;
+         display: flex;
+         justify-content: flex-end;
+         gap: var(--spacing-unit);
+     }
 
-    /* Image Modal Specifics */
+    /* Planner/Weekly Modal specifics */
+    .day-plan, .weekly-day-section {
+      margin-bottom: var(--spacing-unit);
+      padding: var(--spacing-unit);
+      background-color: var(--bg-card-secondary);
+      border: 1px solid var(--border-color-light);
+      border-radius: var(--border-radius);
+    }
+    .day-plan h4, .weekly-day-section h4 { margin-top: 0; color: var(--text-secondary); font-weight: 600; }
+    .task-entry {
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: var(--spacing-unit);
+        margin-bottom: var(--spacing-unit);
+    }
+    .task-entry:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+    .weekly-task-row { display: flex; align-items: center; gap: var(--spacing-unit); margin-bottom: calc(var(--spacing-unit)*0.5);}
+    .weekly-task-row span { flex-grow: 1; font-size: 0.95em; }
+    .weekly-day-section .no-data { color: var(--text-light); font-size: 0.9em; text-align: center; margin: var(--spacing-unit) 0; }
+
+    /* Image Modal */
     #imagePreview {
         display: none;
         max-width: 100%;
-        max-height: 250px; /* Allow slightly larger preview */
-        margin-top: 15px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        max-height: 300px; /* Larger preview */
+        margin-top: var(--spacing-unit);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        object-fit: contain;
     }
-    #imageModal label { font-weight: bold; display: block; margin: 10px 0 5px 0;}
-    #imageModal input[type="text"] { width: 100%; }
+    #imageModal label { margin-top: var(--spacing-unit); }
 
-    /* Google Embeds */
-    .google-embed-container {
-        margin-top: 2em;
-    }
-    .google-embed-container h2 {
-        border-bottom: 2px solid #BCDDFE;
-        padding-bottom: 0.3em;
-    }
+
+    /* === Google Embeds === */
+    .google-embed-container { margin-bottom: calc(var(--spacing-unit) * 1.5); } /* Added card style already */
+    .google-embed-container h2 { margin-bottom: var(--spacing-unit); color: var(--text-primary); }
     #googleCalendarEmbed {
       width: 100%;
       height: 600px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: none; /* Remove border, card provides container */
+      border-radius: var(--border-radius);
     }
-    #googleTasksPlaceholder {
-      background-color:#fefefe;
-      border:1px solid #ccc;
-      padding:15px;
-      border-radius:4px;
-      color: #666;
-    }
+    #googleTasksPlaceholder { color: var(--text-secondary); font-size: 0.95em; }
 
-    /* Footer */
+    /* === Footer === */
     #footer {
-      margin-top: 3em;
-      padding-top: 1em;
-      border-top: 1px solid #ccc;
-      font-size: 0.9em;
-      color: #666;
+      margin-top: calc(var(--spacing-unit) * 3);
+      padding: calc(var(--spacing-unit) * 1.5) var(--spacing-unit);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85em;
+      color: var(--text-light);
       text-align: center;
     }
+     #footer code { background-color: var(--border-color-light); padding: 2px 4px; border-radius: 4px; font-size: 0.9em;}
 
-    /* Mobile responsiveness */
+    /* === Utility Classes === */
+    .no-data { color: var(--text-light); font-style: italic; font-size: 0.9em; }
+    .text-center { text-align: center; }
+
+    /* === Mobile Responsiveness === */
+    @media (max-width: 768px) {
+         .container { margin: var(--spacing-unit) auto; }
+         h1 { font-size: 1.6rem; }
+         h2 { font-size: 1.25rem; }
+         h3 { font-size: 1.1rem; }
+         .client-info .info-row { grid-template-columns: 1fr; } /* Stack label/input */
+         .client-info label { text-align: left; }
+         #bigGoalDisplay { font-size: 1.2em; }
+    }
+
     @media (max-width: 600px) {
-      body { margin: 10px auto; }
-      .controls { flex-direction: column; align-items: stretch; }
-      .controls > * { width: 100%; } /* Stack controls vertically */
-      .client-info .info-row { flex-direction: column; align-items: stretch; }
-      .client-info label { min-width: auto; margin-bottom: 0; }
-      .time-duration-container { flex-direction: column; gap: 5px; }
-      table, td, th { font-size: 0.9em; padding: 0.4em; }
-      th:nth-child(3), td:nth-child(3), /* Done? */
-      th:nth-child(4), td:nth-child(4) { /* Rating */
-        /* Optional: Hide less critical columns on very small screens */
-        /* display: none; */
+      .container { margin: calc(var(--spacing-unit)*0.5) auto; padding: 0 calc(var(--spacing-unit)*0.5); }
+      .controls { flex-direction: column; align-items: stretch; gap: calc(var(--spacing-unit)*0.5); }
+      .controls > div { justify-content: space-between;} /* Space out label/select */
+      .controls select, .controls input[type="date"] { flex-grow: 1; } /* Allow select/date to grow */
+      .controls button { width: 100%; margin: calc(var(--spacing-unit)*0.25) 0; } /* Full width buttons */
+
+      .time-duration-container { grid-template-columns: 1fr; } /* Stack time/duration */
+      table, td, th { font-size: 0.85em; padding: calc(var(--spacing-unit) * 0.5); }
+      /* Optional: Hide less critical columns on small screens */
+       th:nth-child(4), td:nth-child(4) { /* Rating */
+         /* display: none; */
+          min-width: 70px; /* Ensure rating select has some space */
       }
+       th:nth-child(5), td:nth-child(5) { /* Actions */
+           /* Reduce padding/width if keeping */
+           padding: calc(var(--spacing-unit) * 0.3);
+           min-width: 70px; /* Ensure buttons fit */
+           text-align: right;
+       }
+       .task-row .btn { font-size: 0.8em; padding: calc(var(--spacing-unit) * 0.2) calc(var(--spacing-unit) * 0.4); }
+
+
       .modal-content, .weekly-modal-content, .image-modal-content {
-          margin: 20px auto; /* Adjust modal margin */
-          padding: 15px;
+          margin: var(--spacing-unit) auto;
+          padding: var(--spacing-unit);
+          max-width: 95%;
       }
-      #googleCalendarEmbed { height: 400px; } /* Shorter calendar on mobile */
+       /* Modal Footer for mobile */
+       #plannerModal > .modal-content > div:last-child,
+       #weeklyModal > .weekly-modal-content > div:last-child,
+       #imageModal > .image-modal-content > div:last-child {
+            flex-direction: column-reverse; /* Stack buttons */
+            align-items: stretch; /* Make buttons full width */
+       }
+       /* Target buttons inside the identified footer divs */
+       #plannerModal > .modal-content > div:last-child button,
+       #weeklyModal > .weekly-modal-content > div:last-child button,
+       #imageModal > .image-modal-content > div:last-child button {
+           width: 100%;
+           margin: calc(var(--spacing-unit) * 0.25) 0;
+       }
+
+
+      #googleCalendarEmbed { height: 450px; }
     }
   </style>
 </head>
@@ -379,190 +597,211 @@
   <h1>RESET Client Tracker</h1>
 </div>
 
-<div class="controls">
-  <div>
-    <label for="clientSelect">Client:</label>
-    <select id="clientSelect"></select>
-  </div>
-  <button class="btn" id="addClientBtn">+ Add Client</button>
+<!-- Add the main content container -->
+<div class="container">
 
-  <div>
-    <label for="datePicker">Date:</label>
-    <input type="date" id="datePicker" />
-  </div>
+    <div class="controls">
+      <div>
+        <label for="clientSelect">Client:</label>
+        <select id="clientSelect"></select>
+      </div>
+      <button class="btn" id="addClientBtn">+ Add Client</button>
 
-  <button class="btn" id="clearTasksBtn" title="Clear tasks for this client on this date">Clear Tasks</button>
-  <button class="btn" id="exportBtn" title="Export all client data to a JSON file">Export Data</button>
-  <button class="btn" id="reportBtn" title="Generate an HTML report for the current client">View Report</button>
-  <button class="btn" id="multiDayPlanBtn" title="Plan tasks across multiple upcoming days">Multi-Day Plan</button>
-  <button class="btn" id="weeklyPlanBtn" title="Set recurring weekly tasks">Weekly Plan</button>
-  <button class="btn" id="imageBtn" title="Add an image or screenshot">Add Image</button>
-</div>
+      <div>
+        <label for="datePicker">Date:</label>
+        <input type="date" id="datePicker" />
+      </div>
 
-<!-- Form for adding a new client -->
-<div id="newClientForm">
-  <label for="newClientName">New Client Name:</label>
-  <input type="text" id="newClientName" placeholder="Enter client name">
-  <button class="btn" id="saveClientBtn">Save</button>
-  <button class="btn" id="cancelClientBtn">Cancel</button>
-</div>
-
-<!-- Show or edit the Big Goal, Canvas link, and Classroom link -->
-<div class="client-info">
-  <div class="info-row">
-    <label for="bigGoalInput">Big Goal:</label>
-    <input type="text" id="bigGoalInput" placeholder="e.g. Get into Yale">
-  </div>
-  <div class="info-row">
-    <label for="canvasLinkInput">Canvas Link:</label>
-    <input type="text" id="canvasLinkInput" placeholder="https://...">
-  </div>
-  <div class="info-row">
-    <label for="classroomLinkInput">Classroom Link:</label>
-    <input type="text" id="classroomLinkInput" placeholder="https://...">
-  </div>
-  <button class="btn" id="saveClientInfoBtn">Save Client Info</button>
-</div>
-
-<!-- Big Goal displayed prominently -->
-<div id="bigGoalDisplay">(Select a client)</div>
-
-<!-- External links displayed -->
-<div class="external-links">
-  <a href="#" id="canvasLinkAnchor" target="_blank" style="display:none;">Open Canvas</a>
-  <a href="#" id="classroomLinkAnchor" target="_blank" style="display:none;">Open Google Classroom</a>
-</div>
-
-<hr style="margin: 1.5em 0;"/>
-
-<!-- Add New Task Section -->
-<div class="add-task-section">
-    <h2>Add New Task</h2>
-    <div class="time-duration-container">
-    <div>
-        <label for="timeSelect">Time:</label>
-        <select id="timeSelect"></select>
-    </div>
-    <div>
-        <label for="durationSelect">Duration:</label>
-        <select id="durationSelect">
-        <option value="5 min">5 minutes</option>
-        <option value="10 min">10 minutes</option>
-        <option value="15 min">15 minutes</option>
-        <option value="30 min" selected>30 minutes</option>
-        <option value="45 min">45 minutes</option>
-        <option value="1 hour">1 hour</option>
-        <option value="90 min">90 minutes</option>
-        <option value="2 hours">2 hours</option>
-        </select>
-    </div>
-    </div>
-    <div>
-        <label for="activityInput">Activity:</label>
-        <input type="text" id="activityInput" placeholder="e.g. Work on Chemistry assignment" />
-    </div>
-    <div>
-        <input type="text" id="taskSearch" placeholder="Search tasks in table..." title="Filter tasks in the table below">
-    </div>
-    <button class="btn" id="addBtn" title="Add task to the table (Alt+A)">Add Task</button>
-</div>
-
-
-<!-- Task Table -->
-<table id="taskTable">
-  <thead>
-    <tr>
-      <th style="width:18%;">Time & Duration</th>
-      <th style="width:37%;">Activity</th>
-      <th style="width:8%;">Done?</th>
-      <th style="width:12%;">Rating (1-5)</th>
-      <th style="width:25%;">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Rows appended dynamically -->
-    <tr><td colspan="5" style="text-align: center; color: #888;">(No tasks added for this day yet)</td></tr>
-  </tbody>
-</table>
-
-<!-- Image gallery area -->
-<div id="imageGallery">
-    <!-- Images loaded dynamically -->
-</div>
-
-
-<!-- Reflection Section (Moved Here) -->
-<div class="reflection-section">
-    <h3>Daily Reflection</h3>
-    <div class="reflection-item">
-      <label for="dayRatingSelect">Day Rating (1–5):</label>
-      <select id="dayRatingSelect">
-        <option value="0">--</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
+      <button class="btn" id="clearTasksBtn" title="Clear tasks for this client on this date">Clear Tasks</button>
+      <button class="btn" id="exportBtn" title="Export all client data to a JSON file">Export Data</button>
+      <button class="btn" id="reportBtn" title="Generate an HTML report for the current client">View Report</button>
+      <button class="btn" id="multiDayPlanBtn" title="Plan tasks across multiple upcoming days">Multi-Day Plan</button>
+      <button class="btn" id="weeklyPlanBtn" title="Set recurring weekly tasks">Weekly Plan</button>
+      <button class="btn" id="imageBtn" title="Add an image or screenshot">Add Image</button>
     </div>
 
-    <div class="reflection-item">
-      <label for="dayNotes">Reflection Notes:</label>
-      <textarea id="dayNotes" rows="4" placeholder="Notes for the day... how did it go? What worked? What didn't?"></textarea>
+    <!-- Form for adding a new client -->
+    <div id="newClientForm">
+      <label for="newClientName">New Client Name:</label>
+      <input type="text" id="newClientName" placeholder="Enter client name">
+      <button class="btn" id="saveClientBtn">Save</button>
+      <button class="btn" id="cancelClientBtn">Cancel</button>
     </div>
-</div>
+
+    <!-- Show or edit the Big Goal, Canvas link, and Classroom link -->
+    <div class="client-info">
+      <div class="info-row">
+        <label for="bigGoalInput">Big Goal:</label>
+        <input type="text" id="bigGoalInput" placeholder="e.g. Get into Yale">
+      </div>
+      <div class="info-row">
+        <label for="canvasLinkInput">Canvas Link:</label>
+        <input type="text" id="canvasLinkInput" placeholder="https://...">
+      </div>
+      <div class="info-row">
+        <label for="classroomLinkInput">Classroom Link:</label>
+        <input type="text" id="classroomLinkInput" placeholder="https://...">
+      </div>
+      <button class="btn" id="saveClientInfoBtn">Save Client Info</button>
+    </div>
+
+    <!-- Big Goal displayed prominently -->
+    <div id="bigGoalDisplay">(Select a client)</div>
+
+    <!-- External links displayed -->
+    <div class="external-links">
+      <a href="#" id="canvasLinkAnchor" target="_blank" style="display:none;">Open Canvas</a>
+      <a href="#" id="classroomLinkAnchor" target="_blank" style="display:none;">Open Google Classroom</a>
+    </div>
+
+    <hr />
+
+    <!-- Add New Task Section -->
+    <div class="add-task-section">
+        <h2>Add New Task</h2>
+        <div class="time-duration-container">
+        <div>
+            <label for="timeSelect">Time:</label>
+            <select id="timeSelect"></select>
+        </div>
+        <div>
+            <label for="durationSelect">Duration:</label>
+            <select id="durationSelect">
+            <option value="5 min">5 minutes</option>
+            <option value="10 min">10 minutes</option>
+            <option value="15 min">15 minutes</option>
+            <option value="30 min" selected>30 minutes</option>
+            <option value="45 min">45 minutes</option>
+            <option value="1 hour">1 hour</option>
+            <option value="90 min">90 minutes</option>
+            <option value="2 hours">2 hours</option>
+            </select>
+        </div>
+        </div>
+        <div>
+            <label for="activityInput">Activity:</label>
+            <input type="text" id="activityInput" placeholder="e.g. Work on Chemistry assignment" />
+        </div>
+        <div>
+             <label for="taskSearch">Search Tasks:</label>
+            <input type="text" id="taskSearch" placeholder="Filter tasks in table by activity or time..." title="Filter tasks in the table below">
+        </div>
+        <button class="btn" id="addBtn" title="Add task to the table (Alt+A)">Add Task</button>
+    </div>
 
 
-<!-- Progress Dashboard -->
-<div id="progressDashboard">
-  <h3>Progress Dashboard</h3>
+    <!-- Task Table -->
+    <table id="taskTable">
+      <thead>
+        <tr>
+          <th style="width:18%;">Time & Duration</th>
+          <th style="width:37%;">Activity</th>
+          <th style="width:8%;">Done?</th>
+          <th style="width:12%;">Rating</th>
+          <th style="width:25%;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows appended dynamically -->
+        <tr><td colspan="5" class="text-center no-data">(No tasks added for this day yet)</td></tr>
+      </tbody>
+    </table>
 
-  <p><strong>Task Completion (This Day):</strong> <span id="completionRate">-</span></p>
-  <div class="progress-bar-container">
-    <div id="completionBar" class="progress-bar" style="width: 0%">0%</div>
-  </div>
+    <!-- Image gallery area -->
+    <div id="imageGallery">
+        <!-- Images loaded dynamically -->
+        <p class="no-data text-center">(No images added for this client yet)</p>
+    </div>
 
-  <p><strong>Average Task Rating (This Day):</strong> <span id="averageTaskRating">-</span></p>
 
-  <hr style="margin: 1.5em 0;"/>
+    <!-- Reflection Section (Moved Here) -->
+    <div class="reflection-section">
+        <h3>Daily Reflection</h3>
+        <div class="reflection-item">
+          <label for="dayRatingSelect">Day Rating (1–5):</label>
+          <select id="dayRatingSelect">
+            <option value="0">--</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
 
-  <p><strong>Day Rating (This Day):</strong> <span id="displayDayRating">-</span></p>
+        <div class="reflection-item">
+          <label for="dayNotes">Reflection Notes:</label>
+          <textarea id="dayNotes" rows="4" placeholder="Notes for the day... how did it go? What worked? What didn't?"></textarea>
+        </div>
+    </div>
 
-  <p><strong>Avg Day Rating (All Time up to this Date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
-  <div class="progress-bar-container">
-    <div id="avgRatingBar" class="progress-bar avg-rating" style="width: 0%;">0/5</div>
-  </div>
-</div>
 
-<!-- Google Embeds Section -->
-<div class="google-embed-container">
-    <h2>Google Calendar</h2>
-    <p style="font-size: 0.9em; color: #555;">
-      <!-- IMPORTANT: Replace the 'src' attribute below with the public embed code for YOUR Google Calendar -->
-      <!-- Go to Google Calendar -> Settings -> Settings for my calendars -> Select calendar -> Integrate calendar -> Embed code -->
-      <!-- Copy the URL from inside the 'src="..."' part of the code provided by Google -->
-    </p>
-    <iframe
-      id="googleCalendarEmbed"
-      style="width:100%; height:600px; border:1px solid #ccc; border-radius: 4px;"
-      src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID_HERE&ctz=America%2FNew_York"
-      frameborder="0"
-      scrolling="no">
-    </iframe>
-</div>
+    <!-- Progress Dashboard -->
+    <div id="progressDashboard">
+      <h3>Progress Dashboard</h3>
 
-<div class="google-embed-container">
-    <h2>Google Tasks</h2>
-    <div id="googleTasksPlaceholder">
-      <p>
-        Future Integration: A dedicated Google Tasks panel could be embedded here.
-        However, this requires using Google APIs and handling user authentication (OAuth),
-        which is more complex than a simple local HTML/JS application can handle directly without a backend server.
+      <p><strong>Task Completion (This Day):</strong> <span id="completionRate">-</span></p>
+      <div class="progress-bar-container">
+        <div id="completionBar" class="progress-bar" style="width: 0%">0%</div>
+      </div>
+
+      <p><strong>Average Task Rating (This Day):</strong> <span id="averageTaskRating">-</span></p>
+
+      <hr style="margin: 1.5em 0;"/>
+
+      <p><strong>Day Rating (This Day):</strong> <span id="displayDayRating">-</span></p>
+
+      <p><strong>Avg Day Rating (All Time up to this Date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
+      <div class="progress-bar-container">
+        <div id="avgRatingBar" class="progress-bar avg-rating" style="width: 0%;">0/5</div>
+      </div>
+    </div>
+
+    <!-- Google Embeds Section -->
+    <div class="google-embed-container">
+        <h2>Google Calendar</h2>
+        <div> <!-- Added div to receive card styling -->
+            <p style="font-size: 0.9em; color: var(--text-light); margin-top: 0; margin-bottom: 0.5em;">
+            <!-- IMPORTANT: Replace the 'src' attribute below with the public embed code for YOUR Google Calendar -->
+            <!-- Go to Google Calendar -> Settings -> Settings for my calendars -> Select calendar -> Integrate calendar -> Embed code -->
+            <!-- Copy the URL from inside the 'src="..."' part of the code provided by Google -->
+            </p>
+            <iframe
+            id="googleCalendarEmbed"
+            src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID_HERE&ctz=America%2FNew_York"
+            frameborder="0"
+            scrolling="no">
+            </iframe>
+        </div>
+    </div>
+
+    <div class="google-embed-container">
+        <h2>Google Tasks</h2>
+        <div id="googleTasksPlaceholder"> <!-- This div receives card styling -->
+          <p style="margin-top:0;">
+            Future Integration: A dedicated Google Tasks panel could be embedded here.
+            However, this requires using Google APIs and handling user authentication (OAuth),
+            which is more complex than a simple local HTML/JS application can handle directly without a backend server.
+          </p>
+          <p>For now, consider using Google Tasks in a separate browser tab or window during sessions.</p>
+        </div>
+    </div>
+
+
+    <!-- Modals remain outside the main container for full-screen overlay -->
+
+
+    <div id="footer">
+      <p>All client data (goals, tasks, notes, images) is stored locally in your browser's <code>localStorage</code>. No data is sent to any server.</p>
+      <p style="font-size: 0.8em; color:#444;">
+        <em>You can save this HTML file ("File > Save Page As...") and open it directly in any modern web browser.</em>
       </p>
-      <p>For now, consider using Google Tasks in a separate browser tab or window during sessions.</p>
     </div>
-</div>
 
+</div> <!-- End of .container -->
+
+
+<!-- === MODALS (Keep outside .container for positioning) === -->
 
 <!-- Multi-Day Planner Modal -->
 <div id="plannerModal">
@@ -574,7 +813,8 @@
 
     <button class="btn" id="addDayBtn">Add Another Day</button>
 
-    <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 15px; text-align: right;">
+    <!-- Modal Footer -->
+    <div>
       <button class="btn" id="savePlanBtn">Save All Tasks</button>
       <button class="btn" id="cancelPlanBtn">Cancel</button>
     </div>
@@ -589,8 +829,9 @@
 
     <div id="weeklyContent"></div>
 
-    <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 15px; text-align: right;">
-      <button class="btn" id="saveWeeklyBtn">Save Weekly Schedule</button>
+    <!-- Modal Footer -->
+    <div>
+      <button class="btn" id="saveWeeklyBtn">Close & Reload Tasks</button> <!-- Clarified button text -->
       <button class="btn" id="cancelWeeklyBtn">Cancel</button>
     </div>
   </div>
@@ -604,8 +845,8 @@
     <div>
       <label for="imageFileInput">Select Image File:</label>
       <input type="file" id="imageFileInput" accept="image/*">
-      <p style="color:#666;font-size:0.9em;">
-        Or paste a screenshot directly into this modal window (click here, then Ctrl+V / Cmd+V).
+      <p style="color:var(--text-light);font-size:0.9em; margin-top: 0.5em;">
+        Or paste a screenshot directly into this modal window (click anywhere in the modal, then Ctrl+V / Cmd+V).
       </p>
     </div>
 
@@ -616,19 +857,14 @@
       <input type="text" id="imageTitle" placeholder="Optional title for the image">
     </div>
 
-    <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 15px; text-align: right;">
+    <!-- Modal Footer -->
+    <div>
       <button class="btn" id="saveImageBtn">Save Image</button>
       <button class="btn" id="cancelImageBtn">Cancel</button>
     </div>
   </div>
 </div>
 
-<div id="footer">
-  <p>All client data (goals, tasks, notes, images) is stored locally in your browser's <code>localStorage</code>. No data is sent to any server.</p>
-  <p style="font-size: 0.8em; color:#444;">
-    <em>You can save this HTML file ("File > Save Page As...") and open it directly in any modern web browser.</em>
-  </p>
-</div>
 
 <script>
 /***************************************************************
@@ -776,7 +1012,8 @@ window.addEventListener("load", () => {
     currentClient = null;
     // Show placeholder message if no clients
     bigGoalDisplay.textContent = "(Add a client to get started)";
-    taskTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">(Add a client and select a date)</td></tr>';
+    taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Add a client and select a date)</td></tr>';
+    imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>'; // Also update gallery placeholder
   }
 
 
@@ -786,8 +1023,6 @@ window.addEventListener("load", () => {
   // Set up event listeners
   setupEventListeners();
 
-  // Initialize multi-day planner with one day structure (but don't show it yet)
-  // addPlannerDay(); // We'll add the first day when the modal opens
 });
 
 /***************************************************************
@@ -839,6 +1074,17 @@ function setupEventListeners() {
 
   // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
+    // Ignore shortcuts if focus is inside a text input/textarea to allow typing
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+        // Allow Escape key to work in inputs to close modals/forms
+        if (e.key === "Escape") {
+             // Handled below
+        } else {
+            return; // Don't trigger other shortcuts while typing
+        }
+    }
+
     // Alt+A = Focus Activity Input or Add Task if filled
     if (e.altKey && e.key === "a") {
       e.preventDefault();
@@ -864,14 +1110,18 @@ function setupEventListeners() {
     if (e.altKey && e.key === "s") {
       e.preventDefault();
       sortTasksByTime();
-      alert("Tasks sorted by time."); // Provide feedback
+      // Maybe add a subtle visual confirmation instead of alert?
+      // E.g., flash the table background briefly
+      taskTableBody.style.transition = 'background-color 0.1s ease-out';
+      taskTableBody.style.backgroundColor = 'var(--primary-blue-light)';
+      setTimeout(() => { taskTableBody.style.backgroundColor = ''; }, 200);
     }
-    // Escape key closes modals
+    // Escape key closes modals/forms
      if (e.key === "Escape") {
         if (plannerModal.style.display === "block") closePlannerModal();
-        if (weeklyModal.style.display === "block") closeWeeklyModal();
-        if (imageModal.style.display === "block") closeImageModal();
-        if (newClientForm.style.display === "block") hideNewClientForm();
+        else if (weeklyModal.style.display === "block") closeWeeklyModal();
+        else if (imageModal.style.display === "block") closeImageModal();
+        else if (newClientForm.style.display === "flex") hideNewClientForm(); // Check for flex display now
      }
   });
 }
@@ -906,6 +1156,12 @@ function populateClientSelect() {
     clearTasksBtn.disabled = false;
     saveClientInfoBtn.disabled = false;
 
+    // Add a default "-- Select --" option? (Optional)
+    // const defaultOpt = document.createElement("option");
+    // defaultOpt.textContent = "-- Select Client --";
+    // defaultOpt.value = "";
+    // clientSelect.appendChild(defaultOpt);
+
     clientNames.forEach(name => {
       const opt = document.createElement("option");
       opt.value = name;
@@ -916,7 +1172,7 @@ function populateClientSelect() {
 }
 
 function showNewClientForm() {
-  newClientForm.style.display = "block";
+  newClientForm.style.display = "flex"; // Changed to flex
   newClientName.value = "";
   newClientName.focus();
 }
@@ -951,7 +1207,8 @@ function saveNewClient() {
   currentDate = datePicker.value; // Use current date
   loadClientDate(currentClient, currentDate); // Load the new client's (empty) data
   hideNewClientForm();
-  alert(`Client "${name}" added successfully!`);
+  // Consider a less intrusive confirmation, e.g., briefly changing button text
+  // alert(`Client "${name}" added successfully!`);
 }
 
 function saveClientInfo() {
@@ -971,7 +1228,15 @@ function saveClientInfo() {
   cliData.links.classroom = classroomLinkInput.value.trim();
   saveToLocalStorage();
   renderClientInfo(); // Update display
-  alert("Client info (Big Goal, Links) saved!");
+   // Less intrusive confirmation
+    const originalButtonText = saveClientInfoBtn.textContent;
+    saveClientInfoBtn.textContent = 'Saved!';
+    saveClientInfoBtn.style.backgroundColor = 'var(--accent-green)';
+    setTimeout(() => {
+        saveClientInfoBtn.textContent = originalButtonText;
+        saveClientInfoBtn.style.backgroundColor = ''; // Revert to default
+    }, 1500);
+  // alert("Client info (Big Goal, Links) saved!");
 }
 
 function renderClientInfo() {
@@ -989,29 +1254,35 @@ function renderClientInfo() {
   const cliData = allData[currentClient];
 
   // Big goal
-  bigGoalDisplay.textContent = cliData.bigGoal || "(No Big Goal Set - Click 'Save Client Info' to add one)";
+  bigGoalDisplay.textContent = cliData.bigGoal || "(No Big Goal Set)";
   bigGoalInput.value = cliData.bigGoal || "";
 
    // Ensure links object exists before accessing properties
   const links = cliData.links || { canvas: "", classroom: "" };
+  let hasLinks = false;
 
   // Canvas link
-  if (links.canvas) {
+  if (links.canvas && links.canvas.startsWith('http')) { // Basic URL check
     canvasLinkAnchor.href = links.canvas;
-    canvasLinkAnchor.style.display = "inline-block";
+    canvasLinkAnchor.style.display = "inline-flex"; // Use flex for icon alignment
+    hasLinks = true;
   } else {
     canvasLinkAnchor.style.display = "none";
   }
   canvasLinkInput.value = links.canvas || "";
 
   // Classroom link
-  if (links.classroom) {
+  if (links.classroom && links.classroom.startsWith('http')) { // Basic URL check
     classroomLinkAnchor.href = links.classroom;
-    classroomLinkAnchor.style.display = "inline-block";
+    classroomLinkAnchor.style.display = "inline-flex"; // Use flex for icon alignment
+     hasLinks = true;
   } else {
     classroomLinkAnchor.style.display = "none";
   }
   classroomLinkInput.value = links.classroom || "";
+
+  // Hide the whole links container if no links are set? Optional.
+  // document.querySelector('.external-links').style.display = hasLinks ? 'block' : 'none';
 }
 
 /***************************************************************
@@ -1024,11 +1295,11 @@ function onClientOrDateChange() {
       loadClientDate(currentClient, currentDate);
   } else {
       // Handle case where selection might be invalid (e.g., "-- No Clients --")
-       taskTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">(Select a client and date)</td></tr>';
+       taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Select a client and date)</td></tr>';
        renderClientInfo(); // Reset client info display
        resetReflectionFields();
        resetProgressDashboard();
-       imageGallery.innerHTML = ""; // Clear gallery
+       imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>'; // Clear gallery
   }
 }
 
@@ -1038,9 +1309,7 @@ function loadClientDate(clientName, dateStr) {
   // Ensure client exists in data
   if (!allData[clientName]) {
     console.error(`Data for client "${clientName}" not found.`);
-    // Optionally create the client structure here if desired, or just return
      allData[clientName] = { bigGoal: "", links: {}, weeklyTasks: {}, images: [] };
-    // return;
   }
 
   // Ensure date entry exists for the client, create if not
@@ -1051,7 +1320,6 @@ function loadClientDate(clientName, dateStr) {
       tasks: [],
       weeklyDone: {} // Tracks completion of weekly tasks for THIS date
     };
-    // No need to save here yet, will save if user interacts
   }
 
   const clientData = allData[clientName];
@@ -1082,30 +1350,39 @@ function renderTaskTable(clientData, dayRecord, dateStr) {
 
     const dailyTasks = dayRecord.tasks || [];
     const weekday = getWeekdayFromDate(dateStr);
-    // Ensure weeklyTasks and the specific day array exist
     const weeklyTaskList = clientData.weeklyTasks && clientData.weeklyTasks[weekday]
                              ? clientData.weeklyTasks[weekday]
                              : [];
+    const weeklyDoneMap = dayRecord.weeklyDone || {};
 
-    let tasksExist = false;
+    const allTasksToRender = [];
 
-    // Add daily tasks
+     // Add daily tasks to the temporary list
     dailyTasks.forEach(task => {
-        addTaskRow(task, 'daily'); // Pass type 'daily'
-        tasksExist = true;
+        allTasksToRender.push({ ...task, taskType: 'daily' });
     });
 
-    // Add weekly tasks for this day
+    // Add relevant weekly tasks to the temporary list
     weeklyTaskList.forEach(wTask => {
-        addWeeklyTaskRow(wTask, dayRecord.weeklyDone || {}, dateStr);
-        tasksExist = true;
+         allTasksToRender.push({
+             ...wTask, // includes id, time, duration, activity
+             completed: !!weeklyDoneMap[wTask.id], // done status for *this* date
+             rating: "0", // No rating for weekly
+             taskType: 'weekly'
+         });
     });
 
-    if (!tasksExist) {
-         taskTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">(No tasks added for this day yet)</td></tr>';
+    // Sort the combined list by time
+     allTasksToRender.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
+
+
+    if (allTasksToRender.length === 0) {
+         taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(No tasks scheduled for this day)</td></tr>';
     } else {
-        // Optionally sort the combined view after rendering
-        sortRenderedTasksByTime();
+        // Render rows from the sorted list
+        allTasksToRender.forEach(task => {
+            addTaskRow(task, task.taskType);
+        });
     }
 }
 
@@ -1137,21 +1414,37 @@ function onDayRatingChange() {
   saveToLocalStorage();
   updateProgress(); // Update dashboard display
 }
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+// Debounced version of saving notes
+const debouncedSaveNotes = debounce(() => {
+    if (!currentClient || !currentDate) return;
+    const rec = getDayRecord();
+    if (!rec) return;
+    rec.dayNotes = dayNotesTextarea.value;
+    saveToLocalStorage();
+     // console.log("Notes saved"); // Optional: confirmation
+}, 500); // Save 500ms after user stops typing
+
 function onDayNotesChange() {
-  if (!currentClient || !currentDate) return;
-   // Use debounce or throttle here if saving becomes too frequent on fast typing
-   // For simplicity, saving on every input event for now.
-  const rec = getDayRecord();
-  if (!rec) return;
-  rec.dayNotes = dayNotesTextarea.value;
-  saveToLocalStorage();
+    debouncedSaveNotes(); // Call the debounced function
 }
+
 
 // Helper to get the current day record, ensuring structure exists
 function getDayRecord() {
     if (!currentClient || !currentDate || !allData[currentClient]) return null;
     if (!allData[currentClient][currentDate]) {
-        // Create if doesn't exist (should have been created by loadClientDate, but defensively check)
         allData[currentClient][currentDate] = { dayRating: "0", dayNotes: "", tasks: [], weeklyDone: {} };
     }
     return allData[currentClient][currentDate];
@@ -1168,7 +1461,6 @@ function populateTimeDropdown() {
     for (let minute = 0; minute < 60; minute += 15) {
       const d = new Date();
       d.setHours(hour, minute);
-      // Format like "7:30 AM" or "12:00 PM"
       const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
       const opt = document.createElement("option");
       opt.value = label;
@@ -1179,7 +1471,7 @@ function populateTimeDropdown() {
   // Add common non-specific times
   const separator = document.createElement("option");
   separator.disabled = true;
-  separator.textContent = "---- Common Times ----";
+  separator.textContent = "──────────"; // Nicer separator
   timeSelect.appendChild(separator);
 
   const commonTimes = [
@@ -1223,14 +1515,13 @@ function addNewTask() {
     return;
   }
 
-  const rec = getDayRecord(); // Use helper to ensure record exists
-  if (!rec) return; // Should not happen if client/date are set, but check anyway
-
-  // Ensure tasks array exists
+  const rec = getDayRecord();
+  if (!rec) return;
   if (!rec.tasks) rec.tasks = [];
 
   const newTask = {
-    // id: `task_${Date.now()}`, // Optional: Add unique ID if needed later
+    // Using timestamp + random for a more robust unique ID (optional but good practice)
+    id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     time: chosenTime,
     activity: actVal,
     completed: false,
@@ -1241,37 +1532,34 @@ function addNewTask() {
   rec.tasks.push(newTask);
   saveToLocalStorage();
 
-  // If the "no tasks" message is showing, remove it first
-  const noTasksRow = taskTableBody.querySelector('td[colspan="5"]');
-  if (noTasksRow) noTasksRow.parentElement.remove();
+  // Re-render the entire table to ensure correct order and remove "no tasks" message
+  renderTaskTable(allData[currentClient], rec, currentDate);
 
-  addTaskRow(newTask, 'daily'); // Add the new row to the table
   activityInput.value = ""; // Clear input field
-  activityInput.focus(); // Focus back for potentially adding another task
+  activityInput.focus(); // Focus back
 
-  sortRenderedTasksByTime(); // Re-sort the table visually
   updateProgress(); // Update dashboard stats
 }
 
-// Adds a row for a DAILY task
-function addTaskRow(taskObj, taskType = 'daily') { // Default to daily
-  const row = taskTableBody.insertRow();
-  row.classList.add("task-row"); // General task row class
-  row.dataset.taskType = taskType; // Store type (daily/weekly)
-  row.dataset.timeValue = convertTimeToMinutes(taskObj.time); // Store comparable time value for sorting
+// Renders a single task row based on the provided object and type
+function addTaskRow(taskObj, taskType) {
+  const row = taskTableBody.insertRow(); // Appends at the end by default
+  row.classList.add("task-row");
+  row.dataset.taskId = taskObj.id; // Store unique ID if available
+  row.dataset.taskType = taskType;
+  row.dataset.timeValue = convertTimeToMinutes(taskObj.time); // For client-side sorting if needed later
 
   if (taskObj.completed) row.classList.add("completed-task");
 
-  // Time + duration
+  // Time + duration + Type Indicator
   const tdTime = row.insertCell(0);
   tdTime.innerHTML = escapeHtml(taskObj.time);
   if (taskObj.duration) {
-    tdTime.innerHTML += `<br><span style="font-size:0.8em; color:#666;">(${escapeHtml(taskObj.duration)})</span>`;
+    tdTime.innerHTML += `<br><span style="font-size:0.8em; color: var(--text-light);">${escapeHtml(taskObj.duration)}</span>`;
   }
-   if (taskType === 'weekly') {
-        tdTime.innerHTML += `<br><span style="font-size:0.8em; color:#007bff; font-weight:bold;">(Weekly)</span>`;
+  if (taskType === 'weekly') {
+        tdTime.innerHTML += `<span class="weekly-indicator">(Weekly)</span>`;
     }
-
 
   // Activity
   const tdAct = row.insertCell(1);
@@ -1284,19 +1572,19 @@ function addTaskRow(taskObj, taskType = 'daily') { // Default to daily
   chk.checked = taskObj.completed;
   chk.title = "Mark as done / not done";
   chk.addEventListener("change", () => {
-    taskObj.completed = chk.checked;
-    row.classList.toggle("completed-task", chk.checked);
-    // Save differently based on type
-    if (taskType === 'daily') {
-        // Already part of the main save flow
-    } else if (taskType === 'weekly') {
-        // Need to update the specific day's weeklyDone map
-        const dayRec = getDayRecord();
-        if (!dayRec.weeklyDone) dayRec.weeklyDone = {};
-        dayRec.weeklyDone[taskObj.id] = chk.checked; // Use weekly task's ID
-    }
-    saveToLocalStorage();
-    updateProgress();
+      row.classList.toggle("completed-task", chk.checked);
+      // Update the correct data structure based on task type
+      if (taskType === 'daily') {
+          const dayRec = getDayRecord();
+          const task = dayRec?.tasks?.find(t => t.id === taskObj.id);
+          if (task) task.completed = chk.checked;
+      } else if (taskType === 'weekly') {
+          const dayRec = getDayRecord();
+          if (!dayRec.weeklyDone) dayRec.weeklyDone = {};
+          dayRec.weeklyDone[taskObj.id] = chk.checked; // Use weekly task's ID
+      }
+      saveToLocalStorage();
+      updateProgress();
   });
   tdDone.appendChild(chk);
 
@@ -1305,114 +1593,120 @@ function addTaskRow(taskObj, taskType = 'daily') { // Default to daily
   if (taskType === 'daily') {
       const ratingSel = document.createElement("select");
       ratingSel.title = "Rate this task (1-5)";
-      // Add options 0-5 ('--' for 0)
       for (let i = 0; i <= 5; i++) {
           const opt = document.createElement("option");
           opt.value = i;
-          opt.text = i === 0 ? "--" : i.toString();
+          opt.text = i === 0 ? "–" : i.toString(); // Use en-dash for empty
           ratingSel.appendChild(opt);
       }
-      ratingSel.value = taskObj.rating || "0"; // Handle potentially missing rating property
+      ratingSel.value = taskObj.rating || "0";
       ratingSel.addEventListener("change", () => {
-          taskObj.rating = ratingSel.value;
-          saveToLocalStorage();
-          updateProgress();
+           const dayRec = getDayRecord();
+           const task = dayRec?.tasks?.find(t => t.id === taskObj.id);
+           if (task) task.rating = ratingSel.value;
+           saveToLocalStorage();
+           updateProgress();
       });
       tdRating.appendChild(ratingSel);
   } else {
-      tdRating.textContent = "--"; // No rating for weekly tasks in daily view
-      tdRating.style.color = "#888";
+      tdRating.innerHTML = `<span class="no-data">–</span>`; // Use en-dash
   }
 
 
   // Actions (Edit/Delete for Daily, Info for Weekly)
   const tdActions = row.insertCell(4);
+  tdActions.style.whiteSpace = 'nowrap'; // Prevent buttons wrapping
   if (taskType === 'daily') {
       const editBtn = document.createElement("button");
-      editBtn.textContent = "✎";
+      editBtn.textContent = "✎"; // Edit icon
       editBtn.classList.add("btn");
       editBtn.title = "Edit task";
-      editBtn.addEventListener("click", () => {
+      editBtn.addEventListener("click", (e) => {
+           e.stopPropagation(); // Prevent row hover effect while editing
           makeTaskEditable(row, taskObj);
       });
       tdActions.appendChild(editBtn);
 
       const rmBtn = document.createElement("button");
-      rmBtn.textContent = "✕"; // Use a clear 'X' symbol
-      rmBtn.classList.add("btn");
+      rmBtn.textContent = "✕"; // Delete icon
+      rmBtn.classList.add("btn"); // Default button style, specific styling makes it red-ish
       rmBtn.title = "Delete task";
-      rmBtn.addEventListener("click", () => {
+      rmBtn.addEventListener("click", (e) => {
+           e.stopPropagation();
           if (confirm(`Delete task: "${taskObj.activity}"?`)) {
               removeTask(taskObj); // Remove from data
               row.remove();       // Remove from table
               updateProgress();
-              // Check if table is now empty
-              if (taskTableBody.rows.length === 0) {
-                   taskTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">(No tasks added for this day yet)</td></tr>';
+              // Check if table is now empty after removal
+              if (taskTableBody.querySelectorAll('tr.task-row').length === 0) {
+                   taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(No tasks scheduled for this day)</td></tr>';
               }
           }
       });
       tdActions.appendChild(rmBtn);
   } else {
-       tdActions.innerHTML = `<em style="color:#888; font-size:0.9em;">(Edit in Weekly Plan)</em>`;
+       tdActions.innerHTML = `<span style="color:var(--text-light); font-size:0.85em;">(Weekly)</span>`;
   }
-
 }
 
-// Adds a row for a WEEKLY task in the daily view
-function addWeeklyTaskRow(wTask, weeklyDoneMap, dateStr) {
-  // Weekly tasks don't have their own rating/edit in the daily view
-  // They only have a "done" status for *that specific day*
-  const isDone = !!weeklyDoneMap[wTask.id];
-
-  // Use the generic addTaskRow but pass 'weekly' type and custom completion status
-  addTaskRow({
-      ...wTask, // Spread weekly task properties (id, time, duration, activity)
-      completed: isDone, // Use the completion status for *this* date
-      rating: "0" // Weekly tasks don't have ratings here
-  }, 'weekly');
-}
 
 function makeTaskEditable(row, taskObj) {
+  // Prevent editing multiple rows at once (optional but good UX)
+   const currentlyEditing = taskTableBody.querySelector('.editing-task-row');
+    if (currentlyEditing && currentlyEditing !== row) {
+        // Find the cancel button in the other editing row and click it
+        const otherCancelBtn = currentlyEditing.querySelector('.btn-cancel-edit');
+        if (otherCancelBtn) otherCancelBtn.click();
+    }
+  row.classList.add('editing-task-row'); // Add class to identify editing row
+
   // Store original values and references
-  const originalRowIndex = row.rowIndex - 1; // Adjust for header row
+  const originalRowIndex = Array.from(taskTableBody.rows).indexOf(row);
   const tdTime = row.cells[0];
   const tdAct = row.cells[1];
-  const tdRating = row.cells[3]; // Rating cell needed to restore later
+  const tdRating = row.cells[3];
   const tdActions = row.cells[4];
+
+  // Store original HTML content to restore on cancel
   const originalTimeHTML = tdTime.innerHTML;
-  const originalActivityText = tdAct.textContent;
-  const originalRatingHTML = tdRating.innerHTML; // Store the select element HTML
+  const originalActivityHTML = tdAct.innerHTML; // Store original potentially styled text
+  const originalRatingHTML = tdRating.innerHTML;
   const originalActionsHTML = tdActions.innerHTML;
 
   // --- Replace Time/Duration Cell ---
   tdTime.innerHTML = ""; // Clear current content
+  const timeDurContainer = document.createElement('div');
+  timeDurContainer.style.display = 'flex';
+  timeDurContainer.style.flexDirection = 'column';
+  timeDurContainer.style.gap = '4px';
 
-  // Time Select
   const newTimeSel = document.createElement("select");
-  populateTempTimeDropdown(newTimeSel, taskObj.time); // Populate with standard times
-  tdTime.appendChild(newTimeSel);
-  tdTime.appendChild(document.createElement("br"));
+  newTimeSel.style.marginBottom = '0'; // Override default input margin
+  populateTempTimeDropdown(newTimeSel, taskObj.time);
+  timeDurContainer.appendChild(newTimeSel);
 
-  // Duration Select
   const newDurSel = document.createElement("select");
+  newDurSel.style.marginBottom = '0';
   ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
     const opt = document.createElement("option"); opt.value = d; opt.text = d; newDurSel.appendChild(opt);
   });
-  newDurSel.value = taskObj.duration || "30 min"; // Default if missing
-  tdTime.appendChild(newDurSel);
+  newDurSel.value = taskObj.duration || "30 min";
+  timeDurContainer.appendChild(newDurSel);
+  tdTime.appendChild(timeDurContainer);
+
 
   // --- Replace Activity Cell ---
   tdAct.innerHTML = ""; // Clear current content
   const actInput = document.createElement("input");
   actInput.type = "text";
-  actInput.value = originalActivityText;
-  actInput.style.width = "98%";
+  actInput.value = taskObj.activity; // Use the data value, not potentially styled textContent
+  actInput.style.width = "100%"; // Ensure it fits cell
+  actInput.style.marginBottom = '0'; // Override default input margin
   tdAct.appendChild(actInput);
-  actInput.focus(); // Focus the activity field
-  actInput.select(); // Select the text
+  actInput.focus();
+  actInput.select();
 
-   // --- Clear Rating Cell (it's not editable here, will be restored) ---
+   // --- Clear Rating Cell (will be restored) ---
    tdRating.innerHTML = "";
 
   // --- Replace Actions Cell with Save/Cancel ---
@@ -1420,64 +1714,68 @@ function makeTaskEditable(row, taskObj) {
 
   const saveBtn = document.createElement("button");
   saveBtn.textContent = "Save";
-  saveBtn.classList.add("btn");
-  saveBtn.addEventListener("click", () => {
+  saveBtn.classList.add("btn", "btn-primary"); // Make save primary
+  saveBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent row hover effect
     const newTime = newTimeSel.value;
     const newActivity = actInput.value.trim();
     const newDuration = newDurSel.value;
 
-    if (!newActivity) {
-      alert("Activity cannot be empty.");
-      actInput.focus();
-      return;
+    if (!newActivity) { alert("Activity cannot be empty."); actInput.focus(); return; }
+
+    // Find the task in the data structure and update it
+    const dayRec = getDayRecord();
+    const taskIndex = dayRec?.tasks?.findIndex(t => t.id === taskObj.id); // Use ID to find
+    if (taskIndex !== undefined && taskIndex > -1) {
+        dayRec.tasks[taskIndex].time = newTime;
+        dayRec.tasks[taskIndex].activity = newActivity;
+        dayRec.tasks[taskIndex].duration = newDuration;
+        saveToLocalStorage();
+
+        // Update the original taskObj reference as well for re-rendering
+        taskObj.time = newTime;
+        taskObj.activity = newActivity;
+        taskObj.duration = newDuration;
+
+        // Re-render the *entire* table to ensure sorting is correct
+        renderTaskTable(allData[currentClient], dayRec, currentDate);
+        updateProgress();
+    } else {
+        console.error("Failed to find task to update in data:", taskObj.id);
+         // Restore original row display as a fallback
+         row.classList.remove('editing-task-row');
+         tdTime.innerHTML = originalTimeHTML;
+         tdAct.innerHTML = originalActivityHTML;
+         tdRating.innerHTML = originalRatingHTML;
+         tdActions.innerHTML = originalActionsHTML;
+         // Re-attach listeners (this part is complex, re-rendering is easier)
     }
-
-    // Update the task object in the main data structure
-    taskObj.time = newTime;
-    taskObj.activity = newActivity;
-    taskObj.duration = newDuration;
-    saveToLocalStorage();
-
-    // Restore the row's display using the updated task object
-    // Remove the editing row completely
-    row.remove();
-    // Insert a new row at the original position with the updated data
-    const newRow = taskTableBody.insertRow(originalRowIndex);
-    addTaskRow(taskObj, 'daily'); // Re-render the row
-
-    // Optional: Re-sort the entire table visually
-    sortRenderedTasksByTime();
-    updateProgress();
   });
   tdActions.appendChild(saveBtn);
 
   const cancelBtn = document.createElement("button");
   cancelBtn.textContent = "Cancel";
-  cancelBtn.classList.add("btn");
-  cancelBtn.addEventListener("click", () => {
-    // Just restore the original content without saving
-     row.remove(); // Remove the editing row
-     const restoredRow = taskTableBody.insertRow(originalRowIndex); // Insert new row at original position
-     addTaskRow(taskObj, 'daily'); // Re-render with original data
-     // No need to re-sort or update progress if cancelled
+  cancelBtn.classList.add("btn", "btn-cancel-edit"); // Add class to identify cancel button
+  cancelBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    // Restore original content by re-rendering the single row (simpler than re-attaching listeners)
+    const currentScroll = window.scrollY; // Preserve scroll position
+    renderTaskTable(allData[currentClient], getDayRecord(), currentDate); // Re-render whole table
+    window.scrollTo(0, currentScroll); // Restore scroll position
   });
   tdActions.appendChild(cancelBtn);
 }
 
-// Helper for temporary time dropdowns in edit mode or modals
+
+// Helper for temporary time dropdowns
 function populateTempTimeDropdown(selectElem, currentVal) {
-  // Clone options from the main timeSelect dropdown
   const masterOptions = timeSelect.options;
   for (let i = 0; i < masterOptions.length; i++){
     const clone = masterOptions[i].cloneNode(true);
     selectElem.appendChild(clone);
   }
-  // Try to set the value, fallback if the exact value isn't present
   if (Array.from(selectElem.options).some(opt => opt.value === currentVal)) {
     selectElem.value = currentVal;
-  } else {
-     // Optionally set a default or leave as the first option
-     // selectElem.selectedIndex = 0;
   }
 }
 
@@ -1485,82 +1783,56 @@ function populateTempTimeDropdown(selectElem, currentVal) {
 function sortTasksByTimeInData() {
   if (!currentClient || !currentDate) return;
   const rec = getDayRecord();
-  if (!rec || !rec.tasks || rec.tasks.length < 2) return; // No need to sort < 2 tasks
+  if (!rec || !rec.tasks || rec.tasks.length < 2) return;
 
-  rec.tasks.sort((a, b) => {
-    return convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time);
-  });
-  // Note: This only sorts the *data*. You need to re-render or sort the table separately.
+  rec.tasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
   saveToLocalStorage();
-}
-
-// Sorts the currently rendered rows in the table visually
-function sortRenderedTasksByTime() {
-    const rows = Array.from(taskTableBody.querySelectorAll("tr.task-row")); // Get only task rows
-    if (rows.length < 2) return;
-
-    rows.sort((a, b) => {
-        const timeA = parseInt(a.dataset.timeValue || '9999', 10);
-        const timeB = parseInt(b.dataset.timeValue || '9999', 10);
-        return timeA - timeB;
-    });
-
-    // Re-append rows in sorted order
-    rows.forEach(row => taskTableBody.appendChild(row));
 }
 
 // Combined sort function: sorts data AND re-renders the table
 function sortTasksByTime() {
-    sortTasksByTimeInData(); // Sort the underlying data array
-    // Re-load the client/date which will re-render the table in the sorted order
+    sortTasksByTimeInData();
     if (currentClient && currentDate) {
-        loadClientDate(currentClient, currentDate);
+        const dayRec = getDayRecord();
+        renderTaskTable(allData[currentClient], dayRec, currentDate); // Re-render table
     }
 }
 
 
 function convertTimeToMinutes(timeStr) {
-  if (!timeStr) return 9999; // Handle undefined/null time
-  // Handle common non-specific times first
-   const specialTimes = {
-    "Before School": 360,       // 6:00 AM
-    "During Study Hall": 600,   // 10:00 AM (example)
-    "During Lunch": 720,        // 12:00 PM
-    "Right After School": 930, // 3:30 PM (example)
-    "Before Dinner": 1080,      // 6:00 PM
-    "After Dinner": 1200,       // 8:00 PM
-    "Before Bed": 1320          // 10:00 PM
-  };
+  if (!timeStr) return 9999;
+   const specialTimes = { "Before School": 360, "During Study Hall": 600, "During Lunch": 720, "Right After School": 930, "Before Dinner": 1080, "After Dinner": 1200, "Before Bed": 1320 };
   if (specialTimes[timeStr] !== undefined) return specialTimes[timeStr];
 
-  // Handle specific times like "7:30 AM" or "1:15 PM"
   const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
   if (match) {
-    let hours = parseInt(match[1], 10);
-    const minutes = parseInt(match[2], 10);
-    const ampm = match[3].toUpperCase();
-
-    if (isNaN(hours) || isNaN(minutes)) return 9999; // Invalid parse
-
-    if (ampm === "PM" && hours < 12) hours += 12;
-    if (ampm === "AM" && hours === 12) hours = 0; // Midnight case
-
+    let hours = parseInt(match[1], 10); const minutes = parseInt(match[2], 10); const ampm = match[3].toUpperCase();
+    if (isNaN(hours) || isNaN(minutes)) return 9999;
+    if (ampm === "PM" && hours < 12) hours += 12; if (ampm === "AM" && hours === 12) hours = 0;
     return hours * 60 + minutes;
   }
-
-  return 9999; // Default for unrecognized formats
+  return 9999;
 }
 
 function removeTask(taskObj) {
   const rec = getDayRecord();
   if (!rec || !rec.tasks) return;
-  const idx = rec.tasks.findIndex(task => task === taskObj); // Find by object reference
+  // Find using the ID property
+  const idx = rec.tasks.findIndex(task => task.id === taskObj.id);
   if (idx !== -1) {
     rec.tasks.splice(idx, 1);
     saveToLocalStorage();
-    // Row removal is handled in the click listener after confirmation
   } else {
-      console.warn("Task object not found in data for removal.");
+      console.warn("Task object not found in data for removal by ID:", taskObj.id);
+      // Fallback: try finding by object reference (less reliable if objects were cloned)
+      const refIdx = rec.tasks.indexOf(taskObj);
+       if (refIdx !== -1) {
+           rec.tasks.splice(refIdx, 1);
+           saveToLocalStorage();
+           console.log("Removed task by reference fallback.");
+       } else {
+            console.error("Failed to remove task by ID or reference.");
+       }
   }
 }
 
@@ -1569,14 +1841,13 @@ function clearTasksForClientDate() {
       alert("Please select a client and date.");
       return;
   }
-  if (confirm(`Are you sure you want to clear ALL daily tasks for ${currentClient} on ${currentDate}? \n(Weekly tasks will remain, but their 'done' status for this day might be reset if applicable).`)) {
+  if (confirm(`ARE YOU SURE?\n\nThis will delete ALL daily tasks (non-recurring) for ${currentClient} on ${currentDate}.\n\nThis action cannot be undone.`)) {
     const rec = getDayRecord();
     if (rec) {
         rec.tasks = []; // Clear only the daily tasks array
-        // Optionally reset weeklyDone for this day too, or leave it
-        // rec.weeklyDone = {};
         saveToLocalStorage();
-        loadClientDate(currentClient, currentDate); // Reload to reflect changes
+        renderTaskTable(allData[currentClient], rec, currentDate); // Re-render table
+        updateProgress(); // Update stats
         alert("Daily tasks cleared for this date.");
     }
   }
@@ -1584,18 +1855,38 @@ function clearTasksForClientDate() {
 
 function filterTaskTable() {
     const searchText = taskSearch.value.toLowerCase().trim();
-    const rows = taskTableBody.querySelectorAll("tr.task-row"); // Select only task rows
+    const rows = taskTableBody.querySelectorAll("tr.task-row");
 
+    if (rows.length === 0) return; // No rows to filter
+
+    let matchFound = false;
     rows.forEach(row => {
-      const activityCell = row.cells[1]; // Activity is in the second cell (index 1)
+      const activityCell = row.cells[1];
       const activityText = activityCell?.textContent.toLowerCase() || "";
-      const timeCell = row.cells[0]; // Time/Duration is in the first cell (index 0)
-      const timeText = timeCell?.textContent.toLowerCase() || "";
+      const timeCell = row.cells[0];
+      const timeText = timeCell?.textContent.toLowerCase() || ""; // Includes duration and (Weekly)
 
-      // Show row if search text is found in activity OR time/duration
       const isVisible = activityText.includes(searchText) || timeText.includes(searchText);
       row.style.display = isVisible ? "" : "none";
+      if (isVisible) matchFound = true;
     });
+
+    // Optional: Show a message if no tasks match the filter
+    let noMatchRow = taskTableBody.querySelector('.no-match-row');
+    if (!matchFound && searchText !== '') {
+        if (!noMatchRow) {
+            noMatchRow = taskTableBody.insertRow();
+            noMatchRow.classList.add('no-match-row');
+            const cell = noMatchRow.insertCell(0);
+            cell.colSpan = 5; // Span all columns
+            cell.textContent = "No tasks match your search.";
+            cell.className = 'text-center no-data';
+        }
+    } else {
+        if (noMatchRow) {
+            noMatchRow.remove(); // Remove message if there are matches or search is cleared
+        }
+    }
 }
 
 
@@ -1607,16 +1898,30 @@ function exportData() {
       alert("No data to export.");
       return;
   }
-  const dataStr = JSON.stringify(allData, null, 2); // Pretty print JSON
-  const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-  const exportFilename = `reset-client-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+  try {
+      const dataStr = JSON.stringify(allData, null, 2);
+      const dataBlob = new Blob([dataStr], {type: "application/json;charset=utf-8"});
+      const exportFilename = `reset-client-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
 
-  const link = document.createElement("a");
-  link.setAttribute("href", dataUri);
-  link.setAttribute("download", exportFilename);
-  document.body.appendChild(link); // Required for Firefox
-  link.click();
-  document.body.removeChild(link); // Clean up
+      // Use FileSaver.js logic if available, otherwise fallback
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          // For IE/Edge
+          window.navigator.msSaveOrOpenBlob(dataBlob, exportFilename);
+      } else {
+          // For modern browsers
+          const dataUri = URL.createObjectURL(dataBlob);
+          const link = document.createElement("a");
+          link.setAttribute("href", dataUri);
+          link.setAttribute("download", exportFilename);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(dataUri); // Clean up blob URL
+      }
+   } catch (error) {
+        console.error("Error during data export:", error);
+        alert("An error occurred while trying to export data.");
+   }
 }
 
 function generateReport() {
@@ -1625,6 +1930,7 @@ function generateReport() {
       return;
   }
   const cliData = allData[currentClient];
+  // Use the NEW CSS variables in the report style for consistency
   let reportHtml = `
     <!DOCTYPE html>
     <html>
@@ -1632,25 +1938,35 @@ function generateReport() {
       <meta charset="UTF-8">
       <title>Client Report - ${escapeHtml(currentClient)}</title>
       <style>
-        body { font-family: sans-serif; margin: 20px; line-height: 1.5; }
-        h1, h2, h3 { border-bottom: 1px solid #eee; padding-bottom: 0.3em; margin-top: 1.5em; }
-        h1 { font-size: 1.8em; }
-        h2 { font-size: 1.4em; }
-        h3 { font-size: 1.1em; color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; margin-top: 0.5em; font-size: 0.9em; }
-        table, th, td { border: 1px solid #ccc; }
-        th { background-color: #f2f2f2; text-align: left; padding: 8px; }
-        td { padding: 8px; vertical-align: top; }
-        .notes-box { background-color: #f9f9f9; border: 1px solid #eee; padding: 10px; margin: 10px 0; white-space: pre-wrap; } /* Preserve line breaks */
-        .gallery-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .gallery-img { max-width: 250px; max-height: 200px; margin-top: 5px; border: 1px solid #ccc; display: block; }
-        .completed { text-decoration: line-through; color: #777; }
-        .weekly-task-indicator { font-size: 0.8em; color: #007bff; font-style: italic; }
-        .rating-value { font-weight: bold; }
-        .no-data { color: #888; font-style: italic; }
+        :root { /* Define key colors from main app */
+            --primary-blue: #4A90E2; --primary-blue-light: #EBF4FF;
+            --text-primary: #2D3748; --text-secondary: #4A5568; --text-light: #718096;
+            --border-color: #E2E8F0; --border-color-light: #EDF2F7; --bg-card-secondary: #F8F9FA;
+            --border-radius: 6px; --spacing-unit: 1rem;
+        }
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 20px; line-height: 1.6; color: var(--text-primary); }
+        .report-container { max-width: 800px; margin: 0 auto; }
+        h1, h2, h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; margin-top: 1.5em; font-weight: 600;}
+        h1 { font-size: 1.8em; color: var(--primary-blue); border-bottom-width: 2px; }
+        h2 { font-size: 1.4em; margin-top: 2em; }
+        h3 { font-size: 1.1em; color: var(--text-secondary); margin-top: 1.5em; border-bottom-style: dashed;}
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; margin-top: 0.5em; font-size: 0.9em; border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; }
+        th { background-color: var(--bg-card-secondary); text-align: left; padding: 10px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.05em;}
+        td { padding: 10px; vertical-align: top; border-top: 1px solid var(--border-color-light); }
+        tbody tr:nth-child(even) { background-color: #fdfdff; }
+        .notes-box { background-color: #f9f9f9; border: 1px solid var(--border-color-light); padding: 10px; margin: 10px 0; white-space: pre-wrap; border-radius: var(--border-radius); font-size: 0.95em; }
+        .gallery-item { margin-bottom: 15px; border-bottom: 1px solid var(--border-color-light); padding-bottom: 10px; }
+        .gallery-img { max-width: 250px; max-height: 200px; margin-top: 5px; border: 1px solid var(--border-color); display: block; border-radius: var(--border-radius);}
+        .completed td:not(:last-child) { text-decoration: line-through; color: var(--text-light); opacity: 0.8; }
+        .weekly-task-indicator { font-size: 0.8em; color: var(--primary-blue); font-style: italic; display: block; }
+        .rating-value { font-weight: bold; color: var(--primary-blue); }
+        .no-data { color: var(--text-light); font-style: italic; }
+        ul { padding-left: 20px; margin-top: 0.5em; } li { margin-bottom: 0.3em; }
+        a { color: var(--primary-blue); text-decoration: none; } a:hover { text-decoration: underline; }
       </style>
     </head>
     <body>
+    <div class="report-container">
       <h1>Client Report: ${escapeHtml(currentClient)}</h1>
       <p><em>Report generated on: ${new Date().toLocaleString()}</em></p>
 
@@ -1662,13 +1978,11 @@ function generateReport() {
   const links = cliData.links || {};
   if (links.canvas || links.classroom) {
     reportHtml += `<p><strong>Links:</strong> `;
-    if (links.canvas) {
-      reportHtml += `<a href="${escapeHtml(links.canvas)}" target="_blank">Canvas</a> `;
-    }
-    if (links.classroom) {
-      reportHtml += ` <a href="${escapeHtml(links.classroom)}" target="_blank">Google Classroom</a>`;
-    }
+    if (links.canvas) reportHtml += `<a href="${escapeHtml(links.canvas)}" target="_blank">Canvas</a> `;
+    if (links.classroom) reportHtml += ` <a href="${escapeHtml(links.classroom)}" target="_blank">Google Classroom</a>`;
     reportHtml += `</p>`;
+  } else {
+      reportHtml += `<p class="no-data">No external links saved.</p>`;
   }
 
   // Weekly Tasks Summary
@@ -1680,17 +1994,12 @@ function generateReport() {
     if (dayTasks.length > 0) {
       hasWeeklyTasks = true;
       weeklyHtml += `<h3>${escapeHtml(day.charAt(0).toUpperCase() + day.slice(1))}</h3><ul>`;
-      dayTasks.forEach(t => {
-        weeklyHtml += `<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} ${t.duration ? '(' + escapeHtml(t.duration) + ')' : ''}</li>`;
-      });
+      dayTasks.forEach(t => { weeklyHtml += `<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} ${t.duration ? '(' + escapeHtml(t.duration) + ')' : ''}</li>`; });
       weeklyHtml += `</ul>`;
     }
   });
-  if (hasWeeklyTasks) {
-      reportHtml += weeklyHtml;
-  } else {
-      reportHtml += `<p class="no-data">No recurring weekly tasks set.</p>`;
-  }
+  if (hasWeeklyTasks) reportHtml += weeklyHtml;
+  else reportHtml += `<h2>Weekly Recurring Tasks</h2><p class="no-data">No recurring weekly tasks set.</p>`;
 
 
   // Image Gallery
@@ -1705,24 +2014,24 @@ function generateReport() {
         </a>
       </div>`;
     });
+  } else {
+     reportHtml += `<h2>Image Gallery</h2><p class="no-data">No images saved for this client.</p>`;
   }
 
   // Daily Records
   reportHtml += `<h2>Daily Records</h2>`;
-  const dateKeys = Object.keys(cliData)
-    .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)) // Filter only date strings
-    .sort(); // Sort dates chronologically
+  const dateKeys = Object.keys(cliData).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
 
   if (dateKeys.length === 0) {
     reportHtml += `<p class="no-data">No daily records found for this client.</p>`;
   } else {
     dateKeys.forEach(d => {
       const rec = cliData[d];
-      if (!rec) return; // Skip if record is somehow null/undefined
+      if (!rec) return;
 
       const formattedDate = formatDateForReport(d);
       const dayRating = (rec.dayRating && rec.dayRating !== "0") ? `<span class="rating-value">${rec.dayRating}/5</span>` : "--";
-      reportHtml += `<h3>${formattedDate} (Day Rating: ${dayRating})</h3>`;
+      reportHtml += `<h3>${formattedDate} &nbsp; | &nbsp; Day Rating: ${dayRating}</h3>`; // Combined heading
 
       // Daily Notes
       if (rec.dayNotes && rec.dayNotes.trim() !== "") {
@@ -1731,7 +2040,7 @@ function generateReport() {
          reportHtml += `<p class="no-data">No reflection notes for this day.</p>`;
       }
 
-      // Tasks for the day (merged daily + weekly)
+      // Tasks Table for the day
       const dailyTasks = rec.tasks || [];
       const weekday = getWeekdayFromDate(d);
       const weeklyList = (cliData.weeklyTasks && cliData.weeklyTasks[weekday]) ? cliData.weeklyTasks[weekday] : [];
@@ -1739,33 +2048,19 @@ function generateReport() {
 
       const mergedTasks = [];
       dailyTasks.forEach(t => mergedTasks.push({ ...t, _type: 'daily' }));
-      weeklyList.forEach(wt => {
-        mergedTasks.push({
-          ...wt, // Includes id, time, activity, duration
-          completed: !!weeklyDoneMap[wt.id], // Completion status for *this* day
-          rating: "0", // No rating for weekly tasks here
-          _type: 'weekly'
-        });
-      });
-
-      // Sort merged tasks by time
+      weeklyList.forEach(wt => { mergedTasks.push({ ...wt, completed: !!weeklyDoneMap[wt.id], rating: "0", _type: 'weekly' }); });
       mergedTasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
 
       if (mergedTasks.length === 0) {
         reportHtml += `<p class="no-data">No tasks recorded for this day.</p>`;
       } else {
-        reportHtml += `<table>
-          <thead><tr><th>Time</th><th>Activity</th><th>Duration</th><th>Done?</th><th>Rating</th></tr></thead>
-          <tbody>`;
+        reportHtml += `<table><thead><tr><th>Time</th><th>Activity</th><th>Duration</th><th>Done?</th><th>Rating</th></tr></thead><tbody>`;
         let completedCount = 0;
         mergedTasks.forEach(t => {
           if (t.completed) completedCount++;
           const isCompletedClass = t.completed ? 'class="completed"' : '';
-          const ratingStr = (t._type === "daily" && t.rating !== "0")
-            ? `<span class="rating-value">${t.rating}/5</span>`
-            : (t._type === "daily" ? "--" : "<span class='no-data'>(N/A)</span>"); // Indicate N/A for weekly rating
-           const weeklyIndicator = t._type === 'weekly' ? `<br><span class="weekly-task-indicator">(Weekly)</span>` : '';
-
+          const ratingStr = (t._type === "daily" && t.rating !== "0") ? `<span class="rating-value">${t.rating}/5</span>` : (t._type === "daily" ? "--" : "<span class='no-data'>(N/A)</span>");
+          const weeklyIndicator = t._type === 'weekly' ? `<span class="weekly-task-indicator">(Weekly)</span>` : '';
           reportHtml += `<tr ${isCompletedClass}>
             <td>${escapeHtml(t.time)}${weeklyIndicator}</td>
             <td>${escapeHtml(t.activity)}</td>
@@ -1774,37 +2069,28 @@ function generateReport() {
             <td>${ratingStr}</td>
           </tr>`;
         });
-        reportHtml += `</tbody></table>`;
-        reportHtml += `<p><strong>Completion:</strong> ${completedCount} / ${mergedTasks.length} tasks</p>`;
+        reportHtml += `</tbody></table><p><strong>Completion:</strong> ${completedCount} / ${mergedTasks.length} tasks</p>`;
       }
     });
   }
 
   reportHtml += `
-      <hr style="margin-top: 2em;">
-      <p style="text-align:center; font-size: 0.8em; color: #777;">End of Report</p>
-    </body>
-    </html>`;
+      <hr style="margin-top: 2em; border-color: var(--border-color);">
+      <p style="text-align:center; font-size: 0.8em; color: var(--text-light);">End of Report</p>
+    </div> <!-- End report-container -->
+    </body></html>`;
 
-  // Open the report in a new browser tab
   const reportWindow = window.open("", "_blank");
   if (reportWindow) {
-      reportWindow.document.open();
-      reportWindow.document.write(reportHtml);
-      reportWindow.document.close();
-  } else {
-      alert("Could not open report window. Please check your browser's pop-up blocker settings.");
-  }
+      reportWindow.document.open(); reportWindow.document.write(reportHtml); reportWindow.document.close();
+  } else { alert("Could not open report window. Please check pop-up blocker settings."); }
 }
 
 function formatDateForReport(dateStr) {
-    // Converts "YYYY-MM-DD" to a more readable format like "Mon, Jan 15, 2024"
     try {
-        const date = new Date(dateStr + 'T00:00:00'); // Add time part to avoid timezone issues
-        return date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
-    } catch (e) {
-        return dateStr; // Fallback to original string if parsing fails
-    }
+        const date = new Date(dateStr + 'T12:00:00Z'); // Use UTC noon
+        return date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }); // Use long month
+    } catch (e) { return dateStr; }
 }
 
 /***************************************************************
@@ -1815,7 +2101,7 @@ function saveToLocalStorage() {
     const dataString = JSON.stringify(allData);
     localStorage.setItem(STORAGE_KEY, dataString);
   } catch (error) {
-    if (error.name === 'QuotaExceededError' || (error.name === 'NS_ERROR_DOM_QUOTA_REACHED' /* Firefox */) ) {
+    if (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ) {
       console.error("LocalStorage quota exceeded!", error);
       alert("Error: Storage limit exceeded! Cannot save changes.\nPlease export your data soon and consider clearing older records or large images.");
     } else {
@@ -1826,15 +2112,8 @@ function saveToLocalStorage() {
 }
 
 function updateProgress() {
-  if (!currentClient || !currentDate) {
-       resetProgressDashboard(); // Clear dashboard if no client/date
-       return;
-   }
-  const rec = getDayRecord();
-  if (!rec) {
-      resetProgressDashboard();
-      return;
-  } // Ensure record exists
+  if (!currentClient || !currentDate) { resetProgressDashboard(); return; }
+  const rec = getDayRecord(); if (!rec) { resetProgressDashboard(); return; }
 
   const clientData = allData[currentClient];
   const dailyTasks = rec.tasks || [];
@@ -1843,91 +2122,68 @@ function updateProgress() {
   const weeklyDoneMap = rec.weeklyDone || {};
 
   const dailyDoneCount = dailyTasks.filter(t => t.completed).length;
-  const weeklyDoneCount = weeklyList.filter(wt => weeklyDoneMap[wt.id]).length; // Count based on the map for *this day*
-
+  const weeklyDoneCount = weeklyList.filter(wt => weeklyDoneMap[wt.id]).length;
   const totalDone = dailyDoneCount + weeklyDoneCount;
-  const totalTasks = dailyTasks.length + weeklyList.length; // Total tasks shown for the day
+  const totalTasks = dailyTasks.length + weeklyList.length;
 
-  // --- Task Completion Progress ---
+  // Task Completion Progress
   if (totalTasks === 0) {
-    completionRateEl.textContent = "- (No tasks)";
-    completionBarEl.style.width = "0%";
-    completionBarEl.textContent = "0%";
+    completionRateEl.textContent = "- (No tasks)"; completionBarEl.style.width = "0%"; completionBarEl.textContent = "";
   } else {
     const percentage = Math.round((totalDone / totalTasks) * 100);
     completionRateEl.textContent = `${percentage}% (${totalDone}/${totalTasks})`;
     completionBarEl.style.width = `${percentage}%`;
-    completionBarEl.textContent = `${percentage}%`;
+    completionBarEl.textContent = `${percentage}%`; // Show percentage on bar
   }
 
-  // --- Average Daily Task Rating (Only considers DAILY tasks rated > 0) ---
+  // Average Daily Task Rating
   const ratedDailyTasks = dailyTasks.filter(t => t.rating && parseInt(t.rating, 10) > 0);
   if (ratedDailyTasks.length > 0) {
     const sumRatings = ratedDailyTasks.reduce((acc, t) => acc + parseInt(t.rating, 10), 0);
     const avgRating = (sumRatings / ratedDailyTasks.length);
-    averageTaskRatingEl.textContent = `${avgRating.toFixed(1)} / 5 (from ${ratedDailyTasks.length} rated tasks)`;
-  } else {
-    averageTaskRatingEl.textContent = "No daily tasks rated yet";
-  }
+    averageTaskRatingEl.textContent = `${avgRating.toFixed(1)} / 5 (from ${ratedDailyTasks.length} rated)`;
+  } else { averageTaskRatingEl.textContent = "No daily tasks rated yet"; }
 
-  // --- Current Day Rating Display ---
+  // Current Day Rating Display
   const dayRating = rec.dayRating || "0";
   displayDayRatingEl.textContent = (dayRating !== "0") ? `${dayRating} / 5` : "--";
 
-  // --- Average Day Rating (All time up to current date) ---
-  const allClientDates = Object.keys(clientData)
-    .filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= currentDate) // Valid dates up to current
-    .sort();
-
-  let sumDayRatings = 0;
-  let countRatedDays = 0;
+  // Average Day Rating (All time up to current date)
+  const allClientDates = Object.keys(clientData).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= currentDate).sort();
+  let sumDayRatings = 0; let countRatedDays = 0;
   allClientDates.forEach(d => {
     const dayData = clientData[d];
     if (dayData && dayData.dayRating && dayData.dayRating !== "0") {
-      sumDayRatings += parseInt(dayData.dayRating, 10);
-      countRatedDays++;
+      sumDayRatings += parseInt(dayData.dayRating, 10); countRatedDays++;
     }
   });
-
   if (countRatedDays > 0) {
     const avgDayRatingOverall = sumDayRatings / countRatedDays;
-    avgDayRatingUpToDateEl.textContent = `${avgDayRatingOverall.toFixed(1)} / 5 (Avg over ${countRatedDays} rated days)`;
-    const avgPercentage = (avgDayRatingOverall / 5) * 100;
+    avgDayRatingUpToDateEl.textContent = `${avgDayRatingOverall.toFixed(1)} / 5 (Avg over ${countRatedDays} days)`;
+    const avgPercentage = Math.max(0, Math.min(100, (avgDayRatingOverall / 5) * 100)); // Clamp between 0-100
     avgRatingBarEl.style.width = avgPercentage + "%";
     avgRatingBarEl.textContent = avgDayRatingOverall.toFixed(1) + "/5";
   } else {
-    avgDayRatingUpToDateEl.textContent = "No prior day ratings";
-    avgRatingBarEl.style.width = "0%";
-    avgRatingBarEl.textContent = "0/5";
+    avgDayRatingUpToDateEl.textContent = "No prior day ratings"; avgRatingBarEl.style.width = "0%"; avgRatingBarEl.textContent = "";
   }
 }
 
 function getWeekdayFromDate(dateStr) {
-    // Input: "YYYY-MM-DD"
-    // Output: "monday", "tuesday", etc.
     try {
-        // Adding time component helps avoid potential off-by-one day errors due to timezone differences
-        // when using getDay() directly on a date string without time.
         const date = new Date(dateStr + 'T12:00:00Z'); // Use noon UTC
         const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-        return weekdays[date.getUTCDay()]; // Use getUTCDay() to match the UTC time set
+        return weekdays[date.getUTCDay()];
     } catch (e) {
         console.error("Error getting weekday from date:", dateStr, e);
-        // Fallback or default, though ideally the dateStr should always be valid
-        const fallbackDate = new Date(); // Use today as a rough fallback
-         const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-        return weekdays[fallbackDate.getDay()];
+        const fallbackDate = new Date(); const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]; return weekdays[fallbackDate.getDay()];
     }
 }
 
 function escapeHtml(str) {
+  // More robust escaping
   if (typeof str !== 'string') return "";
-  return str
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """)
-    .replace(/'/g, "'"); // Use HTML entity for single quote
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return str.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
 /***************************************************************
@@ -1936,148 +2192,124 @@ function escapeHtml(str) {
 function openPlannerModal() {
     if (!currentClient) { alert("Select a client first."); return; }
     plannerClientLabel.textContent = currentClient;
-    plannerDays.innerHTML = ""; // Clear previous days
-    addPlannerDay(); // Add the first day panel
+    plannerDays.innerHTML = "";
+    addPlannerDay(); // Add the first day panel automatically
     plannerModal.style.display = "block";
 }
-function closePlannerModal() {
-    plannerModal.style.display = "none";
-}
+function closePlannerModal() { plannerModal.style.display = "none"; }
 
 function addPlannerDay() {
   const dayCount = plannerDays.querySelectorAll(".day-plan").length;
-  const startDate = new Date(currentDate + 'T12:00:00Z'); // Use current date as base, ensure time part
-  startDate.setUTCDate(startDate.getUTCDate() + dayCount); // Add days based on existing panels
-  const dateStr = startDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  const startDate = new Date(currentDate + 'T12:00:00Z');
+  startDate.setUTCDate(startDate.getUTCDate() + dayCount);
+  const dateStr = startDate.toISOString().split("T")[0];
 
   const dayDiv = document.createElement("div");
-  dayDiv.className = "day-plan";
-  dayDiv.dataset.date = dateStr;
+  dayDiv.className = "day-plan"; dayDiv.dataset.date = dateStr;
 
   const dateLabel = document.createElement("h4");
-  dateLabel.textContent = `Day ${dayCount + 1}: ${formatDateForUI(dateStr)}`; // Use a readable format
+  dateLabel.textContent = `Day ${dayCount + 1}: ${formatDateForUI(dateStr)}`;
   dayDiv.appendChild(dateLabel);
 
-  // --- Add the first task entry structure ---
+  // Add the first task entry structure
   addPlannerTaskEntry(dayDiv);
 
-  // --- Button to add more tasks to *this specific* day ---
+  // Button to add more tasks to *this* day
   const addAnotherTaskBtn = document.createElement("button");
   addAnotherTaskBtn.className = "btn";
-  addAnotherTaskBtn.textContent = "+ Add Task to This Day";
+  addAnotherTaskBtn.textContent = "+ Task to This Day"; // Shorter text
   addAnotherTaskBtn.style.marginTop = "5px";
   addAnotherTaskBtn.addEventListener("click", () => {
-      addPlannerTaskEntry(dayDiv, addAnotherTaskBtn); // Insert before the button
+      // Insert new task entry *before* this button
+      addPlannerTaskEntry(dayDiv, addAnotherTaskBtn);
   });
   dayDiv.appendChild(addAnotherTaskBtn);
-
 
   plannerDays.appendChild(dayDiv);
 }
 
-// Adds a time/duration/activity input group to a day panel in the multi-day planner
+// Adds a time/duration/activity input group to a day panel
 function addPlannerTaskEntry(dayDiv, insertBeforeElement = null) {
     const taskEntryDiv = document.createElement("div");
-    taskEntryDiv.className = "task-entry"; // Class for styling
+    taskEntryDiv.className = "task-entry";
 
-    const timeContainer = document.createElement("div");
-    timeContainer.style.display = "flex";
-    timeContainer.style.gap = "10px";
-    timeContainer.style.marginBottom = "5px";
+    const controlsContainer = document.createElement('div');
+    controlsContainer.style.display = 'grid';
+    controlsContainer.style.gridTemplateColumns = 'auto auto 1fr'; // Time, Duration, Activity
+    controlsContainer.style.gap = 'var(--spacing-unit)';
+    controlsContainer.style.alignItems = 'flex-end'; // Align bottom of inputs/selects
 
-    const timeLabel = document.createElement("label"); timeLabel.textContent = "Time:"; timeLabel.style.marginRight="5px";
-    const timeSel = document.createElement("select");
-    populateTempTimeDropdown(timeSel, "3:00 PM"); // Populate and set default
-    timeContainer.appendChild(timeLabel); timeContainer.appendChild(timeSel);
+    // Time
+    const timeGroup = document.createElement('div');
+    const timeLabel = document.createElement("label"); timeLabel.textContent = "Time:"; timeLabel.style.marginBottom='2px';
+    const timeSel = document.createElement("select"); populateTempTimeDropdown(timeSel, "3:00 PM");
+    timeGroup.appendChild(timeLabel); timeGroup.appendChild(timeSel);
+    controlsContainer.appendChild(timeGroup);
 
-    const durLabel = document.createElement("label"); durLabel.textContent = "Duration:"; durLabel.style.marginLeft="10px"; durLabel.style.marginRight="5px";
+    // Duration
+    const durGroup = document.createElement('div');
+    const durLabel = document.createElement("label"); durLabel.textContent = "Duration:"; durLabel.style.marginBottom='2px';
     const durSel = document.createElement("select");
-    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
-        const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt);
-    });
+    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => { const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt); });
     durSel.value = "30 min";
-    timeContainer.appendChild(durLabel); timeContainer.appendChild(durSel);
-    taskEntryDiv.appendChild(timeContainer);
+    durGroup.appendChild(durLabel); durGroup.appendChild(durSel);
+    controlsContainer.appendChild(durGroup);
 
+    // Activity
+    const actGroup = document.createElement('div');
+    const actLabel = document.createElement("label"); actLabel.textContent = "Activity:"; actLabel.style.marginBottom='2px';
+    const actInput = document.createElement("input"); actInput.type = "text"; actInput.placeholder = "Task description...";
+    actGroup.appendChild(actLabel); actGroup.appendChild(actInput);
+    controlsContainer.appendChild(actGroup);
 
-    const actLabel = document.createElement("label"); actLabel.textContent = "Activity:";
-    const actInput = document.createElement("input");
-    actInput.type = "text"; actInput.placeholder = "Task description..."; actInput.style.width = "100%";
-    taskEntryDiv.appendChild(actLabel);
-    taskEntryDiv.appendChild(actInput);
+    taskEntryDiv.appendChild(controlsContainer);
 
     // Insert the new task entry div into the day panel
-    if (insertBeforeElement) {
-        dayDiv.insertBefore(taskEntryDiv, insertBeforeElement);
-    } else {
-        dayDiv.appendChild(taskEntryDiv); // Append if no specific insertion point
-    }
+    if (insertBeforeElement) { dayDiv.insertBefore(taskEntryDiv, insertBeforeElement); }
+    else { dayDiv.appendChild(taskEntryDiv); } // Append if no specific insertion point (like the very first one)
 }
 
 
 function formatDateForUI(dateStr) {
-  // Converts "YYYY-MM-DD" to a user-friendly format like "Mon, Jan 15"
   try {
-      const d = new Date(dateStr + 'T12:00:00Z'); // Use noon UTC
+      const d = new Date(dateStr + 'T12:00:00Z');
       return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-  } catch (e) {
-      return dateStr; // Fallback
-  }
+  } catch (e) { return dateStr; }
 }
+
 function saveMultiDayPlan() {
   if (!currentClient) return;
-
   const dayPlanDivs = plannerDays.querySelectorAll(".day-plan");
   let tasksAddedCount = 0;
 
   dayPlanDivs.forEach(dayDiv => {
-    const dateStr = dayDiv.dataset.date;
-    if (!dateStr) {
-        console.warn("Skipping day plan div with no date:", dayDiv);
-        return;
-    }
+    const dateStr = dayDiv.dataset.date; if (!dateStr) return;
+    if (!allData[currentClient][dateStr]) { allData[currentClient][dateStr] = { dayRating: "0", dayNotes: "", tasks: [], weeklyDone: {} }; }
+    const dayRecord = allData[currentClient][dateStr]; if (!dayRecord.tasks) dayRecord.tasks = [];
 
-    // Ensure the date record exists for the client
-    if (!allData[currentClient][dateStr]) {
-      allData[currentClient][dateStr] = { dayRating: "0", dayNotes: "", tasks: [], weeklyDone: {} };
-    }
-    const dayRecord = allData[currentClient][dateStr];
-    if (!dayRecord.tasks) dayRecord.tasks = []; // Ensure tasks array exists
-
-    // Find all task entry divs within this day plan
     const taskEntries = dayDiv.querySelectorAll(".task-entry");
-
     taskEntries.forEach(entry => {
-        const timeSelect = entry.querySelector("select:nth-of-type(1)"); // Assumes time is first select
-        const durationSelect = entry.querySelector("select:nth-of-type(2)"); // Assumes duration is second
+        const timeSelect = entry.querySelector("select:nth-of-type(1)");
+        const durationSelect = entry.querySelector("select:nth-of-type(2)");
         const activityInput = entry.querySelector("input[type='text']");
-
         if (timeSelect && durationSelect && activityInput) {
             const activity = activityInput.value.trim();
-            if (activity) { // Only add if activity is not empty
+            if (activity) {
                 dayRecord.tasks.push({
-                    time: timeSelect.value,
-                    duration: durationSelect.value,
-                    activity: activity,
-                    completed: false,
-                    rating: "0"
+                    id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, // Add ID here too
+                    time: timeSelect.value, duration: durationSelect.value, activity: activity, completed: false, rating: "0"
                 });
                 tasksAddedCount++;
             }
-        } else {
-            console.warn("Could not find expected inputs in task entry:", entry);
         }
     });
-
-     // Optional: Sort tasks within the day after adding
      dayRecord.tasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-
   });
 
   saveToLocalStorage();
-  loadClientDate(currentClient, currentDate); // Reload current view to reflect potential changes if today was planned
+  loadClientDate(currentClient, currentDate); // Reload current view
   closePlannerModal();
-  alert(`Multi-day plan saved! ${tasksAddedCount} tasks were added across the planned days.`);
+  alert(`Multi-day plan saved! ${tasksAddedCount} tasks were added.`);
 }
 
 /***************************************************************
@@ -2086,146 +2318,68 @@ function saveMultiDayPlan() {
 function openWeeklyModal() {
   if (!currentClient) { alert("Select a client first."); return; }
   weeklyClientLabel.textContent = currentClient;
-  buildWeeklyContent(); // Populate the modal with current weekly tasks
+  buildWeeklyContent();
   weeklyModal.style.display = "block";
 }
-function closeWeeklyModal() {
-  weeklyModal.style.display = "none";
-}
+function closeWeeklyModal() { weeklyModal.style.display = "none"; }
+
 function buildWeeklyContent() {
   weeklyContent.innerHTML = ""; // Clear previous content
   const weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-
-  // Ensure the weeklyTasks structure exists for the client
-  if (!allData[currentClient].weeklyTasks) {
-    allData[currentClient].weeklyTasks = { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [] };
-  }
+  if (!allData[currentClient].weeklyTasks) { allData[currentClient].weeklyTasks = {}; } // Ensure object exists
   const clientWeeklyTasks = allData[currentClient].weeklyTasks;
 
   weekdays.forEach(day => {
-    const daySectionDiv = document.createElement("div");
-    daySectionDiv.classList.add("weekly-day-section");
+    const daySectionDiv = document.createElement("div"); daySectionDiv.classList.add("weekly-day-section");
+    const heading = document.createElement("h4"); heading.textContent = day.charAt(0).toUpperCase() + day.slice(1); daySectionDiv.appendChild(heading);
+    const tasksListDiv = document.createElement("div"); tasksListDiv.id = `weekly-tasks-${day}`;
 
-    const heading = document.createElement("h4");
-    heading.textContent = day.charAt(0).toUpperCase() + day.slice(1); // Capitalize day name
-    daySectionDiv.appendChild(heading);
+    if (!clientWeeklyTasks[day]) clientWeeklyTasks[day] = []; // Ensure array exists
+    const dayTasks = clientWeeklyTasks[day]; // Already sorted on add/save
 
-    const tasksListDiv = document.createElement("div");
-    tasksListDiv.id = `weekly-tasks-${day}`; // ID for easy access
-
-    // Ensure the array for the day exists
-    if (!clientWeeklyTasks[day]) {
-        clientWeeklyTasks[day] = [];
-    }
-    const dayTasks = clientWeeklyTasks[day];
-
-    // Display existing tasks for the day
     if (dayTasks.length > 0) {
       dayTasks.forEach(task => {
-        const taskRow = document.createElement("div");
-        taskRow.classList.add('weekly-task-row');
-
-        const taskText = document.createElement("span");
-        taskText.textContent = `[${escapeHtml(task.time)}] ${escapeHtml(task.activity)} (${escapeHtml(task.duration)})`;
-        taskRow.appendChild(taskText);
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "✕";
-        removeBtn.classList.add("btn");
-        removeBtn.title = "Remove this weekly task";
-        removeBtn.style.marginLeft = "auto"; // Push button to the right
+        const taskRow = document.createElement("div"); taskRow.classList.add('weekly-task-row');
+        const taskText = document.createElement("span"); taskText.textContent = `[${escapeHtml(task.time)}] ${escapeHtml(task.activity)} (${escapeHtml(task.duration)})`; taskRow.appendChild(taskText);
+        const removeBtn = document.createElement("button"); removeBtn.textContent = "✕"; removeBtn.classList.add("btn"); removeBtn.title = "Remove weekly task"; removeBtn.style.marginLeft = "auto";
         removeBtn.addEventListener("click", () => {
           if (confirm(`Remove weekly task "${task.activity}" for ${day}?`)) {
             const index = dayTasks.findIndex(t => t.id === task.id);
-            if (index !== -1) {
-              dayTasks.splice(index, 1); // Remove from the array
-              saveToLocalStorage();
-              buildWeeklyContent(); // Rebuild the UI for this modal
-            }
+            if (index !== -1) { dayTasks.splice(index, 1); saveToLocalStorage(); buildWeeklyContent(); }
           }
         });
-        taskRow.appendChild(removeBtn);
-        tasksListDiv.appendChild(taskRow);
+        taskRow.appendChild(removeBtn); tasksListDiv.appendChild(taskRow);
       });
-    } else {
-        tasksListDiv.innerHTML = `<p class="no-data">No weekly tasks for ${day}.</p>`;
-    }
+    } else { tasksListDiv.innerHTML = `<p class="no-data">No weekly tasks for ${day}.</p>`; }
     daySectionDiv.appendChild(tasksListDiv);
 
-    // --- Input row to add NEW weekly tasks for this day ---
+    // Input row to add new weekly tasks
     const addRow = document.createElement("div");
-    addRow.style.marginTop = "15px";
-    addRow.style.paddingTop = "10px";
-    addRow.style.borderTop = "1px dashed #ccc";
-    addRow.style.display = "flex";
-    addRow.style.flexWrap = "wrap";
-    addRow.style.gap = "10px";
-    addRow.style.alignItems = "center";
+    addRow.style.marginTop = "15px"; addRow.style.paddingTop = "10px"; addRow.style.borderTop = "1px dashed var(--border-color)";
+    addRow.style.display = "flex"; addRow.style.flexWrap = "wrap"; addRow.style.gap = "10px"; addRow.style.alignItems = "flex-end";
 
-
-    const timeSel = document.createElement("select");
-    populateTempTimeDropdown(timeSel, "3:00 PM");
-    timeSel.title = "Time for new weekly task";
-
-    const durSel = document.createElement("select");
-     ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
-        const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt);
-    });
-    durSel.value = "30 min";
-    durSel.title = "Duration for new weekly task";
-
-
-    const actInput = document.createElement("input");
-    actInput.type = "text";
-    actInput.placeholder = "New weekly activity...";
-    actInput.style.flexGrow = "1"; // Allow input to take space
-    actInput.style.minWidth = "200px";
-
-
-    const addBtn = document.createElement("button");
-    addBtn.textContent = "+ Add";
-    addBtn.classList.add("btn");
-    addBtn.title = `Add weekly task for ${day}`;
+    const timeSel = document.createElement("select"); populateTempTimeDropdown(timeSel, "3:00 PM"); timeSel.title = "Time";
+    const durSel = document.createElement("select"); ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => { const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt); }); durSel.value = "30 min"; durSel.title = "Duration";
+    const actInput = document.createElement("input"); actInput.type = "text"; actInput.placeholder = "New weekly activity..."; actInput.style.flexGrow = "1"; actInput.style.minWidth = "200px";
+    const addBtn = document.createElement("button"); addBtn.textContent = "+ Add"; addBtn.classList.add("btn"); addBtn.title = `Add weekly task for ${day}`;
     addBtn.addEventListener("click", () => {
-      const activity = actInput.value.trim();
-      if (!activity) {
-        alert("Please enter an activity for the weekly task.");
-        actInput.focus();
-        return;
-      }
-      // Generate a unique ID for the weekly task
+      const activity = actInput.value.trim(); if (!activity) { alert("Enter an activity."); actInput.focus(); return; }
       const newWeeklyId = `wt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-      clientWeeklyTasks[day].push({
-        id: newWeeklyId,
-        time: timeSel.value,
-        duration: durSel.value,
-        activity: activity
-      });
-
-      // Sort the tasks for that day by time after adding
-       clientWeeklyTasks[day].sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-
-      saveToLocalStorage();
-      buildWeeklyContent(); // Rebuild UI to show the new task and clear input
+      clientWeeklyTasks[day].push({ id: newWeeklyId, time: timeSel.value, duration: durSel.value, activity: activity });
+      clientWeeklyTasks[day].sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time)); // Sort after adding
+      saveToLocalStorage(); buildWeeklyContent();
     });
-
-    addRow.appendChild(timeSel);
-    addRow.appendChild(durSel);
-    addRow.appendChild(actInput);
-    addRow.appendChild(addBtn);
+    addRow.appendChild(timeSel); addRow.appendChild(durSel); addRow.appendChild(actInput); addRow.appendChild(addBtn);
     daySectionDiv.appendChild(addRow);
 
-
-    weeklyContent.appendChild(daySectionDiv); // Add the complete section for the day
+    weeklyContent.appendChild(daySectionDiv);
   });
 }
 function saveWeeklySchedule() {
-  // Saving is done implicitly when tasks are added/removed via buildWeeklyContent()
+  // Saving is implicit, this button just closes and reloads main view
   closeWeeklyModal();
-  // Reload the current day view in case weekly tasks were changed for today
   loadClientDate(currentClient, currentDate);
-  alert("Weekly schedule updated!");
+  // No alert needed, action is clear
 }
 
 /***************************************************************
@@ -2234,158 +2388,105 @@ function saveWeeklySchedule() {
 function openImageModal() {
    if (!currentClient) { alert("Select a client first."); return; }
    imageClientLabel.textContent = currentClient;
-   imageFileInput.value = ""; // Clear file input
-   imagePreview.src = "#"; // Reset preview src
-   imagePreview.style.display = "none"; // Hide preview
-   imageTitleInput.value = ""; // Clear title
+   imageFileInput.value = ""; imagePreview.src = "#"; imagePreview.style.display = "none"; imageTitleInput.value = "";
    imageModal.style.display = "block";
 }
-function closeImageModal() {
-  imageModal.style.display = "none";
-}
-function handleFileInputChange(event) {
-  const file = event.target.files ? event.target.files[0] : null;
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-      alert("Please select an image file.");
-      imageFileInput.value = ""; // Clear invalid selection
-      return;
-  }
+function closeImageModal() { imageModal.style.display = "none"; }
 
+function handleFileInputChange(event) {
+  const file = event.target.files ? event.target.files[0] : null; if (!file) return;
+  if (!file.type.startsWith("image/")) { alert("Please select an image file."); imageFileInput.value = ""; return; }
+  if (file.size > 10 * 1024 * 1024) { // Check size > 10MB
+      alert("Warning: Image file is very large (> 10MB) and may cause issues with saving. Consider resizing it first.");
+       // Optionally prevent processing: imageFileInput.value = ""; return;
+  }
   const reader = new FileReader();
-  reader.onload = (e) => {
-    imagePreview.src = e.target.result;
-    imagePreview.style.display = "block"; // Show preview
-  };
-  reader.onerror = (e) => {
-      console.error("FileReader error:", e);
-      alert("Error reading file.");
-  };
+  reader.onload = (e) => { imagePreview.src = e.target.result; imagePreview.style.display = "block"; };
+  reader.onerror = (e) => { console.error("FileReader error:", e); alert("Error reading file."); };
   reader.readAsDataURL(file);
 }
 function handlePasteImage(event) {
-    // Check if the modal is actually visible before processing paste
     if (imageModal.style.display !== 'block') return;
-
-    const items = (event.clipboardData || window.clipboardData)?.items;
-    if (!items) return;
-
+    const items = (event.clipboardData || window.clipboardData)?.items; if (!items) return;
     let foundImage = false;
     for (let i = 0; i < items.length; i++) {
         if (items[i].type.indexOf("image") !== -1) {
             const blob = items[i].getAsFile();
             if (blob) {
-                foundImage = true;
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    imagePreview.src = evt.target.result;
-                    imagePreview.style.display = "block";
-                };
-                reader.onerror = (e) => {
-                    console.error("FileReader error on paste:", e);
-                    alert("Error reading pasted image.");
-                };
-                reader.readAsDataURL(blob);
-                // Optional: Clear file input if paste is successful
-                imageFileInput.value = "";
-                break; // Process only the first image found
+                if (blob.size > 10 * 1024 * 1024) { // Check size > 10MB
+                    alert("Warning: Pasted image is very large (> 10MB) and may cause issues with saving. Consider using a smaller image.");
+                     // Optionally prevent processing: return;
+                }
+                foundImage = true; const reader = new FileReader();
+                reader.onload = (evt) => { imagePreview.src = evt.target.result; imagePreview.style.display = "block"; };
+                reader.onerror = (e) => { console.error("FileReader error on paste:", e); alert("Error reading pasted image."); };
+                reader.readAsDataURL(blob); imageFileInput.value = ""; break;
             }
         }
     }
-     // Optional: Provide feedback if no image was found in pasted data
-     // if (!foundImage) { alert("No image data found in clipboard."); }
 }
 
 function saveImage() {
-  // Check if preview has a valid data URL (not the placeholder '#')
-  if (!imagePreview.src || imagePreview.src === window.location.href + "#" || imagePreview.style.display === 'none') {
-    alert("No image selected or pasted to save.");
-    return;
-  }
-   if (!currentClient) return; // Should already be checked by openImageModal
+  if (!imagePreview.src || imagePreview.src === window.location.href + "#" || imagePreview.style.display === 'none') { alert("No image selected or pasted."); return; }
+  if (!currentClient) return;
+  if (!allData[currentClient]) return; if (!allData[currentClient].images) allData[currentClient].images = [];
 
-   // Ensure client data and images array exist
-   if (!allData[currentClient]) return;
-   if (!allData[currentClient].images) {
-       allData[currentClient].images = [];
-   }
-
-  const title = imageTitleInput.value.trim() || `Image (${formatDateForUI(currentDate)})`; // Default title
+  const title = imageTitleInput.value.trim() || `Image (${formatDateForUI(currentDate)})`;
   const imageDataUrl = imagePreview.src;
 
-    // Basic check for extremely large data URLs (e.g., > 10MB) which might hit localStorage limits quickly
-    if (imageDataUrl.length > 10 * 1024 * 1024) {
-        if (!confirm("Warning: This image is quite large and might significantly impact storage space. Save anyway?")) {
+  // Double-check size before saving (useful if warning was ignored)
+   if (imageDataUrl.length > 15 * 1024 * 1024) { // Stricter check on data URL length (approx > 10-11MB)
+        if (!confirm("SAVE WARNING: This image is very large and might prevent future data saving due to browser storage limits. SAVE ANYWAY?")) {
             return;
         }
     }
 
+  allData[currentClient].images.push({ title: title, dataUrl: imageDataUrl });
+  try {
+      saveToLocalStorage(); // Try saving immediately
+  } catch(e) {
+      // If saving failed (likely due to size), remove the image we just added
+      allData[currentClient].images.pop();
+      // Don't re-throw, the saveToLocalStorage function already alerted the user
+      return; // Stop execution here
+  }
 
-  allData[currentClient].images.push({
-    title: title,
-    dataUrl: imageDataUrl // Store the Base64 data URL
-  });
-
-  saveToLocalStorage();
   closeImageModal();
-  renderImageGallery(); // Update the gallery display
-  alert("Image saved successfully!");
+  renderImageGallery();
+  // alert("Image saved!"); // Less intrusive confirmation? Maybe change button text briefly?
 }
 
 function renderImageGallery() {
   imageGallery.innerHTML = ""; // Clear current gallery
   if (!currentClient || !allData[currentClient] || !allData[currentClient].images || allData[currentClient].images.length === 0) {
-    imageGallery.innerHTML = '<p class="no-data" style="text-align:center;">(No images added for this client yet)</p>';
+    imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>';
     return;
   }
 
   const imgs = allData[currentClient].images;
-
-  const h3 = document.createElement("h3");
-  h3.textContent = "Image Gallery";
-  h3.style.marginTop = "0";
-  imageGallery.appendChild(h3);
+  const h3 = document.createElement("h3"); h3.textContent = "Image Gallery"; h3.style.marginTop = "0"; imageGallery.appendChild(h3);
 
   // Display images in reverse order (newest first)
   [...imgs].reverse().forEach((imgObj, index) => {
-      // Calculate original index for deletion
       const originalIndex = imgs.length - 1 - index;
-
-      const div = document.createElement("div");
-      div.classList.add("gallery-item");
-
-      const thumb = document.createElement("img");
-      thumb.src = imgObj.dataUrl;
-      thumb.alt = escapeHtml(imgObj.title);
-      thumb.title = "Click to view full size";
+      const div = document.createElement("div"); div.classList.add("gallery-item");
+      const thumb = document.createElement("img"); thumb.src = imgObj.dataUrl; thumb.alt = escapeHtml(imgObj.title); thumb.title = "Click to view full size";
       thumb.addEventListener("click", () => {
         const imgWindow = window.open("", "_blank");
-        imgWindow.document.write(`<title>${escapeHtml(imgObj.title)}</title><img src="${imgObj.dataUrl}" style="max-width:100%; max-height:100vh;" alt="${escapeHtml(imgObj.title)}">`);
+        imgWindow.document.write(`<title>${escapeHtml(imgObj.title)}</title><style>body{margin:0; background:#333;} img{display:block; max-width:100%; max-height:100vh; margin:auto;}</style><body><img src="${imgObj.dataUrl}" alt="${escapeHtml(imgObj.title)}"></body>`);
         imgWindow.document.close();
       });
       div.appendChild(thumb);
 
+      const span = document.createElement("span"); span.classList.add("title"); span.textContent = escapeHtml(imgObj.title); div.appendChild(span);
 
-      const span = document.createElement("span");
-      span.classList.add("title");
-      span.textContent = escapeHtml(imgObj.title);
-      div.appendChild(span);
-
-
-      const rmBtn = document.createElement("button");
-      rmBtn.classList.add("btn");
-      rmBtn.textContent = "✕";
-      rmBtn.title = "Remove this image";
-      rmBtn.style.marginLeft = "auto"; // Push button to right
+      const rmBtn = document.createElement("button"); rmBtn.classList.add("btn"); rmBtn.textContent = "✕"; rmBtn.title = "Remove image"; rmBtn.style.marginLeft = "auto";
       rmBtn.addEventListener("click", () => {
           if (confirm(`Remove image "${escapeHtml(imgObj.title)}"? This cannot be undone.`)) {
-              imgs.splice(originalIndex, 1); // Remove using original index
-              saveToLocalStorage();
-              renderImageGallery(); // Re-render the gallery
+              imgs.splice(originalIndex, 1); saveToLocalStorage(); renderImageGallery();
           }
       });
       div.appendChild(rmBtn);
-
       imageGallery.appendChild(div);
   });
 }
