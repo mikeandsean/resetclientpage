@@ -1,2497 +1,408 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RESET Client Tracker</title>
-  <style>
-    /* === Reset & Base Styles === */
-    :root {
-        --font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        --bg-main: #F4F7FC; /* Lighter, softer background */
-        --bg-card: #FFFFFF;
-        --bg-card-secondary: #F8F9FA;
-        --bg-title-bar: linear-gradient(135deg, #6B C5FF 0%, #4A90E2 100%); /* Gradient Title */
-        --text-primary: #2D3748; /* Dark grayish blue */
-        --text-secondary: #4A5568; /* Medium gray */
-        --text-light: #718096; /* Lighter gray */
-        --text-on-primary: #FFFFFF;
-        --border-color: #E2E8F0;
-        --border-color-light: #EDF2F7;
-        --primary-blue: #4A90E2;
-        --primary-blue-dark: #357ABD;
-        --primary-blue-light: #EBF4FF;
-        --accent-green: #48BB78;
-        --accent-green-dark: #38A169;
-        --accent-red: #F56565;
-        --accent-red-dark: #E53E3E;
-        --accent-yellow: #ECC94B;
-        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-        --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-        --border-radius: 6px;
-        --spacing-unit: 1rem; /* Base spacing unit (approx 16px) */
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESET Client Tracker</title> <!-- Changed Title -->
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+        /* === Light Blue Theme Variables === */
+        :root {
+            --font-family-sans: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --bg-main: #F0F9FF; --bg-card: #FFFFFF; --bg-card-secondary: #F7FAFC;
+            --text-primary: #1A202C; --text-secondary: #4A5568; --text-light: #718096; --text-on-accent: #FFFFFF;
+            --border-color: #E2E8F0; --border-color-light: #EDF2F7;
+            --accent-primary: #3182CE; --accent-primary-dark: #2B6CB0; --accent-primary-light: #EBF8FF;
+            --accent-green: #38A169; --accent-red: #E53E3E; --accent-red-dark: #C53030; --accent-red-light: #FFF5F5;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05); --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --border-radius: 0.375rem; --spacing-unit: 1rem;
+        }
 
-    html { scroll-behavior: smooth; }
+        /* === Reset & Base Styles === */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: var(--font-family-sans); background-color: var(--bg-main); color: var(--text-primary); line-height: 1.6; padding-top: 1.5rem; }
+        .container { max-width: 850px; margin: 0 auto; padding: 0 1rem; }
+        a { color: var(--accent-primary); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--accent-primary-dark); text-decoration: underline;}
+        h1, h2, h3, h4 { margin-bottom: 0.75rem; font-weight: 600; line-height: 1.3; }
+        h1 { font-size: 1.75rem; text-align: center; color: #2D3748; margin-bottom: 1.5rem; font-weight: 600;} /* Adjusted H1 */
+        h2 { font-size: 1.25rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1.5rem; font-weight: 600;}
+        h3 { font-size: 1.125rem; color: var(--text-primary); margin-top: 1rem; font-weight: 600;}
+        hr { border: none; border-top: 1px solid var(--border-color); margin: 2rem 0; }
+        label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.25rem; }
 
-    body {
-      background-color: var(--bg-main);
-      font-family: var(--font-family-sans);
-      color: var(--text-primary);
-      margin: 0 auto; /* Remove default margin */
-      padding: 0;
-      line-height: 1.6;
-    }
+        /* === Utility === */
+        .text-center { text-align: center; }
+        .no-data { color: var(--text-light); font-style: italic; font-size: 0.9em; padding: 1rem; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-    .container { /* Added a wrapper div around main content for padding */
-       max-width: 780px; /* Slightly wider */
-       margin: calc(var(--spacing-unit) * 1.5) auto;
-       padding: 0 var(--spacing-unit);
-    }
+        /* === Card Styling === */
+        .card { background-color: var(--bg-card); border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; padding: 1.5rem; }
+        .card h2:first-child, .card h3:first-child { margin-top: 0; }
 
-    h1, h2, h3, h4, h5, h6 {
-      margin-bottom: calc(var(--spacing-unit) * 0.5);
-      line-height: 1.3;
-      font-weight: 600; /* Semibold */
-    }
-    h1 { font-size: 1.8rem; color: var(--text-on-primary); margin: 0; }
-    h2 { font-size: 1.4rem; margin-top: calc(var(--spacing-unit) * 2); border-bottom: 1px solid var(--border-color); padding-bottom: calc(var(--spacing-unit) * 0.4); }
-    h3 { font-size: 1.15rem; margin-top: calc(var(--spacing-unit) * 1.5); color: var(--primary-blue); }
-    h4 { font-size: 1rem; font-weight: 600; }
+        /* === Forms === */
+        select, input[type="date"], input[type="text"], textarea { display: block; width: 100%; padding: 0.625rem 0.75rem; font-size: 1rem; line-height: 1.5; color: var(--text-primary); background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+        input[type="date"] { color: var(--text-primary); } input[type="date"]::-webkit-datetime-edit-fields-wrapper {} input[type="date"]::-webkit-datetime-edit-text { color: var(--text-light); margin-right: 0.3em; } input[type="date"]::-webkit-datetime-edit-month-field, input[type="date"]::-webkit-datetime-edit-day-field, input[type="date"]::-webkit-datetime-edit-year-field { color: var(--text-light); } input[type="date"]:valid { color: var(--text-primary); } input[type="date"]:valid::-webkit-datetime-edit-text, input[type="date"]:valid::-webkit-datetime-edit-month-field, input[type="date"]:valid::-webkit-datetime-edit-day-field, input[type="date"]:valid::-webkit-datetime-edit-year-field { color: var(--text-primary); }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23A0AEC0'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1em; padding-right: 2.5rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2); }
+        textarea { min-height: 100px; }
 
-    p { margin-bottom: var(--spacing-unit); }
-    a { color: var(--primary-blue); text-decoration: none; transition: color 0.2s ease; }
-    a:hover { color: var(--primary-blue-dark); text-decoration: underline; }
+        /* === Buttons === */
+        .btn { display: inline-flex; align-items: center; justify-content: center; font-family: inherit; font-size: 0.9375rem; font-weight: 500; padding: 0.625rem 1rem; margin: 0.25rem 0.25rem 0.25rem 0; border: 1px solid transparent; border-radius: var(--border-radius); cursor: pointer; line-height: 1.5; transition: all 0.2s ease; white-space: nowrap; /* Prevent button text wrapping */ }
+        .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.25); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn:active:not(:disabled) { transform: translateY(1px); }
+        .btn svg { margin-right: 0.4em; width: 1em; height: 1em; } /* Style embedded SVGs */
 
-    hr { border: none; border-top: 1px solid var(--border-color); margin: calc(var(--spacing-unit) * 2) 0; }
+        /* Primary */
+        .btn-primary, #addBtn, #saveClientBtn, #saveClientInfoBtn, #savePlanBtn, #saveWeeklyBtn, #saveImageBtn { background-color: var(--accent-primary); color: var(--text-on-accent); border-color: var(--accent-primary); }
+        .btn-primary:hover:not(:disabled), #addBtn:hover, #saveClientBtn:hover, #saveClientInfoBtn:hover, #savePlanBtn:hover, #saveWeeklyBtn:hover, #saveImageBtn:hover { background-color: var(--accent-primary-dark); border-color: var(--accent-primary-dark); }
+        /* Secondary */
+        .btn-secondary, #addClientBtn, #exportBtn, #reportBtn, #multiDayPlanBtn, #weeklyPlanBtn, #imageBtn, #cancelClientBtn, #cancelPlanBtn, #cancelWeeklyBtn, #cancelImageBtn, #addDayBtn { background-color: var(--bg-card); color: var(--text-secondary); border-color: var(--border-color); box-shadow: var(--shadow-sm); }
+        .btn-secondary:hover:not(:disabled), #addClientBtn:hover, #exportBtn:hover, #reportBtn:hover, #multiDayPlanBtn:hover, #weeklyPlanBtn:hover, #imageBtn:hover, #cancelClientBtn:hover, #cancelPlanBtn:hover, #cancelWeeklyBtn:hover, #cancelImageBtn:hover, #addDayBtn:hover { background-color: var(--bg-card-secondary); border-color: #CBD5E0; color: var(--text-primary); }
+        /* Danger */
+        .btn-danger, #clearTasksBtn { background-color: var(--accent-red-light); color: var(--accent-red-dark); border-color: #FEE2E2; }
+        .btn-danger:hover:not(:disabled), #clearTasksBtn:hover:not(:disabled) { background-color: var(--accent-red); color: var(--text-on-accent); border-color: var(--accent-red); }
+        /* Icon */
+        .btn-icon { padding: 0.375rem; background-color: transparent; color: var(--text-light); border-color: transparent; line-height: 1; }
+        .btn-icon:hover:not(:disabled) { background-color: var(--border-color-light); color: var(--text-secondary); }
+        .btn-icon svg { width: 1.125rem; height: 1.125rem; margin-right: 0; } /* Remove margin for icon-only */
+        .btn-icon-delete { color: var(--accent-red); }
+        .btn-icon-delete:hover:not(:disabled) { background-color: var(--accent-red-light); color: var(--accent-red-dark); }
 
-    label {
-        display: block; /* Better block layout for labels */
-        font-weight: 500; /* Medium weight */
-        margin-bottom: calc(var(--spacing-unit) * 0.25);
-        color: var(--text-secondary);
-        font-size: 0.9em;
-    }
+        /* === Specific Sections === */
+        .controls-container { /* Renamed for clarity */
+            display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; /* Align items bottom */
+        }
+        .control-group { display: flex; flex-direction: column; flex: 0 1 auto; /* Allow shrinking, no growing */ }
+        .control-group label { margin-bottom: 0.1rem; white-space: nowrap; }
+        .control-group select, .control-group input { width: auto; /* Let input size naturally */ min-width: 160px; margin-bottom: 0; }
+        .controls-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; /* Push button group right */ align-self: flex-end; } /* Group for action buttons */
 
-    select, input[type="date"], input[type="text"], textarea {
-      font-family: inherit;
-      font-size: 1em;
-      padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 0.75);
-      margin-bottom: calc(var(--spacing-unit) * 0.5); /* Consistent bottom margin */
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      background-color: var(--bg-card);
-      width: 100%; /* Make inputs full width by default */
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a0aec0'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em; padding-right: 2.5rem; }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--primary-blue);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-    }
-    textarea { min-height: 80px; width: 100%;} /* Ensure textarea width */
+        #newClientForm { border-left: 4px solid var(--accent-primary); display: none; align-items: center; gap: 1rem;}
+        #newClientForm label { margin-bottom: 0; flex-shrink: 0; }
+        #newClientForm input[type="text"] { width: auto; flex-grow: 1; }
+        #newClientForm .button-group { margin-left: auto; display: flex; gap: 0.5rem; }
 
-    /* === Buttons === */
-    .btn {
-      display: inline-block; /* Correct display */
-      font-family: inherit;
-      font-size: 0.95em;
-      font-weight: 600;
-      padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
-      margin: calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.25) 0;
-      border: 1px solid transparent; /* Start with transparent border */
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-      line-height: 1.5; /* Ensure text vertical alignment */
-    }
-    .btn:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
-    }
-     .btn:active {
-        transform: translateY(1px); /* Subtle press effect */
-    }
+        .client-info h3 { grid-column: 1 / -1; margin: 0 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color-light); font-size: 1.125rem; color: var(--text-primary); }
+        .client-info .info-row { display: grid; grid-template-columns: 130px 1fr; gap: 0.5rem 1rem; margin-bottom: 0.75rem; align-items: center; }
+        .client-info label { text-align: right; margin-bottom: 0; color: var(--text-secondary); font-weight: 500;}
+        .client-info .button-container { grid-column: 2 / 3; margin-top: 0.5rem; }
 
-    /* Default/Secondary Button Style */
-    .btn {
-      background-color: var(--bg-card);
-      color: var(--text-primary);
-      border-color: var(--border-color);
-    }
-    .btn:hover {
-      background-color: var(--bg-card-secondary);
-      border-color: #CBD5E0; /* Slightly darker border on hover */
-    }
+        #bigGoalDisplay { font-size: 1.25rem; font-weight: 500; margin: 1.5rem 0; color: var(--text-primary); padding: 1rem; background-color: var(--accent-primary-light); border: 1px solid #BEE3F8; border-radius: var(--border-radius); text-align: center; }
+        .external-links { margin-bottom: 1.5rem; padding: 0; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .external-links a { font-weight: 500; display: inline-flex; align-items: center; gap: 0.3rem; color: var(--text-secondary); }
+        .external-links a:hover { color: var(--accent-primary); }
+        .external-links svg { width: 1em; height: 1em; color: #A0AEC0; }
 
-    /* Primary Button Style */
-    .btn-primary {
-      background-color: var(--primary-blue);
-      color: var(--text-on-primary);
-      border-color: var(--primary-blue);
-    }
-    .btn-primary:hover {
-      background-color: var(--primary-blue-dark);
-      border-color: var(--primary-blue-dark);
-    }
-    /* Apply primary style to key actions */
-    #addBtn, #saveClientBtn, #saveClientInfoBtn, #savePlanBtn, #saveWeeklyBtn, #saveImageBtn {
-        background-color: var(--primary-blue);
-        color: var(--text-on-primary);
-        border-color: var(--primary-blue);
-    }
-     #addBtn:hover, #saveClientBtn:hover, #saveClientInfoBtn:hover, #savePlanBtn:hover, #saveWeeklyBtn:hover, #saveImageBtn:hover {
-        background-color: var(--primary-blue-dark);
-        border-color: var(--primary-blue-dark);
-    }
+        .add-task-section .time-duration-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
 
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; background-color: var(--bg-card); font-size: 0.9375rem; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 0.875rem 1rem; text-align: left; vertical-align: middle; }
+        th { background-color: var(--bg-card-secondary); font-weight: 500; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr { transition: background-color 0.15s ease-in-out; }
+        tbody tr:hover { background-color: var(--accent-primary-light); }
+        td:nth-child(3) { text-align: center; padding: 0.5rem; } td:nth-child(3) input { display: block; margin: auto; width: 1.1rem; height: 1.1rem; border-color: var(--border-color);}
+        td:nth-child(4) select { width: auto; min-width: 65px; font-size: 0.9em; padding: 0.25rem 0.5rem; background-position: right 0.3rem center; margin: 0; }
+        td:nth-child(4) { vertical-align: middle; } td:nth-child(5) { text-align: right; white-space: nowrap; padding-right: 0.5rem;}
+        .completed-task td:not(:last-child) { text-decoration: line-through; color: var(--text-light); } .completed-task td:first-child, .completed-task td:nth-child(2) { opacity: 0.8; }
+        .weekly-indicator { font-size: 0.75em; color: var(--accent-primary); font-weight: 500; display: block; margin-top: 2px; }
 
-    /* Danger Button Style */
-    .btn-danger {
-        background-color: var(--accent-red);
-        color: var(--text-on-primary);
-        border-color: var(--accent-red);
-    }
-    .btn-danger:hover {
-        background-color: var(--accent-red-dark);
-        border-color: var(--accent-red-dark);
-    }
-    /* Apply danger style */
-    #clearTasksBtn {
-        background-color: #FFF5F5; /* Light red background */
-        color: var(--accent-red-dark);
-        border-color: #FED7D7; /* Light red border */
-    }
-     #clearTasksBtn:hover {
-        background-color: var(--accent-red); /* Use solid red on hover */
-        border-color: var(--accent-red);
-        color: var(--text-on-primary);
-    }
-    /* Small icon-like buttons in table/gallery */
-    .task-row .btn, .gallery-item .btn, .weekly-task-row .btn {
-        padding: calc(var(--spacing-unit) * 0.2) calc(var(--spacing-unit) * 0.5);
-        font-size: 0.85em;
-        line-height: 1.2; /* Adjust for smaller size */
-    }
-     .task-row .btn:last-child, .gallery-item .btn:last-child, .weekly-task-row .btn:last-child { /* Make delete buttons red */
-        background-color: #FFF5F5; color: var(--accent-red-dark); border-color: #FED7D7;
-     }
-     .task-row .btn:last-child:hover, .gallery-item .btn:last-child:hover, .weekly-task-row .btn:last-child:hover {
-        background-color: var(--accent-red); color: var(--text-on-primary); border-color: var(--accent-red);
-     }
+        #imageGallery .gallery-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; padding: 0.5rem 0; } #imageGallery .gallery-item:not(:last-child) { border-bottom: 1px solid var(--border-color-light); }
+        #imageGallery .gallery-item img { width: 70px; height: 45px; border-radius: 0.25rem; border: 1px solid var(--border-color); cursor: pointer; object-fit: cover; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        #imageGallery .gallery-item img:hover { transform: scale(1.05); box-shadow: var(--shadow-md); } #imageGallery .gallery-item .title { font-weight: 500; flex-grow: 1; color: var(--text-secondary); font-size: 0.95rem;} #imageGallery .gallery-item .btn-icon { margin-left: auto; }
 
+        #progressDashboard p { margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--text-secondary);} #progressDashboard strong { font-weight: 600; color: var(--text-primary); }
+        .progress-bar-container { width: 100%; background-color: var(--border-color-light); border-radius: 999px; margin: 0.5rem 0 1rem 0; overflow: hidden; height: 10px; }
+        .progress-bar { height: 100%; background-color: var(--accent-green); border-radius: 999px; transition: width 0.4s ease-in-out; }
+        .progress-bar.avg-rating { background-color: var(--accent-primary); }
 
-    /* === Page Structure === */
-    .title-bar {
-      background: var(--bg-title-bar);
-      padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
-      margin-bottom: calc(var(--spacing-unit) * 1.5);
-      text-align: center;
-      border-radius: 0 0 var(--border-radius) var(--border-radius); /* Rounded bottom corners */
-      box-shadow: var(--shadow-md);
-    }
+        /* === Modals === */
+        #plannerModal, #weeklyModal, #imageModal { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background-color: rgba(31, 41, 55, 0.7); z-index: 1000; padding: 1.5rem; overflow-y: auto; backdrop-filter: blur(4px); }
+        .modal-content, .weekly-modal-content, .image-modal-content { background-color: var(--bg-card); margin: 4vh auto; padding: 2rem; width: 100%; max-width: 700px; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); }
+        .weekly-modal-content { max-width: 850px; }
+        .modal-content h3, .weekly-modal-content h3, .image-modal-content h3 { margin-top: 0; color: var(--text-primary); font-size: 1.25rem; }
+        .modal-footer { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem; }
+        .day-plan, .weekly-day-section { margin-bottom: 1rem; padding: 1rem; background-color: var(--bg-card-secondary); border: 1px solid var(--border-color-light); border-radius: var(--border-radius); }
+        .day-plan h4, .weekly-day-section h4 { margin-top: 0; color: var(--text-secondary); font-weight: 600; font-size: 1rem; }
+        .task-entry { border-bottom: 1px dashed var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; } .task-entry:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+        .task-entry .controls-container { display: grid; grid-template-columns: auto auto 1fr; gap: 0.75rem; align-items: flex-end; } .task-entry label { font-size: 0.8rem; }
+        .weekly-task-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;} .weekly-task-row span { flex-grow: 1; font-size: 0.95rem; color: var(--text-secondary); }
+        .weekly-day-section .add-row { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; }
+        .weekly-day-section .add-row select, .weekly-day-section .add-row input { flex: 1 1 150px; } .weekly-day-section .add-row .btn { flex-shrink: 0; }
+        #imagePreview { display: none; max-width: 100%; max-height: 300px; margin-top: 1rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); object-fit: contain; }
 
-    /* Section Card Styling */
-    .card { /* This class isn't used directly, but applied to other selectors below */
-        background-color: var(--bg-card);
-        padding: calc(var(--spacing-unit) * 1.5);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-sm);
-        margin-bottom: calc(var(--spacing-unit) * 1.5);
-        border: 1px solid var(--border-color-light);
-    }
-    /* Apply card style to sections */
-    .controls, .client-info, .add-task-section, .reflection-section, #progressDashboard, #imageGallery, .google-embed-container > div, #newClientForm {
-        background-color: var(--bg-card);
-        padding: calc(var(--spacing-unit) * 1.25);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-sm);
-        margin-bottom: calc(var(--spacing-unit) * 1.5);
-        border: 1px solid var(--border-color-light);
-    }
-     .google-embed-container h2 { /* Adjust heading spacing inside card */
-        margin-top: 0;
-     }
-     .google-embed-container > div { /* Placeholder/iframe specific */
-        padding: calc(var(--spacing-unit) * 0.5); /* Less padding for containers holding just iframe/text */
-     }
+        /* === Google Embeds === */
+        .google-embed-container h2 { font-size: 1.125rem; }
+        #googleCalendarEmbed { width: 100%; height: 600px; border: none; border-radius: var(--border-radius); }
+        #googleTasksPlaceholder p { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
 
+        /* === Footer === */
+        #footer { margin-top: 3rem; padding: 1.5rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.875rem; color: var(--text-light); text-align: center; }
+        #footer code { background-color: var(--border-color-light); padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: var(--text-secondary);}
 
-    /* Controls Bar */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--spacing-unit);
-    }
-    .controls > div { /* Wrap label/select pairs */
-        display: flex;
-        align-items: center;
-        gap: calc(var(--spacing-unit) * 0.5);
-    }
-    .controls label {
-        margin-bottom: 0; /* Remove bottom margin for inline labels */
-        white-space: nowrap; /* Prevent label wrapping */
-    }
-     .controls select, .controls input[type="date"] {
-        width: auto; /* Allow select/date to size naturally */
-        min-width: 140px;
-        margin-bottom: 0;
-    }
-     .controls button { margin: 0; } /* Reset button margin within controls */
-
-    /* New Client Form */
-     #newClientForm { border-left: 4px solid var(--primary-blue); }
-     #newClientForm label { margin-bottom: 0; margin-right: calc(var(--spacing-unit) * 0.5); }
-     #newClientForm input[type="text"] { width: auto; flex-grow: 1; margin-bottom: 0; } /* Adjusted input */
-     #newClientForm { display: none; align-items: center; gap: var(--spacing-unit);} /* Use flex */
-
-
-    /* Client Info Section */
-    .client-info .info-row {
-      display: grid; /* Use grid for better alignment */
-      grid-template-columns: auto 1fr; /* Label column auto, input takes rest */
-      align-items: center;
-      gap: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
-      margin-bottom: calc(var(--spacing-unit) * 0.75);
-    }
-    .client-info label {
-      text-align: right; /* Align labels right */
-      margin-bottom: 0;
-      color: var(--text-primary); /* Make labels slightly darker */
-      font-weight: 600;
-    }
-    .client-info input[type="text"] { margin-bottom: 0; }
-    #saveClientInfoBtn { margin-top: var(--spacing-unit); }
-
-    /* Big Goal Display */
-    #bigGoalDisplay {
-      font-size: 1.4em;
-      font-weight: 600;
-      margin: var(--spacing-unit) 0 calc(var(--spacing-unit) * 1.5) 0;
-      color: var(--primary-blue-dark);
-      padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
-      background-color: var(--primary-blue-light);
-      border: 1px solid var(--primary-blue);
-      border-left: 5px solid var(--primary-blue); /* Accent border */
-      border-radius: var(--border-radius);
-      text-align: center;
-      box-shadow: var(--shadow-sm);
-    }
-
-    /* External Links */
-    .external-links { margin-bottom: calc(var(--spacing-unit) * 1.5); padding: 0;} /* No padding needed */
-    .external-links a {
-        margin-right: var(--spacing-unit);
-        font-weight: 500;
-        display: inline-flex; /* Use flex for icon alignment */
-        align-items: center;
-        gap: 4px;
-     }
-    .external-links a:before { /* Add link icon */
-        content: '';
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        background-color: currentColor; /* Match link color */
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 M8 12a2 2 0 00-2.828 0l-3 3a2 2 0 102.828 2.828l3-3a2 2 0 000-2.828z' clip-rule='evenodd' /%3E%3Cpath fill-rule='evenodd' d='M12.293 7.293a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414zM7.707 12.707a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z' clip-rule='evenodd' /%3E%3C/svg%3E");
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-     }
-
-
-    /* Add Task Section */
-    .add-task-section h2 { margin-top: 0; color: var(--text-primary); }
-    .time-duration-container {
-      display: grid; /* Grid layout */
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
-      gap: var(--spacing-unit);
-      margin-bottom: var(--spacing-unit);
-    }
-    #taskSearch {
-        width: clamp(200px, 60%, 350px); /* Control search width */
-        margin-bottom: var(--spacing-unit);
-    }
-
-    /* === Table Styling === */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: var(--spacing-unit);
-      background-color: var(--bg-card);
-      box-shadow: var(--shadow-sm);
-      border-radius: var(--border-radius);
-      overflow: hidden; /* Clip corners */
-      border: 1px solid var(--border-color-light);
-    }
-    th, td {
-      border: none; /* Remove internal borders */
-      border-bottom: 1px solid var(--border-color-light); /* Use bottom borders */
-      padding: calc(var(--spacing-unit) * 0.75);
-      text-align: left;
-      vertical-align: middle;
-    }
-    th {
-      background-color: var(--bg-card-secondary);
-      font-weight: 600;
-      font-size: 0.8em; /* Smaller header text */
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      white-space: nowrap;
-    }
-    tbody tr:last-child td { border-bottom: none; } /* Remove border from last row */
-    tbody tr { transition: background-color 0.15s ease-in-out; }
-    tbody tr:nth-child(even) { /* Subtle zebra */
-       background-color: #fdfdff;
-    }
-    tbody tr:hover {
-        background-color: var(--primary-blue-light); /* Highlight row on hover */
-    }
-    td:nth-child(3) { text-align: center; } /* Center 'Done?' checkbox */
-    td:nth-child(4) select { width: auto; min-width: 60px; font-size: 0.9em; padding: calc(var(--spacing-unit) * 0.25) calc(var(--spacing-unit) * 0.5); background-position: right 0.3rem center; } /* Make rating select smaller */
-    td:nth-child(4) { vertical-align: middle; } /* Ensure rating select aligns */
-
-
-    /* Completed task styling */
-    .completed-task td:not(:last-child) {
-      text-decoration: line-through;
-      color: var(--text-light);
-    }
-    .completed-task td:first-child, .completed-task td:nth-child(2) { /* Less emphasis on completed time/activity */
-        opacity: 0.7;
-    }
-
-    /* Task Type Indicator */
-    .weekly-indicator {
-        font-size: 0.75em;
-        color: var(--primary-blue);
-        font-weight: 500;
-        display: block; /* Put on new line */
-        margin-top: 2px;
-    }
-
-
-    /* === Reflection Section === */
-    .reflection-section h3 { margin-top: 0; color: var(--text-primary);}
-    .reflection-item { margin-bottom: var(--spacing-unit); }
-
-
-    /* === Image gallery === */
-     #imageGallery h3 { margin-top: 0; color: var(--text-primary); }
-    .gallery-item {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-unit);
-      margin-bottom: calc(var(--spacing-unit) * 0.75);
-      padding: calc(var(--spacing-unit) * 0.5);
-      border-radius: var(--border-radius);
-      transition: background-color 0.2s ease;
-    }
-     .gallery-item:hover { background-color: var(--bg-card-secondary); }
-     .gallery-item:not(:last-child) { border-bottom: 1px solid var(--border-color-light); }
-
-    .gallery-item img {
-      width: 80px; /* Fixed width */
-      height: 50px; /* Fixed height */
-      border-radius: calc(var(--border-radius) / 2);
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-      object-fit: cover; /* Ensure image covers area */
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .gallery-item img:hover { transform: scale(1.05); box-shadow: var(--shadow-md); }
-    .gallery-item .title { font-weight: 500; flex-grow: 1; }
-    .gallery-item .btn { margin-left: auto; /* Push delete button right */ }
-
-    /* === Progress Dashboard === */
-    #progressDashboard h3 { margin-top: 0; color: var(--text-primary); }
-    #progressDashboard p { margin-bottom: calc(var(--spacing-unit)*0.5); font-size: 0.95em; }
-    #progressDashboard strong { font-weight: 600; }
-    .progress-bar-container {
-      width: 100%;
-      background-color: var(--border-color-light);
-      border-radius: var(--border-radius);
-      margin: 5px 0 var(--spacing-unit) 0;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 18px; /* Slightly thinner bar */
-      background-color: var(--accent-green);
-      border-radius: var(--border-radius); /* Fully rounded bar */
-      text-align: center; /* Center text */
-      padding: 0 8px; /* Padding for text */
-      color: white;
-      font-weight: 600;
-      font-size: 0.75em;
-      line-height: 18px;
-      white-space: nowrap;
-      transition: width 0.4s ease-in-out;
-      box-shadow: inset 0 -1px 1px rgba(0,0,0,0.1); /* Subtle inner shadow */
-    }
-    .progress-bar.avg-rating { background-color: var(--primary-blue); }
-
-
-    /* === Modals === */
-    #plannerModal, #weeklyModal, #imageModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(45, 55, 72, 0.75); /* Darker overlay using var(--text-primary) base */
-      z-index: 1000;
-      padding: var(--spacing-unit);
-      overflow-y: auto;
-      backdrop-filter: blur(3px); /* Subtle blur effect */
-    }
-    .modal-content, .weekly-modal-content, .image-modal-content {
-      background-color: var(--bg-card);
-      margin: 5vh auto; /* Vertical centering with margin */
-      padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
-      width: 90%;
-      max-width: 700px;
-      border-radius: calc(var(--border-radius) * 1.5); /* Slightly larger radius */
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-    .weekly-modal-content { max-width: 850px; } /* Wider weekly */
-    .modal-content h3, .weekly-modal-content h3, .image-modal-content h3 { margin-top: 0; color: var(--text-primary); }
-
-    /* Modal Footer needs explicit class or selection */
-     #plannerModal > .modal-content > div:last-child,
-     #weeklyModal > .weekly-modal-content > div:last-child,
-     #imageModal > .image-modal-content > div:last-child {
-         margin-top: calc(var(--spacing-unit) * 1.5);
-         padding-top: var(--spacing-unit);
-         border-top: 1px solid var(--border-color);
-         text-align: right;
-         display: flex;
-         justify-content: flex-end;
-         gap: var(--spacing-unit);
-     }
-
-    /* Planner/Weekly Modal specifics */
-    .day-plan, .weekly-day-section {
-      margin-bottom: var(--spacing-unit);
-      padding: var(--spacing-unit);
-      background-color: var(--bg-card-secondary);
-      border: 1px solid var(--border-color-light);
-      border-radius: var(--border-radius);
-    }
-    .day-plan h4, .weekly-day-section h4 { margin-top: 0; color: var(--text-secondary); font-weight: 600; }
-    .task-entry {
-        border-bottom: 1px dashed var(--border-color);
-        padding-bottom: var(--spacing-unit);
-        margin-bottom: var(--spacing-unit);
-    }
-    .task-entry:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
-    .weekly-task-row { display: flex; align-items: center; gap: var(--spacing-unit); margin-bottom: calc(var(--spacing-unit)*0.5);}
-    .weekly-task-row span { flex-grow: 1; font-size: 0.95em; }
-    .weekly-day-section .no-data { color: var(--text-light); font-size: 0.9em; text-align: center; margin: var(--spacing-unit) 0; }
-
-    /* Image Modal */
-    #imagePreview {
-        display: none;
-        max-width: 100%;
-        max-height: 300px; /* Larger preview */
-        margin-top: var(--spacing-unit);
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-color);
-        object-fit: contain;
-    }
-    #imageModal label { margin-top: var(--spacing-unit); }
-
-
-    /* === Google Embeds === */
-    .google-embed-container { margin-bottom: calc(var(--spacing-unit) * 1.5); } /* Added card style already */
-    .google-embed-container h2 { margin-bottom: var(--spacing-unit); color: var(--text-primary); }
-    #googleCalendarEmbed {
-      width: 100%;
-      height: 600px;
-      border: none; /* Remove border, card provides container */
-      border-radius: var(--border-radius);
-    }
-    #googleTasksPlaceholder { color: var(--text-secondary); font-size: 0.95em; }
-
-    /* === Footer === */
-    #footer {
-      margin-top: calc(var(--spacing-unit) * 3);
-      padding: calc(var(--spacing-unit) * 1.5) var(--spacing-unit);
-      border-top: 1px solid var(--border-color);
-      font-size: 0.85em;
-      color: var(--text-light);
-      text-align: center;
-    }
-     #footer code { background-color: var(--border-color-light); padding: 2px 4px; border-radius: 4px; font-size: 0.9em;}
-
-    /* === Utility Classes === */
-    .no-data { color: var(--text-light); font-style: italic; font-size: 0.9em; }
-    .text-center { text-align: center; }
-
-    /* === Mobile Responsiveness === */
-    @media (max-width: 768px) {
-         .container { margin: var(--spacing-unit) auto; }
-         h1 { font-size: 1.6rem; }
-         h2 { font-size: 1.25rem; }
-         h3 { font-size: 1.1rem; }
-         .client-info .info-row { grid-template-columns: 1fr; } /* Stack label/input */
-         .client-info label { text-align: left; }
-         #bigGoalDisplay { font-size: 1.2em; }
-    }
-
-    @media (max-width: 600px) {
-      .container { margin: calc(var(--spacing-unit)*0.5) auto; padding: 0 calc(var(--spacing-unit)*0.5); }
-      .controls { flex-direction: column; align-items: stretch; gap: calc(var(--spacing-unit)*0.5); }
-      .controls > div { justify-content: space-between;} /* Space out label/select */
-      .controls select, .controls input[type="date"] { flex-grow: 1; } /* Allow select/date to grow */
-      .controls button { width: 100%; margin: calc(var(--spacing-unit)*0.25) 0; } /* Full width buttons */
-
-      .time-duration-container { grid-template-columns: 1fr; } /* Stack time/duration */
-      table, td, th { font-size: 0.85em; padding: calc(var(--spacing-unit) * 0.5); }
-      /* Optional: Hide less critical columns on small screens */
-       th:nth-child(4), td:nth-child(4) { /* Rating */
-         /* display: none; */
-          min-width: 70px; /* Ensure rating select has some space */
-      }
-       th:nth-child(5), td:nth-child(5) { /* Actions */
-           /* Reduce padding/width if keeping */
-           padding: calc(var(--spacing-unit) * 0.3);
-           min-width: 70px; /* Ensure buttons fit */
-           text-align: right;
-       }
-       .task-row .btn { font-size: 0.8em; padding: calc(var(--spacing-unit) * 0.2) calc(var(--spacing-unit) * 0.4); }
-
-
-      .modal-content, .weekly-modal-content, .image-modal-content {
-          margin: var(--spacing-unit) auto;
-          padding: var(--spacing-unit);
-          max-width: 95%;
-      }
-       /* Modal Footer for mobile */
-       #plannerModal > .modal-content > div:last-child,
-       #weeklyModal > .weekly-modal-content > div:last-child,
-       #imageModal > .image-modal-content > div:last-child {
-            flex-direction: column-reverse; /* Stack buttons */
-            align-items: stretch; /* Make buttons full width */
-       }
-       /* Target buttons inside the identified footer divs */
-       #plannerModal > .modal-content > div:last-child button,
-       #weeklyModal > .weekly-modal-content > div:last-child button,
-       #imageModal > .image-modal-content > div:last-child button {
-           width: 100%;
-           margin: calc(var(--spacing-unit) * 0.25) 0;
-       }
-
-
-      #googleCalendarEmbed { height: 450px; }
-    }
-  </style>
+        /* === Responsive === */
+        @media (max-width: 768px) {
+             h1 { font-size: 1.5rem; } h2 { font-size: 1.125rem; } h3 { font-size: 1rem; }
+             .client-info .info-row { grid-template-columns: 1fr; } .client-info label { text-align: left; }
+             #bigGoalDisplay { font-size: 1.125rem; } .card { padding: 1rem; }
+             .controls-container { gap: 0.75rem; } /* Reduce gap */
+        }
+        @media (max-width: 600px) {
+             html { font-size: 15px; } body { padding-top: 1rem; }
+             .container { padding: 0 0.75rem; } h1 { margin-bottom: 1.5rem; }
+             .controls-container { flex-direction: column; align-items: stretch; } /* Stack controls vertically */
+             .control-group { width: 100%; } .control-group select, .control-group input { min-width: 0; } /* Allow inputs to shrink */
+             .controls-buttons { margin-left: 0; flex-direction: column; align-items: stretch; } /* Stack buttons */
+             .controls-buttons .btn { width: 100%; margin: 0.25rem 0; }
+             th, td { padding: 0.75rem 0.5rem; font-size: 0.9rem; }
+             .modal-content, .weekly-modal-content, .image-modal-content { padding: 1.5rem 1rem; margin: 2vh auto; }
+             .modal-footer { flex-direction: column-reverse; align-items: stretch; } .modal-footer .btn { width: 100%; margin: 0.25rem 0; }
+             #googleCalendarEmbed { height: 450px; }
+             .task-entry .controls-container { grid-template-columns: 1fr; }
+             .weekly-day-section .add-row { flex-direction: column; align-items: stretch; } .weekly-day-section .add-row .btn { margin-top: 0.5rem; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="title-bar">
-  <h1>RESET Client Tracker</h1>
-</div>
+    <h1>RESET Client Tracker</h1> <!-- Changed Title -->
 
-<!-- Add the main content container -->
-<div class="container">
+    <div class="container">
 
-    <div class="controls">
-      <div>
-        <label for="clientSelect">Client:</label>
-        <select id="clientSelect"></select>
-      </div>
-      <button class="btn" id="addClientBtn">+ Add Client</button>
-
-      <div>
-        <label for="datePicker">Date:</label>
-        <input type="date" id="datePicker" />
-      </div>
-
-      <button class="btn" id="clearTasksBtn" title="Clear tasks for this client on this date">Clear Tasks</button>
-      <button class="btn" id="exportBtn" title="Export all client data to a JSON file">Export Data</button>
-      <button class="btn" id="reportBtn" title="Generate an HTML report for the current client">View Report</button>
-      <button class="btn" id="multiDayPlanBtn" title="Plan tasks across multiple upcoming days">Multi-Day Plan</button>
-      <button class="btn" id="weeklyPlanBtn" title="Set recurring weekly tasks">Weekly Plan</button>
-      <button class="btn" id="imageBtn" title="Add an image or screenshot">Add Image</button>
-    </div>
-
-    <!-- Form for adding a new client -->
-    <div id="newClientForm">
-      <label for="newClientName">New Client Name:</label>
-      <input type="text" id="newClientName" placeholder="Enter client name">
-      <button class="btn" id="saveClientBtn">Save</button>
-      <button class="btn" id="cancelClientBtn">Cancel</button>
-    </div>
-
-    <!-- Show or edit the Big Goal, Canvas link, and Classroom link -->
-    <div class="client-info">
-      <div class="info-row">
-        <label for="bigGoalInput">Big Goal:</label>
-        <input type="text" id="bigGoalInput" placeholder="e.g. Get into Yale">
-      </div>
-      <div class="info-row">
-        <label for="canvasLinkInput">Canvas Link:</label>
-        <input type="text" id="canvasLinkInput" placeholder="https://...">
-      </div>
-      <div class="info-row">
-        <label for="classroomLinkInput">Classroom Link:</label>
-        <input type="text" id="classroomLinkInput" placeholder="https://...">
-      </div>
-      <button class="btn" id="saveClientInfoBtn">Save Client Info</button>
-    </div>
-
-    <!-- Big Goal displayed prominently -->
-    <div id="bigGoalDisplay">(Select a client)</div>
-
-    <!-- External links displayed -->
-    <div class="external-links">
-      <a href="#" id="canvasLinkAnchor" target="_blank" style="display:none;">Open Canvas</a>
-      <a href="#" id="classroomLinkAnchor" target="_blank" style="display:none;">Open Google Classroom</a>
-    </div>
-
-    <hr />
-
-    <!-- Add New Task Section -->
-    <div class="add-task-section">
-        <h2>Add New Task</h2>
-        <div class="time-duration-container">
-        <div>
-            <label for="timeSelect">Time:</label>
-            <select id="timeSelect"></select>
-        </div>
-        <div>
-            <label for="durationSelect">Duration:</label>
-            <select id="durationSelect">
-            <option value="5 min">5 minutes</option>
-            <option value="10 min">10 minutes</option>
-            <option value="15 min">15 minutes</option>
-            <option value="30 min" selected>30 minutes</option>
-            <option value="45 min">45 minutes</option>
-            <option value="1 hour">1 hour</option>
-            <option value="90 min">90 minutes</option>
-            <option value="2 hours">2 hours</option>
-            </select>
-        </div>
-        </div>
-        <div>
-            <label for="activityInput">Activity:</label>
-            <input type="text" id="activityInput" placeholder="e.g. Work on Chemistry assignment" />
-        </div>
-        <div>
-             <label for="taskSearch">Search Tasks:</label>
-            <input type="text" id="taskSearch" placeholder="Filter tasks in table by activity or time..." title="Filter tasks in the table below">
-        </div>
-        <button class="btn" id="addBtn" title="Add task to the table (Alt+A)">Add Task</button>
-    </div>
-
-
-    <!-- Task Table -->
-    <table id="taskTable">
-      <thead>
-        <tr>
-          <th style="width:18%;">Time & Duration</th>
-          <th style="width:37%;">Activity</th>
-          <th style="width:8%;">Done?</th>
-          <th style="width:12%;">Rating</th>
-          <th style="width:25%;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Rows appended dynamically -->
-        <tr><td colspan="5" class="text-center no-data">(No tasks added for this day yet)</td></tr>
-      </tbody>
-    </table>
-
-    <!-- Image gallery area -->
-    <div id="imageGallery">
-        <!-- Images loaded dynamically -->
-        <p class="no-data text-center">(No images added for this client yet)</p>
-    </div>
-
-
-    <!-- Reflection Section (Moved Here) -->
-    <div class="reflection-section">
-        <h3>Daily Reflection</h3>
-        <div class="reflection-item">
-          <label for="dayRatingSelect">Day Rating (1–5):</label>
-          <select id="dayRatingSelect">
-            <option value="0">--</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+        <div class="card controls-container"> <!-- Changed class -->
+            <div class="control-group">
+                <label for="clientSelect">Client</label>
+                <select id="clientSelect"></select>
+            </div>
+            <div class="control-group">
+                <label for="datePicker">Date</label>
+                <input type="date" id="datePicker" />
+            </div>
+            <div class="control-group" style="align-self: flex-end;"> <!-- Wrapped Add Client Button -->
+                 <button class="btn btn-secondary" id="addClientBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 6.75a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" /></svg>
+                    Add Client
+                 </button>
+            </div>
+            <div class="controls-buttons"> <!-- Group remaining buttons -->
+                <button class="btn btn-secondary" id="exportBtn" title="Export all data">Export</button> <!-- Shorter Text -->
+                <button class="btn btn-secondary" id="reportBtn" title="View report">Report</button>
+                <button class="btn btn-secondary" id="multiDayPlanBtn" title="Multi-Day Plan">Plan Ahead</button>
+                <button class="btn btn-secondary" id="weeklyPlanBtn" title="Weekly Plan">Weekly</button>
+                <button class="btn btn-secondary" id="imageBtn" title="Add image">Add Image</button>
+                <button class="btn btn-danger" id="clearTasksBtn" title="Clear tasks for date">Clear Tasks</button>
+            </div>
         </div>
 
-        <div class="reflection-item">
-          <label for="dayNotes">Reflection Notes:</label>
-          <textarea id="dayNotes" rows="4" placeholder="Notes for the day... how did it go? What worked? What didn't?"></textarea>
+        <div id="newClientForm" class="card">
+          <label for="newClientName">New Client Name:</label>
+          <input type="text" id="newClientName" placeholder="Enter name">
+          <div class="button-group">
+            <button class="btn btn-secondary" id="cancelClientBtn">Cancel</button>
+            <button class="btn btn-primary" id="saveClientBtn">Save</button>
+          </div>
         </div>
-    </div>
 
-
-    <!-- Progress Dashboard -->
-    <div id="progressDashboard">
-      <h3>Progress Dashboard</h3>
-
-      <p><strong>Task Completion (This Day):</strong> <span id="completionRate">-</span></p>
-      <div class="progress-bar-container">
-        <div id="completionBar" class="progress-bar" style="width: 0%">0%</div>
-      </div>
-
-      <p><strong>Average Task Rating (This Day):</strong> <span id="averageTaskRating">-</span></p>
-
-      <hr style="margin: 1.5em 0;"/>
-
-      <p><strong>Day Rating (This Day):</strong> <span id="displayDayRating">-</span></p>
-
-      <p><strong>Avg Day Rating (All Time up to this Date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
-      <div class="progress-bar-container">
-        <div id="avgRatingBar" class="progress-bar avg-rating" style="width: 0%;">0/5</div>
-      </div>
-    </div>
-
-    <!-- Google Embeds Section -->
-    <div class="google-embed-container">
-        <h2>Google Calendar</h2>
-        <div> <!-- Added div to receive card styling -->
-            <p style="font-size: 0.9em; color: var(--text-light); margin-top: 0; margin-bottom: 0.5em;">
-            <!-- IMPORTANT: Replace the 'src' attribute below with the public embed code for YOUR Google Calendar -->
-            <!-- Go to Google Calendar -> Settings -> Settings for my calendars -> Select calendar -> Integrate calendar -> Embed code -->
-            <!-- Copy the URL from inside the 'src="..."' part of the code provided by Google -->
-            </p>
-            <iframe
-            id="googleCalendarEmbed"
-            src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID_HERE&ctz=America%2FNew_York"
-            frameborder="0"
-            scrolling="no">
-            </iframe>
+        <div class="card client-info">
+             <h3>Client Information</h3>
+            <div class="info-row"> <label for="bigGoalInput">Big Goal:</label> <input type="text" id="bigGoalInput" placeholder="e.g., Improve Organization"> </div>
+            <div class="info-row"> <label for="canvasLinkInput">Canvas Link:</label> <input type="text" id="canvasLinkInput" placeholder="https://..."> </div>
+            <div class="info-row"> <label for="classroomLinkInput">Classroom Link:</label> <input type="text" id="classroomLinkInput" placeholder="https://..."> </div>
+            <div class="button-container"> <button class="btn btn-primary" id="saveClientInfoBtn">Save Info</button> </div>
         </div>
-    </div>
 
-    <div class="google-embed-container">
-        <h2>Google Tasks</h2>
-        <div id="googleTasksPlaceholder"> <!-- This div receives card styling -->
-          <p style="margin-top:0;">
-            Future Integration: A dedicated Google Tasks panel could be embedded here.
-            However, this requires using Google APIs and handling user authentication (OAuth),
-            which is more complex than a simple local HTML/JS application can handle directly without a backend server.
-          </p>
-          <p>For now, consider using Google Tasks in a separate browser tab or window during sessions.</p>
+        <div id="bigGoalDisplay">(Select Client)</div>
+
+        <div class="external-links">
+          <a href="#" id="canvasLinkAnchor" target="_blank" rel="noopener noreferrer" style="display:none;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.665l3-3z" /><path d="M8.603 14.53a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 005.656 5.656l3-3a4 4 0 00-.225-5.865.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.665l-3 3z" /></svg> Canvas </a>
+          <a href="#" id="classroomLinkAnchor" target="_blank" rel="noopener noreferrer" style="display:none;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.665l3-3z" /><path d="M8.603 14.53a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 005.656 5.656l3-3a4 4 0 00-.225-5.865.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.665l-3 3z" /></svg> Classroom </a>
         </div>
-    </div>
 
-
-    <!-- Modals remain outside the main container for full-screen overlay -->
-
-
-    <div id="footer">
-      <p>All client data (goals, tasks, notes, images) is stored locally in your browser's <code>localStorage</code>. No data is sent to any server.</p>
-      <p style="font-size: 0.8em; color:#444;">
-        <em>You can save this HTML file ("File > Save Page As...") and open it directly in any modern web browser.</em>
-      </p>
-    </div>
-
-</div> <!-- End of .container -->
-
-
-<!-- === MODALS (Keep outside .container for positioning) === -->
-
-<!-- Multi-Day Planner Modal -->
-<div id="plannerModal">
-  <div class="modal-content">
-    <h3>Multi-Day Task Planner</h3>
-    <p>Create a series of tasks across multiple upcoming days for: <strong><span id="plannerClientLabel"></span></strong></p>
-
-    <div id="plannerDays"></div>
-
-    <button class="btn" id="addDayBtn">Add Another Day</button>
-
-    <!-- Modal Footer -->
-    <div>
-      <button class="btn" id="savePlanBtn">Save All Tasks</button>
-      <button class="btn" id="cancelPlanBtn">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Weekly Planner Modal -->
-<div id="weeklyModal">
-  <div class="weekly-modal-content">
-    <h3>Weekly Planner for: <span id="weeklyClientLabel"></span></h3>
-    <p>Set recurring tasks for each weekday. These tasks will appear automatically on those days.</p>
-
-    <div id="weeklyContent"></div>
-
-    <!-- Modal Footer -->
-    <div>
-      <button class="btn" id="saveWeeklyBtn">Close & Reload Tasks</button> <!-- Clarified button text -->
-      <button class="btn" id="cancelWeeklyBtn">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Image Modal -->
-<div id="imageModal">
-  <div class="image-modal-content">
-    <h3>Add an Image / Screenshot for: <strong><span id="imageClientLabel"></span></strong></h3>
-
-    <div>
-      <label for="imageFileInput">Select Image File:</label>
-      <input type="file" id="imageFileInput" accept="image/*">
-      <p style="color:var(--text-light);font-size:0.9em; margin-top: 0.5em;">
-        Or paste a screenshot directly into this modal window (click anywhere in the modal, then Ctrl+V / Cmd+V).
-      </p>
-    </div>
-
-    <img id="imagePreview" src="#" alt="(Preview will appear here)">
-
-    <div>
-      <label for="imageTitle">Image Title:</label>
-      <input type="text" id="imageTitle" placeholder="Optional title for the image">
-    </div>
-
-    <!-- Modal Footer -->
-    <div>
-      <button class="btn" id="saveImageBtn">Save Image</button>
-      <button class="btn" id="cancelImageBtn">Cancel</button>
-    </div>
-  </div>
-</div>
-
-
-<script>
-/***************************************************************
-  1) DATA STRUCTURE (localStorage key: "resetClientTrackerData")
-     allData = {
-       clientName1: {
-         bigGoal: "Goal text",
-         links: { canvas: "url", classroom: "url" },
-         weeklyTasks: {
-           monday: [ {id:"wt_...", time:"...", duration:"...", activity:"..."} ],
-           tuesday: [], ... sunday: []
-         },
-         images: [ { title: "...", dataUrl: "..." } ],
-         "YYYY-MM-DD": { // Date specific data
-           dayRating: "1-5" or "0",
-           dayNotes: "Notes text",
-           tasks: [ { time:"...", duration:"...", activity:"...", completed:bool, rating:"0-5" } ],
-           weeklyDone: { weeklyTaskId: true/false } // Tracks completion of weekly tasks for this specific day
-         },
-         "YYYY-MM-DD": { ... }
-       },
-       clientName2: { ... }
-     }
-****************************************************************/
-const STORAGE_KEY = "resetClientTrackerData";
-let allData = {};
-let currentClient = null;
-let currentDate   = null;
-
-/***************************************************************
-  DOM ELEMENTS
-****************************************************************/
-// Controls
-const clientSelect        = document.getElementById("clientSelect");
-const addClientBtn        = document.getElementById("addClientBtn");
-const datePicker          = document.getElementById("datePicker");
-const clearTasksBtn       = document.getElementById("clearTasksBtn");
-const exportBtn           = document.getElementById("exportBtn");
-const reportBtn           = document.getElementById("reportBtn");
-const multiDayPlanBtn     = document.getElementById("multiDayPlanBtn");
-const weeklyPlanBtn       = document.getElementById("weeklyPlanBtn");
-const imageBtn            = document.getElementById("imageBtn");
-
-// New Client Form
-const newClientForm       = document.getElementById("newClientForm");
-const newClientName       = document.getElementById("newClientName");
-const saveClientBtn       = document.getElementById("saveClientBtn");
-const cancelClientBtn     = document.getElementById("cancelClientBtn");
-
-// Client Info Area
-const bigGoalInput        = document.getElementById("bigGoalInput");
-const canvasLinkInput     = document.getElementById("canvasLinkInput");
-const classroomLinkInput  = document.getElementById("classroomLinkInput");
-const saveClientInfoBtn   = document.getElementById("saveClientInfoBtn");
-const bigGoalDisplay      = document.getElementById("bigGoalDisplay");
-const canvasLinkAnchor    = document.getElementById("canvasLinkAnchor");
-const classroomLinkAnchor = document.getElementById("classroomLinkAnchor");
-
-// Add Task Section
-const timeSelect          = document.getElementById("timeSelect");
-const durationSelect      = document.getElementById("durationSelect");
-const activityInput       = document.getElementById("activityInput");
-const taskSearch          = document.getElementById("taskSearch");
-const addBtn              = document.getElementById("addBtn");
-const taskTableBody       = document.getElementById("taskTable").querySelector("tbody");
-
-// Reflection Section (Moved)
-const dayRatingSelect     = document.getElementById("dayRatingSelect");
-const dayNotesTextarea    = document.getElementById("dayNotes");
-
-// Image Gallery
-const imageGallery        = document.getElementById("imageGallery");
-
-// Progress Dashboard
-const completionRateEl       = document.getElementById("completionRate");
-const completionBarEl        = document.getElementById("completionBar");
-const averageTaskRatingEl    = document.getElementById("averageTaskRating");
-const displayDayRatingEl     = document.getElementById("displayDayRating");
-const avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate");
-const avgRatingBarEl         = document.getElementById("avgRatingBar");
-
-// Multi-day planner modal
-const plannerModal        = document.getElementById("plannerModal");
-const plannerClientLabel  = document.getElementById("plannerClientLabel");
-const plannerDays         = document.getElementById("plannerDays");
-const addDayBtn           = document.getElementById("addDayBtn");
-const savePlanBtn         = document.getElementById("savePlanBtn");
-const cancelPlanBtn       = document.getElementById("cancelPlanBtn");
-
-// Weekly planner modal
-const weeklyModal         = document.getElementById("weeklyModal");
-const weeklyClientLabel   = document.getElementById("weeklyClientLabel");
-const weeklyContent       = document.getElementById("weeklyContent");
-const saveWeeklyBtn       = document.getElementById("saveWeeklyBtn");
-const cancelWeeklyBtn     = document.getElementById("cancelWeeklyBtn");
-
-// Image Modal
-const imageModal          = document.getElementById("imageModal");
-const imageClientLabel    = document.getElementById("imageClientLabel");
-const imageFileInput      = document.getElementById("imageFileInput");
-const imagePreview        = document.getElementById("imagePreview");
-const imageTitleInput     = document.getElementById("imageTitle");
-const saveImageBtn        = document.getElementById("saveImageBtn");
-const cancelImageBtn      = document.getElementById("cancelImageBtn");
-
-/***************************************************************
-  INITIALIZATION
-****************************************************************/
-window.addEventListener("load", () => {
-  // Load from localStorage with error handling
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      allData = JSON.parse(stored);
-      // Basic validation (ensure it's an object)
-      if (typeof allData !== 'object' || allData === null) {
-          console.warn("Invalid data found in localStorage, resetting.");
-          allData = {};
-      }
-    } else {
-      allData = {};
-    }
-  } catch (error) {
-    console.error("Error parsing data from localStorage:", error);
-    alert("Could not load saved data. It might be corrupted. Starting fresh.");
-    allData = {};
-  }
-
-
-  // Populate client dropdown
-  populateClientSelect();
-
-  // Set datePicker to today
-  const todayStr = new Date().toISOString().split("T")[0];
-  datePicker.value = todayStr;
-  currentDate = todayStr;
-
-  // Auto-select first client or handle no clients
-  const clientNames = Object.keys(allData).sort();
-  if (clientNames.length > 0) {
-    currentClient = clientNames[0];
-    clientSelect.value = currentClient;
-    loadClientDate(currentClient, currentDate);
-  } else {
-    currentClient = null;
-    // Show placeholder message if no clients
-    bigGoalDisplay.textContent = "(Add a client to get started)";
-    taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Add a client and select a date)</td></tr>';
-    imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>'; // Also update gallery placeholder
-  }
-
-
-  // Build time dropdown
-  populateTimeDropdown();
-
-  // Set up event listeners
-  setupEventListeners();
-
-});
-
-/***************************************************************
-  EVENT LISTENERS SETUP
-****************************************************************/
-function setupEventListeners() {
-  // Client selection & Date change
-  clientSelect.addEventListener("change", onClientOrDateChange);
-  datePicker.addEventListener("change", onClientOrDateChange);
-
-  // Client management
-  addClientBtn.addEventListener("click", showNewClientForm);
-  saveClientBtn.addEventListener("click", saveNewClient);
-  cancelClientBtn.addEventListener("click", hideNewClientForm);
-
-  // Save client info (big goal & links)
-  saveClientInfoBtn.addEventListener("click", saveClientInfo);
-
-  // Task adding & management
-  addBtn.addEventListener("click", addNewTask);
-  clearTasksBtn.addEventListener("click", clearTasksForClientDate);
-  exportBtn.addEventListener("click", exportData);
-  reportBtn.addEventListener("click", generateReport);
-
-  // Reflection Section
-  dayRatingSelect.addEventListener("change", onDayRatingChange);
-  dayNotesTextarea.addEventListener("input", onDayNotesChange); // Use input for immediate saving
-
-  // Multi-day planner
-  multiDayPlanBtn.addEventListener("click", openPlannerModal);
-  addDayBtn.addEventListener("click", addPlannerDay);
-  savePlanBtn.addEventListener("click", saveMultiDayPlan);
-  cancelPlanBtn.addEventListener("click", closePlannerModal);
-
-  // Weekly planner
-  weeklyPlanBtn.addEventListener("click", openWeeklyModal);
-  saveWeeklyBtn.addEventListener("click", saveWeeklySchedule); // Saving happens implicitly, this just closes
-  cancelWeeklyBtn.addEventListener("click", closeWeeklyModal);
-
-  // Images
-  imageBtn.addEventListener("click", openImageModal);
-  cancelImageBtn.addEventListener("click", closeImageModal);
-  saveImageBtn.addEventListener("click", saveImage);
-  imageModal.addEventListener("paste", handlePasteImage);
-  imageFileInput.addEventListener("change", handleFileInputChange);
-
-  // Task search/filter
-  taskSearch.addEventListener("input", filterTaskTable);
-
-  // Keyboard shortcuts
-  document.addEventListener("keydown", (e) => {
-    // Ignore shortcuts if focus is inside a text input/textarea to allow typing
-    const activeEl = document.activeElement;
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
-        // Allow Escape key to work in inputs to close modals/forms
-        if (e.key === "Escape") {
-             // Handled below
-        } else {
-            return; // Don't trigger other shortcuts while typing
-        }
-    }
-
-    // Alt+A = Focus Activity Input or Add Task if filled
-    if (e.altKey && e.key === "a") {
-      e.preventDefault();
-      if (document.activeElement === activityInput && activityInput.value.trim() !== '') {
-           addNewTask();
-      } else {
-          activityInput.focus();
-      }
-    }
-    // Alt+D = Toggle last task as done
-    if (e.altKey && e.key === "d") {
-      e.preventDefault();
-      const lastRow = taskTableBody.querySelector("tr.task-row:last-child"); // Ensure it's a task row
-      if (lastRow) {
-        const checkbox = lastRow.querySelector("input[type='checkbox']");
-        if (checkbox) {
-            checkbox.checked = !checkbox.checked;
-            checkbox.dispatchEvent(new Event("change")); // Trigger change handler
-        }
-      }
-    }
-    // Alt+S = Sort tasks by time
-    if (e.altKey && e.key === "s") {
-      e.preventDefault();
-      sortTasksByTime();
-      // Maybe add a subtle visual confirmation instead of alert?
-      // E.g., flash the table background briefly
-      taskTableBody.style.transition = 'background-color 0.1s ease-out';
-      taskTableBody.style.backgroundColor = 'var(--primary-blue-light)';
-      setTimeout(() => { taskTableBody.style.backgroundColor = ''; }, 200);
-    }
-    // Escape key closes modals/forms
-     if (e.key === "Escape") {
-        if (plannerModal.style.display === "block") closePlannerModal();
-        else if (weeklyModal.style.display === "block") closeWeeklyModal();
-        else if (imageModal.style.display === "block") closeImageModal();
-        else if (newClientForm.style.display === "flex") hideNewClientForm(); // Check for flex display now
-     }
-  });
-}
-
-/***************************************************************
-  CLIENT MANAGEMENT FUNCTIONS
-****************************************************************/
-function populateClientSelect() {
-  clientSelect.innerHTML = ""; // Clear existing options
-  const clientNames = Object.keys(allData).sort();
-  if (clientNames.length === 0) {
-    const opt = document.createElement("option");
-    opt.textContent = "-- No Clients Added --";
-    opt.value = "";
-    clientSelect.appendChild(opt);
-    clientSelect.disabled = true; // Disable select if no clients
-    // Disable buttons that require a client
-    multiDayPlanBtn.disabled = true;
-    weeklyPlanBtn.disabled = true;
-    imageBtn.disabled = true;
-    reportBtn.disabled = true;
-    clearTasksBtn.disabled = true;
-    saveClientInfoBtn.disabled = true;
-
-  } else {
-    clientSelect.disabled = false;
-    // Enable buttons
-    multiDayPlanBtn.disabled = false;
-    weeklyPlanBtn.disabled = false;
-    imageBtn.disabled = false;
-    reportBtn.disabled = false;
-    clearTasksBtn.disabled = false;
-    saveClientInfoBtn.disabled = false;
-
-    // Add a default "-- Select --" option? (Optional)
-    // const defaultOpt = document.createElement("option");
-    // defaultOpt.textContent = "-- Select Client --";
-    // defaultOpt.value = "";
-    // clientSelect.appendChild(defaultOpt);
-
-    clientNames.forEach(name => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      clientSelect.appendChild(opt);
-    });
-  }
-}
-
-function showNewClientForm() {
-  newClientForm.style.display = "flex"; // Changed to flex
-  newClientName.value = "";
-  newClientName.focus();
-}
-function hideNewClientForm() {
-  newClientForm.style.display = "none";
-}
-function saveNewClient() {
-  const name = newClientName.value.trim();
-  if (!name) {
-    alert("Please enter a client name.");
-    return;
-  }
-  if (allData[name]) {
-    alert(`Client "${name}" already exists. Please choose a different name.`);
-    return;
-  }
-  // Create default structure for new client
-  allData[name] = {
-    bigGoal: "",
-    links: { canvas: "", classroom: "" },
-    weeklyTasks: { // Initialize all days
-      monday: [], tuesday: [], wednesday: [], thursday: [],
-      friday: [], saturday: [], sunday: []
-    },
-    images: [],
-    // No date entries initially
-  };
-  saveToLocalStorage();
-  populateClientSelect(); // Update dropdown
-  clientSelect.value = name; // Select the new client
-  currentClient = name;
-  currentDate = datePicker.value; // Use current date
-  loadClientDate(currentClient, currentDate); // Load the new client's (empty) data
-  hideNewClientForm();
-  // Consider a less intrusive confirmation, e.g., briefly changing button text
-  // alert(`Client "${name}" added successfully!`);
-}
-
-function saveClientInfo() {
-  if (!currentClient) {
-      alert("Please select a client first.");
-      return;
-  }
-  const cliData = allData[currentClient];
-  if (!cliData) {
-      console.error("Client data object not found for:", currentClient);
-      return;
-  }
-  cliData.bigGoal = bigGoalInput.value.trim();
-  // Ensure links object exists
-  if (!cliData.links) cliData.links = {};
-  cliData.links.canvas = canvasLinkInput.value.trim();
-  cliData.links.classroom = classroomLinkInput.value.trim();
-  saveToLocalStorage();
-  renderClientInfo(); // Update display
-   // Less intrusive confirmation
-    const originalButtonText = saveClientInfoBtn.textContent;
-    saveClientInfoBtn.textContent = 'Saved!';
-    saveClientInfoBtn.style.backgroundColor = 'var(--accent-green)';
-    setTimeout(() => {
-        saveClientInfoBtn.textContent = originalButtonText;
-        saveClientInfoBtn.style.backgroundColor = ''; // Revert to default
-    }, 1500);
-  // alert("Client info (Big Goal, Links) saved!");
-}
-
-function renderClientInfo() {
-  if (!currentClient || !allData[currentClient]) {
-    // Reset fields if no client selected or data missing
-    bigGoalDisplay.textContent = "(Select a client)";
-    bigGoalInput.value = "";
-    canvasLinkInput.value = "";
-    classroomLinkInput.value = "";
-    canvasLinkAnchor.style.display = "none";
-    classroomLinkAnchor.style.display = "none";
-    return;
-  }
-
-  const cliData = allData[currentClient];
-
-  // Big goal
-  bigGoalDisplay.textContent = cliData.bigGoal || "(No Big Goal Set)";
-  bigGoalInput.value = cliData.bigGoal || "";
-
-   // Ensure links object exists before accessing properties
-  const links = cliData.links || { canvas: "", classroom: "" };
-  let hasLinks = false;
-
-  // Canvas link
-  if (links.canvas && links.canvas.startsWith('http')) { // Basic URL check
-    canvasLinkAnchor.href = links.canvas;
-    canvasLinkAnchor.style.display = "inline-flex"; // Use flex for icon alignment
-    hasLinks = true;
-  } else {
-    canvasLinkAnchor.style.display = "none";
-  }
-  canvasLinkInput.value = links.canvas || "";
-
-  // Classroom link
-  if (links.classroom && links.classroom.startsWith('http')) { // Basic URL check
-    classroomLinkAnchor.href = links.classroom;
-    classroomLinkAnchor.style.display = "inline-flex"; // Use flex for icon alignment
-     hasLinks = true;
-  } else {
-    classroomLinkAnchor.style.display = "none";
-  }
-  classroomLinkInput.value = links.classroom || "";
-
-  // Hide the whole links container if no links are set? Optional.
-  // document.querySelector('.external-links').style.display = hasLinks ? 'block' : 'none';
-}
-
-/***************************************************************
-  CORE DATA LOADING & DISPLAY
-****************************************************************/
-function onClientOrDateChange() {
-  currentClient = clientSelect.value;
-  currentDate   = datePicker.value;
-  if (currentClient && currentDate) {
-      loadClientDate(currentClient, currentDate);
-  } else {
-      // Handle case where selection might be invalid (e.g., "-- No Clients --")
-       taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Select a client and date)</td></tr>';
-       renderClientInfo(); // Reset client info display
-       resetReflectionFields();
-       resetProgressDashboard();
-       imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>'; // Clear gallery
-  }
-}
-
-function loadClientDate(clientName, dateStr) {
-  if (!clientName || !dateStr) return;
-
-  // Ensure client exists in data
-  if (!allData[clientName]) {
-    console.error(`Data for client "${clientName}" not found.`);
-     allData[clientName] = { bigGoal: "", links: {}, weeklyTasks: {}, images: [] };
-  }
-
-  // Ensure date entry exists for the client, create if not
-  if (!allData[clientName][dateStr]) {
-    allData[clientName][dateStr] = {
-      dayRating: "0",
-      dayNotes: "",
-      tasks: [],
-      weeklyDone: {} // Tracks completion of weekly tasks for THIS date
-    };
-  }
-
-  const clientData = allData[clientName];
-  const dayRecord = clientData[dateStr];
-
-  // 1. Render Client-Level Info (Goal, Links)
-  renderClientInfo();
-
-  // 2. Render Date-Specific Info (Reflection)
-  dayRatingSelect.value = dayRecord.dayRating || "0";
-  dayNotesTextarea.value = dayRecord.dayNotes || "";
-
-  // 3. Render Task Table (Daily + Weekly)
-  renderTaskTable(clientData, dayRecord, dateStr);
-
-  // 4. Render Image Gallery
-  renderImageGallery();
-
-  // 5. Update Progress Dashboard
-  updateProgress();
-
-  // 6. Clear search field
-  taskSearch.value = "";
-}
-
-function renderTaskTable(clientData, dayRecord, dateStr) {
-    taskTableBody.innerHTML = ""; // Clear existing rows
-
-    const dailyTasks = dayRecord.tasks || [];
-    const weekday = getWeekdayFromDate(dateStr);
-    const weeklyTaskList = clientData.weeklyTasks && clientData.weeklyTasks[weekday]
-                             ? clientData.weeklyTasks[weekday]
-                             : [];
-    const weeklyDoneMap = dayRecord.weeklyDone || {};
-
-    const allTasksToRender = [];
-
-     // Add daily tasks to the temporary list
-    dailyTasks.forEach(task => {
-        allTasksToRender.push({ ...task, taskType: 'daily' });
-    });
-
-    // Add relevant weekly tasks to the temporary list
-    weeklyTaskList.forEach(wTask => {
-         allTasksToRender.push({
-             ...wTask, // includes id, time, duration, activity
-             completed: !!weeklyDoneMap[wTask.id], // done status for *this* date
-             rating: "0", // No rating for weekly
-             taskType: 'weekly'
-         });
-    });
-
-    // Sort the combined list by time
-     allTasksToRender.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-
-
-    if (allTasksToRender.length === 0) {
-         taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(No tasks scheduled for this day)</td></tr>';
-    } else {
-        // Render rows from the sorted list
-        allTasksToRender.forEach(task => {
-            addTaskRow(task, task.taskType);
+        <div class="card add-task-section">
+            <h2>Add Task</h2>
+            <div class="time-duration-container">
+                <div> <label for="timeSelect">Time</label> <select id="timeSelect"></select> </div>
+                <div> <label for="durationSelect">Duration</label> <select id="durationSelect"> <option value="5 min">5 min</option> <option value="10 min">10 min</option> <option value="15 min">15 min</option> <option value="30 min" selected>30 min</option> <option value="45 min">45 min</option> <option value="1 hour">1 hour</option> <option value="90 min">90 min</option> <option value="2 hours">2 hours</option> </select> </div>
+            </div>
+            <div style="margin-bottom: 1rem;"> <label for="activityInput">Activity</label> <input type="text" id="activityInput" placeholder="Task description..."> </div>
+            <div style="margin-bottom: 1rem;"> <label for="taskSearch">Search Tasks</label> <input type="text" id="taskSearch" placeholder="Filter tasks in table..." title="Filter tasks"> </div>
+            <button class="btn btn-primary" id="addBtn" title="Add task (Alt+A)"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg> Add Task </button>
+        </div>
+
+         <div class="card" style="padding: 0;">
+             <h2 style="padding: 1.5rem 1.5rem 0.5rem; margin: 0; border-bottom: 1px solid var(--border-color);">Daily Tasks</h2>
+             <div class="table-wrapper">
+                <table id="taskTable">
+                  <thead><tr><th style="width:20%;">Time/Duration</th><th style="width:40%;">Activity</th><th style="width:8%;">Done</th><th style="width:12%;">Rating</th><th style="width:20%; text-align: right;">Actions</th></tr></thead>
+                  <tbody><tr><td colspan="5" class="text-center no-data">(No tasks added)</td></tr></tbody>
+                </table>
+             </div>
+        </div>
+
+        <div class="card" id="imageGallery">
+            <h3>Image Gallery</h3> <p class="no-data text-center">(No images)</p>
+        </div>
+
+        <div class="card reflection-section">
+            <h3>Daily Reflection</h3>
+            <div class="reflection-item" style="max-width: 150px; margin-bottom: 1rem;"> <label for="dayRatingSelect">Rating (1–5)</label> <select id="dayRatingSelect"> <option value="0">--</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> </select> </div>
+            <div class="reflection-item"> <label for="dayNotes">Notes</label> <textarea id="dayNotes" rows="4" placeholder="Insights? Challenges? Next steps?"></textarea> </div>
+        </div>
+
+        <div class="card" id="progressDashboard">
+          <h3>Progress Dashboard</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+              <div> <p><strong>Task Completion:</strong> <span id="completionRate">-</span></p> <div class="progress-bar-container"> <div id="completionBar" class="progress-bar" style="width: 0%"></div> </div> </div>
+              <div> <p><strong>Avg Day Rating:</strong> <span id="avgDayRatingUpToDate">-</span></p> <div class="progress-bar-container"> <div id="avgRatingBar" class="progress-bar avg-rating" style="width: 0%;"></div> </div> </div>
+              <div> <p><strong>Avg Task Rating:</strong> <span id="averageTaskRating">-</span></p> </div>
+              <div> <p><strong>Today's Rating:</strong> <span id="displayDayRating">-</span></p> </div>
+          </div>
+        </div>
+
+        <div class="google-embed-container">
+            <h2>Google Calendar</h2>
+            <div class="card">
+                <p style="font-size: 0.9em; color: var(--text-light); margin-top: 0; margin-bottom: 0.5em;"> Replace 'YOUR_CALENDAR_ID_HERE'. </p>
+                <iframe id="googleCalendarEmbed" src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID_HERE&ctz=America%2FNew_York" frameborder="0" scrolling="no"> </iframe>
+            </div>
+        </div>
+        <div class="google-embed-container">
+            <h2>Google Tasks</h2>
+            <div id="googleTasksPlaceholder" class="card">
+              <p style="margin-top:0;"> <strong>Note:</strong> Direct embedding unavailable. </p> <p>Use Google Tasks in a separate window.</p>
+            </div>
+        </div>
+
+        <div id="footer"> <p>Data stored locally via <code>localStorage</code>.</p> <p><em>Use Export/Import for backup.</em></p> </div>
+
+    </div> <!-- End .container -->
+
+    <!-- === MODALS === -->
+    <div id="plannerModal"> <div class="modal-content"> <h3>Multi-Day Planner</h3> <p style="color: #4B5563;">For: <strong><span id="plannerClientLabel"></span></strong></p> <hr style="margin: 1rem 0;" /> <div id="plannerDays" style="max-height: 50vh; overflow-y: auto; margin-bottom: 1rem; padding-right: 0.5rem;"></div> <button class="btn btn-secondary" id="addDayBtn" style="margin-bottom: 1rem;">+ Day</button> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelPlanBtn">Cancel</button> <button class="btn btn-primary" id="savePlanBtn">Save Plan</button> </div> </div> </div>
+    <div id="weeklyModal"> <div class="weekly-modal-content"> <h3>Weekly Planner</h3> <p style="color: #4B5563;">For: <span id="weeklyClientLabel"></span></p> <hr style="margin: 1rem 0;" /> <div id="weeklyContent" style="max-height: 60vh; overflow-y: auto; padding-right: 0.5rem;"></div> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelWeeklyBtn">Cancel</button> <button class="btn btn-primary" id="saveWeeklyBtn">Done</button> </div> </div> </div>
+    <div id="imageModal"> <div class="image-modal-content"> <h3>Add Image</h3> <p style="color: #4B5563;">For: <strong><span id="imageClientLabel"></span></strong></p> <hr style="margin: 1rem 0;" /> <div style="margin-bottom: 1rem;"> <label for="imageFileInput">Select File:</label> <input type="file" id="imageFileInput" accept="image/*"> <p style="color:#6B7280;font-size:0.9em; margin-top: 0.5em;"> Or paste (Ctrl+V / Cmd+V). </p> </div> <img id="imagePreview" src="#" alt="Preview"> <div style="margin-top: 1rem;"> <label for="imageTitle">Title (Opt):</label> <input type="text" id="imageTitle" placeholder="Description..."> </div> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelImageBtn">Cancel</button> <button class="btn btn-primary" id="saveImageBtn">Save Image</button> </div> </div> </div>
+
+
+    <script>
+        // === START OF FULL, CORRECTLY FORMATTED JAVASCRIPT ===
+
+        const STORAGE_KEY = "clientTrackerData_v4"; // Use a distinct key for safety
+        let allData = {};
+        let currentClient = null;
+        let currentDate   = null;
+
+        // --- DOM Elements ---
+        const clientSelect = document.getElementById("clientSelect"), addClientBtn = document.getElementById("addClientBtn"), datePicker = document.getElementById("datePicker"), clearTasksBtn = document.getElementById("clearTasksBtn"), exportBtn = document.getElementById("exportBtn"), reportBtn = document.getElementById("reportBtn"), multiDayPlanBtn = document.getElementById("multiDayPlanBtn"), weeklyPlanBtn = document.getElementById("weeklyPlanBtn"), imageBtn = document.getElementById("imageBtn"), newClientForm = document.getElementById("newClientForm"), newClientName = document.getElementById("newClientName"), saveClientBtn = document.getElementById("saveClientBtn"), cancelClientBtn = document.getElementById("cancelClientBtn"), bigGoalInput = document.getElementById("bigGoalInput"), canvasLinkInput = document.getElementById("canvasLinkInput"), classroomLinkInput = document.getElementById("classroomLinkInput"), saveClientInfoBtn = document.getElementById("saveClientInfoBtn"), bigGoalDisplay = document.getElementById("bigGoalDisplay"), canvasLinkAnchor = document.getElementById("canvasLinkAnchor"), classroomLinkAnchor = document.getElementById("classroomLinkAnchor"), timeSelect = document.getElementById("timeSelect"), durationSelect = document.getElementById("durationSelect"), activityInput = document.getElementById("activityInput"), taskSearch = document.getElementById("taskSearch"), addBtn = document.getElementById("addBtn"), taskTableBody = document.getElementById("taskTable").querySelector("tbody"), dayRatingSelect = document.getElementById("dayRatingSelect"), dayNotesTextarea = document.getElementById("dayNotes"), imageGallery = document.getElementById("imageGallery"), completionRateEl = document.getElementById("completionRate"), completionBarEl = document.getElementById("completionBar"), averageTaskRatingEl = document.getElementById("averageTaskRating"), displayDayRatingEl = document.getElementById("displayDayRating"), avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate"), avgRatingBarEl = document.getElementById("avgRatingBar"), plannerModal = document.getElementById("plannerModal"), plannerClientLabel = document.getElementById("plannerClientLabel"), plannerDays = document.getElementById("plannerDays"), addDayBtn = document.getElementById("addDayBtn"), savePlanBtn = document.getElementById("savePlanBtn"), cancelPlanBtn = document.getElementById("cancelPlanBtn"), weeklyModal = document.getElementById("weeklyModal"), weeklyClientLabel = document.getElementById("weeklyClientLabel"), weeklyContent = document.getElementById("weeklyContent"), saveWeeklyBtn = document.getElementById("saveWeeklyBtn"), cancelWeeklyBtn = document.getElementById("cancelWeeklyBtn"), imageModal = document.getElementById("imageModal"), imageClientLabel = document.getElementById("imageClientLabel"), imageFileInput = document.getElementById("imageFileInput"), imagePreview = document.getElementById("imagePreview"), imageTitleInput = document.getElementById("imageTitle"), saveImageBtn = document.getElementById("saveImageBtn"), cancelImageBtn = document.getElementById("cancelImageBtn");
+        const editIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em"> <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /> <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /> </svg>`;
+        const deleteIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em"> <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /> </svg>`;
+
+        // --- Initialization ---
+        window.addEventListener("load", () => {
+            try { const stored = localStorage.getItem(STORAGE_KEY); if (stored) { allData = JSON.parse(stored); if (typeof allData !== 'object' || allData === null) { console.warn("Invalid data, resetting."); allData = {}; } } else { allData = {}; } } catch (error) { console.error("Load error:", error); alert("Could not load data."); allData = {}; }
+            populateClientSelect(); const todayStr = new Date().toISOString().split("T")[0]; datePicker.value = todayStr; currentDate = todayStr; const clientNames = Object.keys(allData).sort(); if (clientNames.length > 0) { currentClient = clientNames[0]; clientSelect.value = currentClient; loadClientDate(currentClient, currentDate); } else { currentClient = null; bigGoalDisplay.textContent = "(Add client)"; taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Add client/date)</td></tr>'; imageGallery.innerHTML = '<p class="no-data text-center">(No images)</p>'; } populateTimeDropdown(); setupEventListeners();
         });
-    }
-}
 
-function resetReflectionFields() {
-    dayRatingSelect.value = "0";
-    dayNotesTextarea.value = "";
-}
-
-function resetProgressDashboard() {
-    completionRateEl.textContent = "-";
-    completionBarEl.style.width = "0%";
-    completionBarEl.textContent = "0%";
-    averageTaskRatingEl.textContent = "-";
-    displayDayRatingEl.textContent = "-";
-    avgDayRatingUpToDateEl.textContent = "-";
-    avgRatingBarEl.style.width = "0%";
-    avgRatingBarEl.textContent = "0/5";
-}
-
-
-/***************************************************************
-  REFLECTION (DAY RATING + NOTES)
-****************************************************************/
-function onDayRatingChange() {
-  if (!currentClient || !currentDate) return;
-  const rec = getDayRecord();
-  if (!rec) return;
-  rec.dayRating = dayRatingSelect.value;
-  saveToLocalStorage();
-  updateProgress(); // Update dashboard display
-}
-// Debounce function
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-};
-// Debounced version of saving notes
-const debouncedSaveNotes = debounce(() => {
-    if (!currentClient || !currentDate) return;
-    const rec = getDayRecord();
-    if (!rec) return;
-    rec.dayNotes = dayNotesTextarea.value;
-    saveToLocalStorage();
-     // console.log("Notes saved"); // Optional: confirmation
-}, 500); // Save 500ms after user stops typing
-
-function onDayNotesChange() {
-    debouncedSaveNotes(); // Call the debounced function
-}
-
-
-// Helper to get the current day record, ensuring structure exists
-function getDayRecord() {
-    if (!currentClient || !currentDate || !allData[currentClient]) return null;
-    if (!allData[currentClient][currentDate]) {
-        allData[currentClient][currentDate] = { dayRating: "0", dayNotes: "", tasks: [], weeklyDone: {} };
-    }
-    return allData[currentClient][currentDate];
-}
-
-
-/***************************************************************
-  TIME DROPDOWN POPULATION
-****************************************************************/
-function populateTimeDropdown() {
-  timeSelect.innerHTML = ""; // Clear existing
-  // Standard times (e.g., 5:00 AM to 11:45 PM in 15 min increments)
-  for (let hour = 5; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const d = new Date();
-      d.setHours(hour, minute);
-      const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-      const opt = document.createElement("option");
-      opt.value = label;
-      opt.textContent = label;
-      timeSelect.appendChild(opt);
-    }
-  }
-  // Add common non-specific times
-  const separator = document.createElement("option");
-  separator.disabled = true;
-  separator.textContent = "──────────"; // Nicer separator
-  timeSelect.appendChild(separator);
-
-  const commonTimes = [
-    "Before School",
-    "During Study Hall",
-    "During Lunch",
-    "Right After School",
-    "Before Dinner",
-    "After Dinner",
-    "Before Bed"
-  ];
-  commonTimes.forEach(t => {
-    const opt = document.createElement("option");
-    opt.value = t;
-    opt.textContent = t;
-    timeSelect.appendChild(opt);
-  });
-
-  // Set a default, e.g., 3:00 PM if possible
-  const defaultTime = "3:00 PM";
-  if (Array.from(timeSelect.options).some(opt => opt.value === defaultTime)) {
-      timeSelect.value = defaultTime;
-  }
-}
-
-/***************************************************************
-  TASK MANAGEMENT (ADD, RENDER, EDIT, REMOVE, SORT)
-****************************************************************/
-function addNewTask() {
-  if (!currentClient || !currentDate) {
-      alert("Please select a client and date first.");
-      return;
-  }
-  const chosenTime = timeSelect.value;
-  const actVal = activityInput.value.trim();
-  const durationVal = durationSelect.value;
-
-  if (!actVal) {
-    alert("Please enter an activity description.");
-    activityInput.focus();
-    return;
-  }
-
-  const rec = getDayRecord();
-  if (!rec) return;
-  if (!rec.tasks) rec.tasks = [];
-
-  const newTask = {
-    // Using timestamp + random for a more robust unique ID (optional but good practice)
-    id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-    time: chosenTime,
-    activity: actVal,
-    completed: false,
-    rating: "0",
-    duration: durationVal
-  };
-
-  rec.tasks.push(newTask);
-  saveToLocalStorage();
-
-  // Re-render the entire table to ensure correct order and remove "no tasks" message
-  renderTaskTable(allData[currentClient], rec, currentDate);
-
-  activityInput.value = ""; // Clear input field
-  activityInput.focus(); // Focus back
-
-  updateProgress(); // Update dashboard stats
-}
-
-// Renders a single task row based on the provided object and type
-function addTaskRow(taskObj, taskType) {
-  const row = taskTableBody.insertRow(); // Appends at the end by default
-  row.classList.add("task-row");
-  row.dataset.taskId = taskObj.id; // Store unique ID if available
-  row.dataset.taskType = taskType;
-  row.dataset.timeValue = convertTimeToMinutes(taskObj.time); // For client-side sorting if needed later
-
-  if (taskObj.completed) row.classList.add("completed-task");
-
-  // Time + duration + Type Indicator
-  const tdTime = row.insertCell(0);
-  tdTime.innerHTML = escapeHtml(taskObj.time);
-  if (taskObj.duration) {
-    tdTime.innerHTML += `<br><span style="font-size:0.8em; color: var(--text-light);">${escapeHtml(taskObj.duration)}</span>`;
-  }
-  if (taskType === 'weekly') {
-        tdTime.innerHTML += `<span class="weekly-indicator">(Weekly)</span>`;
-    }
-
-  // Activity
-  const tdAct = row.insertCell(1);
-  tdAct.textContent = taskObj.activity;
-
-  // Done checkbox
-  const tdDone = row.insertCell(2);
-  const chk = document.createElement("input");
-  chk.type = "checkbox";
-  chk.checked = taskObj.completed;
-  chk.title = "Mark as done / not done";
-  chk.addEventListener("change", () => {
-      row.classList.toggle("completed-task", chk.checked);
-      // Update the correct data structure based on task type
-      if (taskType === 'daily') {
-          const dayRec = getDayRecord();
-          const task = dayRec?.tasks?.find(t => t.id === taskObj.id);
-          if (task) task.completed = chk.checked;
-      } else if (taskType === 'weekly') {
-          const dayRec = getDayRecord();
-          if (!dayRec.weeklyDone) dayRec.weeklyDone = {};
-          dayRec.weeklyDone[taskObj.id] = chk.checked; // Use weekly task's ID
-      }
-      saveToLocalStorage();
-      updateProgress();
-  });
-  tdDone.appendChild(chk);
-
-  // Rating select (Only for Daily Tasks)
-  const tdRating = row.insertCell(3);
-  if (taskType === 'daily') {
-      const ratingSel = document.createElement("select");
-      ratingSel.title = "Rate this task (1-5)";
-      for (let i = 0; i <= 5; i++) {
-          const opt = document.createElement("option");
-          opt.value = i;
-          opt.text = i === 0 ? "–" : i.toString(); // Use en-dash for empty
-          ratingSel.appendChild(opt);
-      }
-      ratingSel.value = taskObj.rating || "0";
-      ratingSel.addEventListener("change", () => {
-           const dayRec = getDayRecord();
-           const task = dayRec?.tasks?.find(t => t.id === taskObj.id);
-           if (task) task.rating = ratingSel.value;
-           saveToLocalStorage();
-           updateProgress();
-      });
-      tdRating.appendChild(ratingSel);
-  } else {
-      tdRating.innerHTML = `<span class="no-data">–</span>`; // Use en-dash
-  }
-
-
-  // Actions (Edit/Delete for Daily, Info for Weekly)
-  const tdActions = row.insertCell(4);
-  tdActions.style.whiteSpace = 'nowrap'; // Prevent buttons wrapping
-  if (taskType === 'daily') {
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "✎"; // Edit icon
-      editBtn.classList.add("btn");
-      editBtn.title = "Edit task";
-      editBtn.addEventListener("click", (e) => {
-           e.stopPropagation(); // Prevent row hover effect while editing
-          makeTaskEditable(row, taskObj);
-      });
-      tdActions.appendChild(editBtn);
-
-      const rmBtn = document.createElement("button");
-      rmBtn.textContent = "✕"; // Delete icon
-      rmBtn.classList.add("btn"); // Default button style, specific styling makes it red-ish
-      rmBtn.title = "Delete task";
-      rmBtn.addEventListener("click", (e) => {
-           e.stopPropagation();
-          if (confirm(`Delete task: "${taskObj.activity}"?`)) {
-              removeTask(taskObj); // Remove from data
-              row.remove();       // Remove from table
-              updateProgress();
-              // Check if table is now empty after removal
-              if (taskTableBody.querySelectorAll('tr.task-row').length === 0) {
-                   taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(No tasks scheduled for this day)</td></tr>';
-              }
-          }
-      });
-      tdActions.appendChild(rmBtn);
-  } else {
-       tdActions.innerHTML = `<span style="color:var(--text-light); font-size:0.85em;">(Weekly)</span>`;
-  }
-}
-
-
-function makeTaskEditable(row, taskObj) {
-  // Prevent editing multiple rows at once (optional but good UX)
-   const currentlyEditing = taskTableBody.querySelector('.editing-task-row');
-    if (currentlyEditing && currentlyEditing !== row) {
-        // Find the cancel button in the other editing row and click it
-        const otherCancelBtn = currentlyEditing.querySelector('.btn-cancel-edit');
-        if (otherCancelBtn) otherCancelBtn.click();
-    }
-  row.classList.add('editing-task-row'); // Add class to identify editing row
-
-  // Store original values and references
-  const originalRowIndex = Array.from(taskTableBody.rows).indexOf(row);
-  const tdTime = row.cells[0];
-  const tdAct = row.cells[1];
-  const tdRating = row.cells[3];
-  const tdActions = row.cells[4];
-
-  // Store original HTML content to restore on cancel
-  const originalTimeHTML = tdTime.innerHTML;
-  const originalActivityHTML = tdAct.innerHTML; // Store original potentially styled text
-  const originalRatingHTML = tdRating.innerHTML;
-  const originalActionsHTML = tdActions.innerHTML;
-
-  // --- Replace Time/Duration Cell ---
-  tdTime.innerHTML = ""; // Clear current content
-  const timeDurContainer = document.createElement('div');
-  timeDurContainer.style.display = 'flex';
-  timeDurContainer.style.flexDirection = 'column';
-  timeDurContainer.style.gap = '4px';
-
-  const newTimeSel = document.createElement("select");
-  newTimeSel.style.marginBottom = '0'; // Override default input margin
-  populateTempTimeDropdown(newTimeSel, taskObj.time);
-  timeDurContainer.appendChild(newTimeSel);
-
-  const newDurSel = document.createElement("select");
-  newDurSel.style.marginBottom = '0';
-  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
-    const opt = document.createElement("option"); opt.value = d; opt.text = d; newDurSel.appendChild(opt);
-  });
-  newDurSel.value = taskObj.duration || "30 min";
-  timeDurContainer.appendChild(newDurSel);
-  tdTime.appendChild(timeDurContainer);
-
-
-  // --- Replace Activity Cell ---
-  tdAct.innerHTML = ""; // Clear current content
-  const actInput = document.createElement("input");
-  actInput.type = "text";
-  actInput.value = taskObj.activity; // Use the data value, not potentially styled textContent
-  actInput.style.width = "100%"; // Ensure it fits cell
-  actInput.style.marginBottom = '0'; // Override default input margin
-  tdAct.appendChild(actInput);
-  actInput.focus();
-  actInput.select();
-
-   // --- Clear Rating Cell (will be restored) ---
-   tdRating.innerHTML = "";
-
-  // --- Replace Actions Cell with Save/Cancel ---
-  tdActions.innerHTML = ""; // Clear edit/delete buttons
-
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
-  saveBtn.classList.add("btn", "btn-primary"); // Make save primary
-  saveBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // Prevent row hover effect
-    const newTime = newTimeSel.value;
-    const newActivity = actInput.value.trim();
-    const newDuration = newDurSel.value;
-
-    if (!newActivity) { alert("Activity cannot be empty."); actInput.focus(); return; }
-
-    // Find the task in the data structure and update it
-    const dayRec = getDayRecord();
-    const taskIndex = dayRec?.tasks?.findIndex(t => t.id === taskObj.id); // Use ID to find
-    if (taskIndex !== undefined && taskIndex > -1) {
-        dayRec.tasks[taskIndex].time = newTime;
-        dayRec.tasks[taskIndex].activity = newActivity;
-        dayRec.tasks[taskIndex].duration = newDuration;
-        saveToLocalStorage();
-
-        // Update the original taskObj reference as well for re-rendering
-        taskObj.time = newTime;
-        taskObj.activity = newActivity;
-        taskObj.duration = newDuration;
-
-        // Re-render the *entire* table to ensure sorting is correct
-        renderTaskTable(allData[currentClient], dayRec, currentDate);
-        updateProgress();
-    } else {
-        console.error("Failed to find task to update in data:", taskObj.id);
-         // Restore original row display as a fallback
-         row.classList.remove('editing-task-row');
-         tdTime.innerHTML = originalTimeHTML;
-         tdAct.innerHTML = originalActivityHTML;
-         tdRating.innerHTML = originalRatingHTML;
-         tdActions.innerHTML = originalActionsHTML;
-         // Re-attach listeners (this part is complex, re-rendering is easier)
-    }
-  });
-  tdActions.appendChild(saveBtn);
-
-  const cancelBtn = document.createElement("button");
-  cancelBtn.textContent = "Cancel";
-  cancelBtn.classList.add("btn", "btn-cancel-edit"); // Add class to identify cancel button
-  cancelBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    // Restore original content by re-rendering the single row (simpler than re-attaching listeners)
-    const currentScroll = window.scrollY; // Preserve scroll position
-    renderTaskTable(allData[currentClient], getDayRecord(), currentDate); // Re-render whole table
-    window.scrollTo(0, currentScroll); // Restore scroll position
-  });
-  tdActions.appendChild(cancelBtn);
-}
-
-
-// Helper for temporary time dropdowns
-function populateTempTimeDropdown(selectElem, currentVal) {
-  const masterOptions = timeSelect.options;
-  for (let i = 0; i < masterOptions.length; i++){
-    const clone = masterOptions[i].cloneNode(true);
-    selectElem.appendChild(clone);
-  }
-  if (Array.from(selectElem.options).some(opt => opt.value === currentVal)) {
-    selectElem.value = currentVal;
-  }
-}
-
-// Sorts the tasks array in the data structure
-function sortTasksByTimeInData() {
-  if (!currentClient || !currentDate) return;
-  const rec = getDayRecord();
-  if (!rec || !rec.tasks || rec.tasks.length < 2) return;
-
-  rec.tasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-  saveToLocalStorage();
-}
-
-// Combined sort function: sorts data AND re-renders the table
-function sortTasksByTime() {
-    sortTasksByTimeInData();
-    if (currentClient && currentDate) {
-        const dayRec = getDayRecord();
-        renderTaskTable(allData[currentClient], dayRec, currentDate); // Re-render table
-    }
-}
-
-
-function convertTimeToMinutes(timeStr) {
-  if (!timeStr) return 9999;
-   const specialTimes = { "Before School": 360, "During Study Hall": 600, "During Lunch": 720, "Right After School": 930, "Before Dinner": 1080, "After Dinner": 1200, "Before Bed": 1320 };
-  if (specialTimes[timeStr] !== undefined) return specialTimes[timeStr];
-
-  const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if (match) {
-    let hours = parseInt(match[1], 10); const minutes = parseInt(match[2], 10); const ampm = match[3].toUpperCase();
-    if (isNaN(hours) || isNaN(minutes)) return 9999;
-    if (ampm === "PM" && hours < 12) hours += 12; if (ampm === "AM" && hours === 12) hours = 0;
-    return hours * 60 + minutes;
-  }
-  return 9999;
-}
-
-function removeTask(taskObj) {
-  const rec = getDayRecord();
-  if (!rec || !rec.tasks) return;
-  // Find using the ID property
-  const idx = rec.tasks.findIndex(task => task.id === taskObj.id);
-  if (idx !== -1) {
-    rec.tasks.splice(idx, 1);
-    saveToLocalStorage();
-  } else {
-      console.warn("Task object not found in data for removal by ID:", taskObj.id);
-      // Fallback: try finding by object reference (less reliable if objects were cloned)
-      const refIdx = rec.tasks.indexOf(taskObj);
-       if (refIdx !== -1) {
-           rec.tasks.splice(refIdx, 1);
-           saveToLocalStorage();
-           console.log("Removed task by reference fallback.");
-       } else {
-            console.error("Failed to remove task by ID or reference.");
-       }
-  }
-}
-
-function clearTasksForClientDate() {
-  if (!currentClient || !currentDate) {
-      alert("Please select a client and date.");
-      return;
-  }
-  if (confirm(`ARE YOU SURE?\n\nThis will delete ALL daily tasks (non-recurring) for ${currentClient} on ${currentDate}.\n\nThis action cannot be undone.`)) {
-    const rec = getDayRecord();
-    if (rec) {
-        rec.tasks = []; // Clear only the daily tasks array
-        saveToLocalStorage();
-        renderTaskTable(allData[currentClient], rec, currentDate); // Re-render table
-        updateProgress(); // Update stats
-        alert("Daily tasks cleared for this date.");
-    }
-  }
-}
-
-function filterTaskTable() {
-    const searchText = taskSearch.value.toLowerCase().trim();
-    const rows = taskTableBody.querySelectorAll("tr.task-row");
-
-    if (rows.length === 0) return; // No rows to filter
-
-    let matchFound = false;
-    rows.forEach(row => {
-      const activityCell = row.cells[1];
-      const activityText = activityCell?.textContent.toLowerCase() || "";
-      const timeCell = row.cells[0];
-      const timeText = timeCell?.textContent.toLowerCase() || ""; // Includes duration and (Weekly)
-
-      const isVisible = activityText.includes(searchText) || timeText.includes(searchText);
-      row.style.display = isVisible ? "" : "none";
-      if (isVisible) matchFound = true;
-    });
-
-    // Optional: Show a message if no tasks match the filter
-    let noMatchRow = taskTableBody.querySelector('.no-match-row');
-    if (!matchFound && searchText !== '') {
-        if (!noMatchRow) {
-            noMatchRow = taskTableBody.insertRow();
-            noMatchRow.classList.add('no-match-row');
-            const cell = noMatchRow.insertCell(0);
-            cell.colSpan = 5; // Span all columns
-            cell.textContent = "No tasks match your search.";
-            cell.className = 'text-center no-data';
+        // --- Event Listeners Setup ---
+        function setupEventListeners() {
+            clientSelect.addEventListener("change", onClientOrDateChange); datePicker.addEventListener("change", onClientOrDateChange);
+            addClientBtn.addEventListener("click", showNewClientForm); saveClientBtn.addEventListener("click", saveNewClient); cancelClientBtn.addEventListener("click", hideNewClientForm);
+            saveClientInfoBtn.addEventListener("click", saveClientInfo); addBtn.addEventListener("click", addNewTask); clearTasksBtn.addEventListener("click", clearTasksForClientDate); exportBtn.addEventListener("click", exportData); reportBtn.addEventListener("click", generateReport);
+            dayRatingSelect.addEventListener("change", onDayRatingChange); dayNotesTextarea.addEventListener("input", onDayNotesChange);
+            multiDayPlanBtn.addEventListener("click", openPlannerModal); addDayBtn.addEventListener("click", addPlannerDay); savePlanBtn.addEventListener("click", saveMultiDayPlan); cancelPlanBtn.addEventListener("click", closePlannerModal);
+            weeklyPlanBtn.addEventListener("click", openWeeklyModal); saveWeeklyBtn.addEventListener("click", saveWeeklySchedule); cancelWeeklyBtn.addEventListener("click", closeWeeklyModal);
+            imageBtn.addEventListener("click", openImageModal); cancelImageBtn.addEventListener("click", closeImageModal); saveImageBtn.addEventListener("click", saveImage); imageModal.addEventListener("paste", handlePasteImage); imageFileInput.addEventListener("change", handleFileInputChange);
+            taskSearch.addEventListener("input", filterTaskTable); document.addEventListener("keydown", handleKeyboardShortcuts);
         }
-    } else {
-        if (noMatchRow) {
-            noMatchRow.remove(); // Remove message if there are matches or search is cleared
+
+        function handleKeyboardShortcuts(e) {
+            const activeEl = document.activeElement; const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
+            if (e.key === "Escape") { if (plannerModal.style.display === "block") closePlannerModal(); else if (weeklyModal.style.display === "block") closeWeeklyModal(); else if (imageModal.style.display === "block") closeImageModal(); else if (newClientForm.style.display === "flex") hideNewClientForm(); else if (isInputFocused) activeEl.blur(); return; }
+            if (isInputFocused && activeEl !== taskSearch) return;
+            if (e.altKey && e.key === "a") { e.preventDefault(); if (document.activeElement === activityInput && activityInput.value.trim() !== '') { addNewTask(); } else { activityInput.focus(); } }
+            if (e.altKey && e.key === "d") { e.preventDefault(); const lR = taskTableBody.querySelector("tr.task-row:last-child"); if (lR) { const cB = lR.querySelector("input[type='checkbox']"); if (cB) { cB.checked = !cB.checked; cB.dispatchEvent(new Event("change")); } } }
+            if (e.altKey && e.key === "s") { e.preventDefault(); sortTasksByTime(); const tB = document.getElementById('taskTable'); tB.style.transition = 'background-color 0.1s ease-out'; tB.style.backgroundColor = '#EBF8FF'; setTimeout(() => { tB.style.backgroundColor = ''; }, 200); }
         }
-    }
-}
 
-
-/***************************************************************
-  EXPORT & REPORT
-****************************************************************/
-function exportData() {
-  if (Object.keys(allData).length === 0) {
-      alert("No data to export.");
-      return;
-  }
-  try {
-      const dataStr = JSON.stringify(allData, null, 2);
-      const dataBlob = new Blob([dataStr], {type: "application/json;charset=utf-8"});
-      const exportFilename = `reset-client-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
-
-      // Use FileSaver.js logic if available, otherwise fallback
-      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-          // For IE/Edge
-          window.navigator.msSaveOrOpenBlob(dataBlob, exportFilename);
-      } else {
-          // For modern browsers
-          const dataUri = URL.createObjectURL(dataBlob);
-          const link = document.createElement("a");
-          link.setAttribute("href", dataUri);
-          link.setAttribute("download", exportFilename);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(dataUri); // Clean up blob URL
-      }
-   } catch (error) {
-        console.error("Error during data export:", error);
-        alert("An error occurred while trying to export data.");
-   }
-}
-
-function generateReport() {
-  if (!currentClient || !allData[currentClient]) {
-      alert("Please select a client with data to generate a report.");
-      return;
-  }
-  const cliData = allData[currentClient];
-  // Use the NEW CSS variables in the report style for consistency
-  let reportHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Client Report - ${escapeHtml(currentClient)}</title>
-      <style>
-        :root { /* Define key colors from main app */
-            --primary-blue: #4A90E2; --primary-blue-light: #EBF4FF;
-            --text-primary: #2D3748; --text-secondary: #4A5568; --text-light: #718096;
-            --border-color: #E2E8F0; --border-color-light: #EDF2F7; --bg-card-secondary: #F8F9FA;
-            --border-radius: 6px; --spacing-unit: 1rem;
-        }
-        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 20px; line-height: 1.6; color: var(--text-primary); }
-        .report-container { max-width: 800px; margin: 0 auto; }
-        h1, h2, h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; margin-top: 1.5em; font-weight: 600;}
-        h1 { font-size: 1.8em; color: var(--primary-blue); border-bottom-width: 2px; }
-        h2 { font-size: 1.4em; margin-top: 2em; }
-        h3 { font-size: 1.1em; color: var(--text-secondary); margin-top: 1.5em; border-bottom-style: dashed;}
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; margin-top: 0.5em; font-size: 0.9em; border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; }
-        th { background-color: var(--bg-card-secondary); text-align: left; padding: 10px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.05em;}
-        td { padding: 10px; vertical-align: top; border-top: 1px solid var(--border-color-light); }
-        tbody tr:nth-child(even) { background-color: #fdfdff; }
-        .notes-box { background-color: #f9f9f9; border: 1px solid var(--border-color-light); padding: 10px; margin: 10px 0; white-space: pre-wrap; border-radius: var(--border-radius); font-size: 0.95em; }
-        .gallery-item { margin-bottom: 15px; border-bottom: 1px solid var(--border-color-light); padding-bottom: 10px; }
-        .gallery-img { max-width: 250px; max-height: 200px; margin-top: 5px; border: 1px solid var(--border-color); display: block; border-radius: var(--border-radius);}
-        .completed td:not(:last-child) { text-decoration: line-through; color: var(--text-light); opacity: 0.8; }
-        .weekly-task-indicator { font-size: 0.8em; color: var(--primary-blue); font-style: italic; display: block; }
-        .rating-value { font-weight: bold; color: var(--primary-blue); }
-        .no-data { color: var(--text-light); font-style: italic; }
-        ul { padding-left: 20px; margin-top: 0.5em; } li { margin-bottom: 0.3em; }
-        a { color: var(--primary-blue); text-decoration: none; } a:hover { text-decoration: underline; }
-      </style>
-    </head>
-    <body>
-    <div class="report-container">
-      <h1>Client Report: ${escapeHtml(currentClient)}</h1>
-      <p><em>Report generated on: ${new Date().toLocaleString()}</em></p>
-
-      <h2>Client Information</h2>
-      <p><strong>Big Goal:</strong> ${escapeHtml(cliData.bigGoal || "(Not Set)")}</p>
-  `;
-
-  // External Links
-  const links = cliData.links || {};
-  if (links.canvas || links.classroom) {
-    reportHtml += `<p><strong>Links:</strong> `;
-    if (links.canvas) reportHtml += `<a href="${escapeHtml(links.canvas)}" target="_blank">Canvas</a> `;
-    if (links.classroom) reportHtml += ` <a href="${escapeHtml(links.classroom)}" target="_blank">Google Classroom</a>`;
-    reportHtml += `</p>`;
-  } else {
-      reportHtml += `<p class="no-data">No external links saved.</p>`;
-  }
-
-  // Weekly Tasks Summary
-  const weeklyTasks = cliData.weeklyTasks || {};
-  let hasWeeklyTasks = false;
-  let weeklyHtml = `<h2>Weekly Recurring Tasks</h2>`;
-  Object.keys(weeklyTasks).sort((a, b) => ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(a) - ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(b)).forEach(day => {
-    const dayTasks = weeklyTasks[day] || [];
-    if (dayTasks.length > 0) {
-      hasWeeklyTasks = true;
-      weeklyHtml += `<h3>${escapeHtml(day.charAt(0).toUpperCase() + day.slice(1))}</h3><ul>`;
-      dayTasks.forEach(t => { weeklyHtml += `<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} ${t.duration ? '(' + escapeHtml(t.duration) + ')' : ''}</li>`; });
-      weeklyHtml += `</ul>`;
-    }
-  });
-  if (hasWeeklyTasks) reportHtml += weeklyHtml;
-  else reportHtml += `<h2>Weekly Recurring Tasks</h2><p class="no-data">No recurring weekly tasks set.</p>`;
-
-
-  // Image Gallery
-  const images = cliData.images || [];
-  if (images.length > 0) {
-    reportHtml += `<h2>Image Gallery</h2>`;
-    images.forEach(img => {
-      reportHtml += `<div class="gallery-item">
-        <strong>${escapeHtml(img.title || "(Untitled)")}</strong><br/>
-        <a href="${img.dataUrl}" target="_blank" title="Click to view full size">
-            <img src="${img.dataUrl}" alt="${escapeHtml(img.title || "Client image")}" class="gallery-img"/>
-        </a>
-      </div>`;
-    });
-  } else {
-     reportHtml += `<h2>Image Gallery</h2><p class="no-data">No images saved for this client.</p>`;
-  }
-
-  // Daily Records
-  reportHtml += `<h2>Daily Records</h2>`;
-  const dateKeys = Object.keys(cliData).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
-
-  if (dateKeys.length === 0) {
-    reportHtml += `<p class="no-data">No daily records found for this client.</p>`;
-  } else {
-    dateKeys.forEach(d => {
-      const rec = cliData[d];
-      if (!rec) return;
-
-      const formattedDate = formatDateForReport(d);
-      const dayRating = (rec.dayRating && rec.dayRating !== "0") ? `<span class="rating-value">${rec.dayRating}/5</span>` : "--";
-      reportHtml += `<h3>${formattedDate} &nbsp; | &nbsp; Day Rating: ${dayRating}</h3>`; // Combined heading
-
-      // Daily Notes
-      if (rec.dayNotes && rec.dayNotes.trim() !== "") {
-        reportHtml += `<div class="notes-box"><strong>Notes:</strong><br/>${escapeHtml(rec.dayNotes).replace(/\n/g, "<br/>")}</div>`;
-      } else {
-         reportHtml += `<p class="no-data">No reflection notes for this day.</p>`;
-      }
-
-      // Tasks Table for the day
-      const dailyTasks = rec.tasks || [];
-      const weekday = getWeekdayFromDate(d);
-      const weeklyList = (cliData.weeklyTasks && cliData.weeklyTasks[weekday]) ? cliData.weeklyTasks[weekday] : [];
-      const weeklyDoneMap = rec.weeklyDone || {};
-
-      const mergedTasks = [];
-      dailyTasks.forEach(t => mergedTasks.push({ ...t, _type: 'daily' }));
-      weeklyList.forEach(wt => { mergedTasks.push({ ...wt, completed: !!weeklyDoneMap[wt.id], rating: "0", _type: 'weekly' }); });
-      mergedTasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-
-      if (mergedTasks.length === 0) {
-        reportHtml += `<p class="no-data">No tasks recorded for this day.</p>`;
-      } else {
-        reportHtml += `<table><thead><tr><th>Time</th><th>Activity</th><th>Duration</th><th>Done?</th><th>Rating</th></tr></thead><tbody>`;
-        let completedCount = 0;
-        mergedTasks.forEach(t => {
-          if (t.completed) completedCount++;
-          const isCompletedClass = t.completed ? 'class="completed"' : '';
-          const ratingStr = (t._type === "daily" && t.rating !== "0") ? `<span class="rating-value">${t.rating}/5</span>` : (t._type === "daily" ? "--" : "<span class='no-data'>(N/A)</span>");
-          const weeklyIndicator = t._type === 'weekly' ? `<span class="weekly-task-indicator">(Weekly)</span>` : '';
-          reportHtml += `<tr ${isCompletedClass}>
-            <td>${escapeHtml(t.time)}${weeklyIndicator}</td>
-            <td>${escapeHtml(t.activity)}</td>
-            <td>${escapeHtml(t.duration || '--')}</td>
-            <td>${t.completed ? 'Yes' : 'No'}</td>
-            <td>${ratingStr}</td>
-          </tr>`;
-        });
-        reportHtml += `</tbody></table><p><strong>Completion:</strong> ${completedCount} / ${mergedTasks.length} tasks</p>`;
-      }
-    });
-  }
-
-  reportHtml += `
-      <hr style="margin-top: 2em; border-color: var(--border-color);">
-      <p style="text-align:center; font-size: 0.8em; color: var(--text-light);">End of Report</p>
-    </div> <!-- End report-container -->
-    </body></html>`;
-
-  const reportWindow = window.open("", "_blank");
-  if (reportWindow) {
-      reportWindow.document.open(); reportWindow.document.write(reportHtml); reportWindow.document.close();
-  } else { alert("Could not open report window. Please check pop-up blocker settings."); }
-}
-
-function formatDateForReport(dateStr) {
-    try {
-        const date = new Date(dateStr + 'T12:00:00Z'); // Use UTC noon
-        return date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }); // Use long month
-    } catch (e) { return dateStr; }
-}
-
-/***************************************************************
-  LOCALSTORAGE & UTILITIES
-****************************************************************/
-function saveToLocalStorage() {
-  try {
-    const dataString = JSON.stringify(allData);
-    localStorage.setItem(STORAGE_KEY, dataString);
-  } catch (error) {
-    if (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ) {
-      console.error("LocalStorage quota exceeded!", error);
-      alert("Error: Storage limit exceeded! Cannot save changes.\nPlease export your data soon and consider clearing older records or large images.");
-    } else {
-      console.error("Error saving data to localStorage:", error);
-      alert("An unexpected error occurred while saving data. Changes might not be preserved.");
-    }
-  }
-}
-
-function updateProgress() {
-  if (!currentClient || !currentDate) { resetProgressDashboard(); return; }
-  const rec = getDayRecord(); if (!rec) { resetProgressDashboard(); return; }
-
-  const clientData = allData[currentClient];
-  const dailyTasks = rec.tasks || [];
-  const weekday = getWeekdayFromDate(currentDate);
-  const weeklyList = (clientData.weeklyTasks && clientData.weeklyTasks[weekday]) ? clientData.weeklyTasks[weekday] : [];
-  const weeklyDoneMap = rec.weeklyDone || {};
-
-  const dailyDoneCount = dailyTasks.filter(t => t.completed).length;
-  const weeklyDoneCount = weeklyList.filter(wt => weeklyDoneMap[wt.id]).length;
-  const totalDone = dailyDoneCount + weeklyDoneCount;
-  const totalTasks = dailyTasks.length + weeklyList.length;
-
-  // Task Completion Progress
-  if (totalTasks === 0) {
-    completionRateEl.textContent = "- (No tasks)"; completionBarEl.style.width = "0%"; completionBarEl.textContent = "";
-  } else {
-    const percentage = Math.round((totalDone / totalTasks) * 100);
-    completionRateEl.textContent = `${percentage}% (${totalDone}/${totalTasks})`;
-    completionBarEl.style.width = `${percentage}%`;
-    completionBarEl.textContent = `${percentage}%`; // Show percentage on bar
-  }
-
-  // Average Daily Task Rating
-  const ratedDailyTasks = dailyTasks.filter(t => t.rating && parseInt(t.rating, 10) > 0);
-  if (ratedDailyTasks.length > 0) {
-    const sumRatings = ratedDailyTasks.reduce((acc, t) => acc + parseInt(t.rating, 10), 0);
-    const avgRating = (sumRatings / ratedDailyTasks.length);
-    averageTaskRatingEl.textContent = `${avgRating.toFixed(1)} / 5 (from ${ratedDailyTasks.length} rated)`;
-  } else { averageTaskRatingEl.textContent = "No daily tasks rated yet"; }
-
-  // Current Day Rating Display
-  const dayRating = rec.dayRating || "0";
-  displayDayRatingEl.textContent = (dayRating !== "0") ? `${dayRating} / 5` : "--";
-
-  // Average Day Rating (All time up to current date)
-  const allClientDates = Object.keys(clientData).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= currentDate).sort();
-  let sumDayRatings = 0; let countRatedDays = 0;
-  allClientDates.forEach(d => {
-    const dayData = clientData[d];
-    if (dayData && dayData.dayRating && dayData.dayRating !== "0") {
-      sumDayRatings += parseInt(dayData.dayRating, 10); countRatedDays++;
-    }
-  });
-  if (countRatedDays > 0) {
-    const avgDayRatingOverall = sumDayRatings / countRatedDays;
-    avgDayRatingUpToDateEl.textContent = `${avgDayRatingOverall.toFixed(1)} / 5 (Avg over ${countRatedDays} days)`;
-    const avgPercentage = Math.max(0, Math.min(100, (avgDayRatingOverall / 5) * 100)); // Clamp between 0-100
-    avgRatingBarEl.style.width = avgPercentage + "%";
-    avgRatingBarEl.textContent = avgDayRatingOverall.toFixed(1) + "/5";
-  } else {
-    avgDayRatingUpToDateEl.textContent = "No prior day ratings"; avgRatingBarEl.style.width = "0%"; avgRatingBarEl.textContent = "";
-  }
-}
-
-function getWeekdayFromDate(dateStr) {
-    try {
-        const date = new Date(dateStr + 'T12:00:00Z'); // Use noon UTC
-        const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-        return weekdays[date.getUTCDay()];
-    } catch (e) {
-        console.error("Error getting weekday from date:", dateStr, e);
-        const fallbackDate = new Date(); const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]; return weekdays[fallbackDate.getDay()];
-    }
-}
-
-function escapeHtml(str) {
-  // More robust escaping
-  if (typeof str !== 'string') return "";
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return str.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-/***************************************************************
-  MULTI-DAY PLANNER MODAL
-****************************************************************/
-function openPlannerModal() {
-    if (!currentClient) { alert("Select a client first."); return; }
-    plannerClientLabel.textContent = currentClient;
-    plannerDays.innerHTML = "";
-    addPlannerDay(); // Add the first day panel automatically
-    plannerModal.style.display = "block";
-}
-function closePlannerModal() { plannerModal.style.display = "none"; }
-
-function addPlannerDay() {
-  const dayCount = plannerDays.querySelectorAll(".day-plan").length;
-  const startDate = new Date(currentDate + 'T12:00:00Z');
-  startDate.setUTCDate(startDate.getUTCDate() + dayCount);
-  const dateStr = startDate.toISOString().split("T")[0];
-
-  const dayDiv = document.createElement("div");
-  dayDiv.className = "day-plan"; dayDiv.dataset.date = dateStr;
-
-  const dateLabel = document.createElement("h4");
-  dateLabel.textContent = `Day ${dayCount + 1}: ${formatDateForUI(dateStr)}`;
-  dayDiv.appendChild(dateLabel);
-
-  // Add the first task entry structure
-  addPlannerTaskEntry(dayDiv);
-
-  // Button to add more tasks to *this* day
-  const addAnotherTaskBtn = document.createElement("button");
-  addAnotherTaskBtn.className = "btn";
-  addAnotherTaskBtn.textContent = "+ Task to This Day"; // Shorter text
-  addAnotherTaskBtn.style.marginTop = "5px";
-  addAnotherTaskBtn.addEventListener("click", () => {
-      // Insert new task entry *before* this button
-      addPlannerTaskEntry(dayDiv, addAnotherTaskBtn);
-  });
-  dayDiv.appendChild(addAnotherTaskBtn);
-
-  plannerDays.appendChild(dayDiv);
-}
-
-// Adds a time/duration/activity input group to a day panel
-function addPlannerTaskEntry(dayDiv, insertBeforeElement = null) {
-    const taskEntryDiv = document.createElement("div");
-    taskEntryDiv.className = "task-entry";
-
-    const controlsContainer = document.createElement('div');
-    controlsContainer.style.display = 'grid';
-    controlsContainer.style.gridTemplateColumns = 'auto auto 1fr'; // Time, Duration, Activity
-    controlsContainer.style.gap = 'var(--spacing-unit)';
-    controlsContainer.style.alignItems = 'flex-end'; // Align bottom of inputs/selects
-
-    // Time
-    const timeGroup = document.createElement('div');
-    const timeLabel = document.createElement("label"); timeLabel.textContent = "Time:"; timeLabel.style.marginBottom='2px';
-    const timeSel = document.createElement("select"); populateTempTimeDropdown(timeSel, "3:00 PM");
-    timeGroup.appendChild(timeLabel); timeGroup.appendChild(timeSel);
-    controlsContainer.appendChild(timeGroup);
-
-    // Duration
-    const durGroup = document.createElement('div');
-    const durLabel = document.createElement("label"); durLabel.textContent = "Duration:"; durLabel.style.marginBottom='2px';
-    const durSel = document.createElement("select");
-    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => { const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt); });
-    durSel.value = "30 min";
-    durGroup.appendChild(durLabel); durGroup.appendChild(durSel);
-    controlsContainer.appendChild(durGroup);
-
-    // Activity
-    const actGroup = document.createElement('div');
-    const actLabel = document.createElement("label"); actLabel.textContent = "Activity:"; actLabel.style.marginBottom='2px';
-    const actInput = document.createElement("input"); actInput.type = "text"; actInput.placeholder = "Task description...";
-    actGroup.appendChild(actLabel); actGroup.appendChild(actInput);
-    controlsContainer.appendChild(actGroup);
-
-    taskEntryDiv.appendChild(controlsContainer);
-
-    // Insert the new task entry div into the day panel
-    if (insertBeforeElement) { dayDiv.insertBefore(taskEntryDiv, insertBeforeElement); }
-    else { dayDiv.appendChild(taskEntryDiv); } // Append if no specific insertion point (like the very first one)
-}
-
-
-function formatDateForUI(dateStr) {
-  try {
-      const d = new Date(dateStr + 'T12:00:00Z');
-      return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-  } catch (e) { return dateStr; }
-}
-
-function saveMultiDayPlan() {
-  if (!currentClient) return;
-  const dayPlanDivs = plannerDays.querySelectorAll(".day-plan");
-  let tasksAddedCount = 0;
-
-  dayPlanDivs.forEach(dayDiv => {
-    const dateStr = dayDiv.dataset.date; if (!dateStr) return;
-    if (!allData[currentClient][dateStr]) { allData[currentClient][dateStr] = { dayRating: "0", dayNotes: "", tasks: [], weeklyDone: {} }; }
-    const dayRecord = allData[currentClient][dateStr]; if (!dayRecord.tasks) dayRecord.tasks = [];
-
-    const taskEntries = dayDiv.querySelectorAll(".task-entry");
-    taskEntries.forEach(entry => {
-        const timeSelect = entry.querySelector("select:nth-of-type(1)");
-        const durationSelect = entry.querySelector("select:nth-of-type(2)");
-        const activityInput = entry.querySelector("input[type='text']");
-        if (timeSelect && durationSelect && activityInput) {
-            const activity = activityInput.value.trim();
-            if (activity) {
-                dayRecord.tasks.push({
-                    id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, // Add ID here too
-                    time: timeSelect.value, duration: durationSelect.value, activity: activity, completed: false, rating: "0"
-                });
-                tasksAddedCount++;
-            }
-        }
-    });
-     dayRecord.tasks.sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-  });
-
-  saveToLocalStorage();
-  loadClientDate(currentClient, currentDate); // Reload current view
-  closePlannerModal();
-  alert(`Multi-day plan saved! ${tasksAddedCount} tasks were added.`);
-}
-
-/***************************************************************
-  WEEKLY PLANNER MODAL
-****************************************************************/
-function openWeeklyModal() {
-  if (!currentClient) { alert("Select a client first."); return; }
-  weeklyClientLabel.textContent = currentClient;
-  buildWeeklyContent();
-  weeklyModal.style.display = "block";
-}
-function closeWeeklyModal() { weeklyModal.style.display = "none"; }
-
-function buildWeeklyContent() {
-  weeklyContent.innerHTML = ""; // Clear previous content
-  const weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-  if (!allData[currentClient].weeklyTasks) { allData[currentClient].weeklyTasks = {}; } // Ensure object exists
-  const clientWeeklyTasks = allData[currentClient].weeklyTasks;
-
-  weekdays.forEach(day => {
-    const daySectionDiv = document.createElement("div"); daySectionDiv.classList.add("weekly-day-section");
-    const heading = document.createElement("h4"); heading.textContent = day.charAt(0).toUpperCase() + day.slice(1); daySectionDiv.appendChild(heading);
-    const tasksListDiv = document.createElement("div"); tasksListDiv.id = `weekly-tasks-${day}`;
-
-    if (!clientWeeklyTasks[day]) clientWeeklyTasks[day] = []; // Ensure array exists
-    const dayTasks = clientWeeklyTasks[day]; // Already sorted on add/save
-
-    if (dayTasks.length > 0) {
-      dayTasks.forEach(task => {
-        const taskRow = document.createElement("div"); taskRow.classList.add('weekly-task-row');
-        const taskText = document.createElement("span"); taskText.textContent = `[${escapeHtml(task.time)}] ${escapeHtml(task.activity)} (${escapeHtml(task.duration)})`; taskRow.appendChild(taskText);
-        const removeBtn = document.createElement("button"); removeBtn.textContent = "✕"; removeBtn.classList.add("btn"); removeBtn.title = "Remove weekly task"; removeBtn.style.marginLeft = "auto";
-        removeBtn.addEventListener("click", () => {
-          if (confirm(`Remove weekly task "${task.activity}" for ${day}?`)) {
-            const index = dayTasks.findIndex(t => t.id === task.id);
-            if (index !== -1) { dayTasks.splice(index, 1); saveToLocalStorage(); buildWeeklyContent(); }
-          }
-        });
-        taskRow.appendChild(removeBtn); tasksListDiv.appendChild(taskRow);
-      });
-    } else { tasksListDiv.innerHTML = `<p class="no-data">No weekly tasks for ${day}.</p>`; }
-    daySectionDiv.appendChild(tasksListDiv);
-
-    // Input row to add new weekly tasks
-    const addRow = document.createElement("div");
-    addRow.style.marginTop = "15px"; addRow.style.paddingTop = "10px"; addRow.style.borderTop = "1px dashed var(--border-color)";
-    addRow.style.display = "flex"; addRow.style.flexWrap = "wrap"; addRow.style.gap = "10px"; addRow.style.alignItems = "flex-end";
-
-    const timeSel = document.createElement("select"); populateTempTimeDropdown(timeSel, "3:00 PM"); timeSel.title = "Time";
-    const durSel = document.createElement("select"); ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => { const opt = document.createElement("option"); opt.value = d; opt.text = d; durSel.appendChild(opt); }); durSel.value = "30 min"; durSel.title = "Duration";
-    const actInput = document.createElement("input"); actInput.type = "text"; actInput.placeholder = "New weekly activity..."; actInput.style.flexGrow = "1"; actInput.style.minWidth = "200px";
-    const addBtn = document.createElement("button"); addBtn.textContent = "+ Add"; addBtn.classList.add("btn"); addBtn.title = `Add weekly task for ${day}`;
-    addBtn.addEventListener("click", () => {
-      const activity = actInput.value.trim(); if (!activity) { alert("Enter an activity."); actInput.focus(); return; }
-      const newWeeklyId = `wt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      clientWeeklyTasks[day].push({ id: newWeeklyId, time: timeSel.value, duration: durSel.value, activity: activity });
-      clientWeeklyTasks[day].sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time)); // Sort after adding
-      saveToLocalStorage(); buildWeeklyContent();
-    });
-    addRow.appendChild(timeSel); addRow.appendChild(durSel); addRow.appendChild(actInput); addRow.appendChild(addBtn);
-    daySectionDiv.appendChild(addRow);
-
-    weeklyContent.appendChild(daySectionDiv);
-  });
-}
-function saveWeeklySchedule() {
-  // Saving is implicit, this button just closes and reloads main view
-  closeWeeklyModal();
-  loadClientDate(currentClient, currentDate);
-  // No alert needed, action is clear
-}
-
-/***************************************************************
-  IMAGE HANDLING MODAL & GALLERY
-****************************************************************/
-function openImageModal() {
-   if (!currentClient) { alert("Select a client first."); return; }
-   imageClientLabel.textContent = currentClient;
-   imageFileInput.value = ""; imagePreview.src = "#"; imagePreview.style.display = "none"; imageTitleInput.value = "";
-   imageModal.style.display = "block";
-}
-function closeImageModal() { imageModal.style.display = "none"; }
-
-function handleFileInputChange(event) {
-  const file = event.target.files ? event.target.files[0] : null; if (!file) return;
-  if (!file.type.startsWith("image/")) { alert("Please select an image file."); imageFileInput.value = ""; return; }
-  if (file.size > 10 * 1024 * 1024) { // Check size > 10MB
-      alert("Warning: Image file is very large (> 10MB) and may cause issues with saving. Consider resizing it first.");
-       // Optionally prevent processing: imageFileInput.value = ""; return;
-  }
-  const reader = new FileReader();
-  reader.onload = (e) => { imagePreview.src = e.target.result; imagePreview.style.display = "block"; };
-  reader.onerror = (e) => { console.error("FileReader error:", e); alert("Error reading file."); };
-  reader.readAsDataURL(file);
-}
-function handlePasteImage(event) {
-    if (imageModal.style.display !== 'block') return;
-    const items = (event.clipboardData || window.clipboardData)?.items; if (!items) return;
-    let foundImage = false;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf("image") !== -1) {
-            const blob = items[i].getAsFile();
-            if (blob) {
-                if (blob.size > 10 * 1024 * 1024) { // Check size > 10MB
-                    alert("Warning: Pasted image is very large (> 10MB) and may cause issues with saving. Consider using a smaller image.");
-                     // Optionally prevent processing: return;
-                }
-                foundImage = true; const reader = new FileReader();
-                reader.onload = (evt) => { imagePreview.src = evt.target.result; imagePreview.style.display = "block"; };
-                reader.onerror = (e) => { console.error("FileReader error on paste:", e); alert("Error reading pasted image."); };
-                reader.readAsDataURL(blob); imageFileInput.value = ""; break;
-            }
-        }
-    }
-}
-
-function saveImage() {
-  if (!imagePreview.src || imagePreview.src === window.location.href + "#" || imagePreview.style.display === 'none') { alert("No image selected or pasted."); return; }
-  if (!currentClient) return;
-  if (!allData[currentClient]) return; if (!allData[currentClient].images) allData[currentClient].images = [];
-
-  const title = imageTitleInput.value.trim() || `Image (${formatDateForUI(currentDate)})`;
-  const imageDataUrl = imagePreview.src;
-
-  // Double-check size before saving (useful if warning was ignored)
-   if (imageDataUrl.length > 15 * 1024 * 1024) { // Stricter check on data URL length (approx > 10-11MB)
-        if (!confirm("SAVE WARNING: This image is very large and might prevent future data saving due to browser storage limits. SAVE ANYWAY?")) {
-            return;
-        }
-    }
-
-  allData[currentClient].images.push({ title: title, dataUrl: imageDataUrl });
-  try {
-      saveToLocalStorage(); // Try saving immediately
-  } catch(e) {
-      // If saving failed (likely due to size), remove the image we just added
-      allData[currentClient].images.pop();
-      // Don't re-throw, the saveToLocalStorage function already alerted the user
-      return; // Stop execution here
-  }
-
-  closeImageModal();
-  renderImageGallery();
-  // alert("Image saved!"); // Less intrusive confirmation? Maybe change button text briefly?
-}
-
-function renderImageGallery() {
-  imageGallery.innerHTML = ""; // Clear current gallery
-  if (!currentClient || !allData[currentClient] || !allData[currentClient].images || allData[currentClient].images.length === 0) {
-    imageGallery.innerHTML = '<p class="no-data text-center">(No images added for this client yet)</p>';
-    return;
-  }
-
-  const imgs = allData[currentClient].images;
-  const h3 = document.createElement("h3"); h3.textContent = "Image Gallery"; h3.style.marginTop = "0"; imageGallery.appendChild(h3);
-
-  // Display images in reverse order (newest first)
-  [...imgs].reverse().forEach((imgObj, index) => {
-      const originalIndex = imgs.length - 1 - index;
-      const div = document.createElement("div"); div.classList.add("gallery-item");
-      const thumb = document.createElement("img"); thumb.src = imgObj.dataUrl; thumb.alt = escapeHtml(imgObj.title); thumb.title = "Click to view full size";
-      thumb.addEventListener("click", () => {
-        const imgWindow = window.open("", "_blank");
-        imgWindow.document.write(`<title>${escapeHtml(imgObj.title)}</title><style>body{margin:0; background:#333;} img{display:block; max-width:100%; max-height:100vh; margin:auto;}</style><body><img src="${imgObj.dataUrl}" alt="${escapeHtml(imgObj.title)}"></body>`);
-        imgWindow.document.close();
-      });
-      div.appendChild(thumb);
-
-      const span = document.createElement("span"); span.classList.add("title"); span.textContent = escapeHtml(imgObj.title); div.appendChild(span);
-
-      const rmBtn = document.createElement("button"); rmBtn.classList.add("btn"); rmBtn.textContent = "✕"; rmBtn.title = "Remove image"; rmBtn.style.marginLeft = "auto";
-      rmBtn.addEventListener("click", () => {
-          if (confirm(`Remove image "${escapeHtml(imgObj.title)}"? This cannot be undone.`)) {
-              imgs.splice(originalIndex, 1); saveToLocalStorage(); renderImageGallery();
-          }
-      });
-      div.appendChild(rmBtn);
-      imageGallery.appendChild(div);
-  });
-}
-
-</script>
+        // --- Client Management ---
+        function populateClientSelect(){clientSelect.innerHTML="";const cN=Object.keys(allData).sort();const hC=cN.length>0;clientSelect.disabled=!hC;multiDayPlanBtn.disabled=!hC;weeklyPlanBtn.disabled=!hC;imageBtn.disabled=!hC;reportBtn.disabled=!hC;clearTasksBtn.disabled=!hC;saveClientInfoBtn.disabled=!hC;if(!hC){const o=document.createElement("option");o.textContent="-- No Clients --";o.value="";clientSelect.appendChild(o);}else{cN.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;clientSelect.appendChild(o);});}}
+        function showNewClientForm(){newClientForm.style.display="flex";newClientName.value="";newClientName.focus();}
+        function hideNewClientForm(){newClientForm.style.display="none";}
+        function saveNewClient(){const n=newClientName.value.trim();if(!n){alert("Enter name.");return;}if(allData[n]){alert(`Client "${n}" exists.`);return;}allData[n]={bigGoal:"",links:{canvas:"",classroom:""},weeklyTasks:{monday:[],tuesday:[],wednesday:[],thursday:[],friday:[],saturday:[],sunday:[]},images:[]};saveToLocalStorage();populateClientSelect();clientSelect.value=n;currentClient=n;currentDate=datePicker.value;loadClientDate(currentClient,currentDate);hideNewClientForm();}
+        function saveClientInfo(){if(!currentClient){alert("Select client.");return;}const cD=allData[currentClient];if(!cD)return;cD.bigGoal=bigGoalInput.value.trim();if(!cD.links)cD.links={};cD.links.canvas=canvasLinkInput.value.trim();cD.links.classroom=classroomLinkInput.value.trim();saveToLocalStorage();renderClientInfo();const btn=saveClientInfoBtn;const oT=btn.textContent;btn.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em" style="margin-right: 0.4em;"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" /></svg> Saved!`;btn.style.backgroundColor='#10B981';btn.disabled=true;setTimeout(()=>{btn.innerHTML=oT;btn.style.backgroundColor='';btn.disabled=false;},1500);}
+        function renderClientInfo(){if(!currentClient||!allData[currentClient]){bigGoalDisplay.textContent="(Select client)";bigGoalInput.value="";canvasLinkInput.value="";classroomLinkInput.value="";canvasLinkAnchor.style.display="none";classroomLinkAnchor.style.display="none";return;}const cD=allData[currentClient];bigGoalDisplay.textContent=cD.bigGoal||"(No Goal Set)";bigGoalInput.value=cD.bigGoal||"";const l=cD.links||{};canvasLinkAnchor.style.display=(l.canvas&&l.canvas.startsWith('http'))?"inline-flex":"none";if(l.canvas)canvasLinkAnchor.href=l.canvas;canvasLinkInput.value=l.canvas||"";classroomLinkAnchor.style.display=(l.classroom&&l.classroom.startsWith('http'))?"inline-flex":"none";if(l.classroom)classroomLinkAnchor.href=l.classroom;classroomLinkInput.value=l.classroom||"";}
+
+        // --- Core Data Loading & Display ---
+        function onClientOrDateChange(){currentClient=clientSelect.value;currentDate=datePicker.value;if(currentClient&¤tDate){loadClientDate(currentClient,currentDate);}else{taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(Select client/date)</td></tr>';renderClientInfo();resetReflectionFields();resetProgressDashboard();imageGallery.innerHTML='<p class="no-data text-center">(No images)</p>';}}
+        function loadClientDate(cN,dS){if(!cN||!dS)return;if(!allData[cN]){allData[cN]={bigGoal:"",links:{},weeklyTasks:{},images:[]};}if(!allData[cN][dS]){allData[cN][dS]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}const cD=allData[cN];const dR=cD[dS];renderClientInfo();dayRatingSelect.value=dR.dayRating||"0";dayNotesTextarea.value=dR.dayNotes||"";renderTaskTable(cD,dR,dS);renderImageGallery();updateProgress();taskSearch.value="";filterTaskTable();}
+        function renderTaskTable(cD,dR,dS){taskTableBody.innerHTML="";const dT=dR.tasks||[];const wd=getWeekdayFromDate(dS);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=dR.weeklyDone||{};const allT=[];dT.forEach(t=>allT.push({...t,taskType:'daily'}));wL.forEach(wT=>allT.push({...wT,completed:!!wDM[wT.id],rating:"0",taskType:'weekly'}));allT.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));if(allT.length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks scheduled)</td></tr>';}else{allT.forEach(t=>addTaskRow(t,t.taskType));}}
+        function resetReflectionFields(){dayRatingSelect.value="0";dayNotesTextarea.value="";}
+        function resetProgressDashboard(){completionRateEl.textContent="-";completionBarEl.style.width="0%";averageTaskRatingEl.textContent="-";displayDayRatingEl.textContent="-";avgDayRatingUpToDateEl.textContent="-";avgRatingBarEl.style.width="0%";}
+
+        // --- Reflection ---
+        function onDayRatingChange(){if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r)return;r.dayRating=dayRatingSelect.value;saveToLocalStorage();updateProgress();}
+        const debounce=(func,wait)=>{let timeout;return(...args)=>{clearTimeout(timeout);timeout=setTimeout(()=>func.apply(this,args),wait);};};
+        const debouncedSaveNotes=debounce(()=>{if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r)return;r.dayNotes=dayNotesTextarea.value;saveToLocalStorage();},500);
+        function onDayNotesChange(){debouncedSaveNotes();}
+        function getDayRecord(){if(!currentClient||!currentDate||!allData[currentClient])return null;if(!allData[currentClient][currentDate]){allData[currentClient][currentDate]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}return allData[currentClient][currentDate];}
+
+        // --- Time Dropdown ---
+        function populateTimeDropdown(){timeSelect.innerHTML="";for(let h=5;h<24;h++){for(let m=0;m<60;m+=15){const d=new Date();d.setHours(h,m);const l=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',hour12:true});const o=document.createElement("option");o.value=l;o.textContent=l;timeSelect.appendChild(o);}}const s=document.createElement("option");s.disabled=true;s.textContent="──────────";timeSelect.appendChild(s);const cT=["Before School","Study Hall","Lunch","After School","Before Dinner","After Dinner","Before Bed"];cT.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;timeSelect.appendChild(o);});const dF="3:00 PM";if(Array.from(timeSelect.options).some(o=>o.value===dF))timeSelect.value=dF;}
+
+        // --- Task Management ---
+        function addNewTask(){if(!currentClient||!currentDate){alert("Select client/date.");return;}const t=timeSelect.value;const a=activityInput.value.trim();const d=durationSelect.value;if(!a){alert("Enter activity.");activityInput.focus();return;}const rec=getDayRecord();if(!rec)return;if(!rec.tasks)rec.tasks=[];const nT={id:`task_${Date.now()}_${Math.random().toString(36).substring(2,9)}`,time:t,activity:a,completed:false,rating:"0",duration:d};rec.tasks.push(nT);saveToLocalStorage();renderTaskTable(allData[currentClient],rec,currentDate);activityInput.value="";activityInput.focus();updateProgress();}
+        function addTaskRow(tO,tT){const r=taskTableBody.insertRow();r.className="task-row";r.dataset.taskId=tO.id;r.dataset.taskType=tT;r.dataset.timeValue=convertTimeToMinutes(tO.time);if(tO.completed)r.classList.add("completed-task");const tD=r.insertCell(0);tD.innerHTML=escapeHtml(tO.time);if(tO.duration)tD.innerHTML+=`<br><span style="font-size:0.8em;color:#6B7280;">${escapeHtml(tO.duration)}</span>`;if(tT==='weekly')tD.innerHTML+=`<span class="weekly-indicator">(Weekly)</span>`;const tA=r.insertCell(1);tA.textContent=tO.activity;const tDn=r.insertCell(2);const cK=document.createElement("input");cK.type="checkbox";cK.checked=tO.completed;cK.title="Mark done/undone";cK.className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500";cK.addEventListener("change",()=>{r.classList.toggle("completed-task",cK.checked);if(tT==='daily'){const dR=getDayRecord();const t=dR?.tasks?.find(t=>t.id===tO.id);if(t)t.completed=cK.checked;}else if(tT==='weekly'){const dR=getDayRecord();if(!dR.weeklyDone)dR.weeklyDone={};dR.weeklyDone[tO.id]=cK.checked;}saveToLocalStorage();updateProgress();});tDn.appendChild(cK);const tR=r.insertCell(3);if(tT==='daily'){const sL=document.createElement("select");sL.title="Rate task (1-5)";for(let i=0;i<=5;i++){const o=document.createElement("option");o.value=i;o.text=i===0?"–":i.toString();sL.appendChild(o);}sL.value=tO.rating||"0";sL.addEventListener("change",()=>{const dR=getDayRecord();const t=dR?.tasks?.find(t=>t.id===tO.id);if(t)t.rating=sL.value;saveToLocalStorage();updateProgress();});tR.appendChild(sL);}else{tR.innerHTML=`<span class="no-data">–</span>`;}const tAc=r.insertCell(4);tAc.style.textAlign='right';if(tT==='daily'){const eB=document.createElement("button");eB.innerHTML=editIconSVG;eB.className="btn btn-icon";eB.title="Edit task";eB.addEventListener("click",(e)=>{e.stopPropagation();makeTaskEditable(r,tO);});tAc.appendChild(eB);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Delete task";rB.addEventListener("click",(e)=>{e.stopPropagation();if(confirm(`Delete task: "${tO.activity}"?`)){removeTask(tO);r.remove();updateProgress();if(taskTableBody.querySelectorAll('tr.task-row').length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks)</td></tr>';}}});tAc.appendChild(rB);}}
+        function makeTaskEditable(row,taskObj){const cE=taskTableBody.querySelector('.editing-task-row');if(cE&&cE!==row){const oCB=cE.querySelector('.btn-cancel-edit');if(oCB)oCB.click();}row.classList.add('editing-task-row');const tT=row.cells[0];const tA=row.cells[1];const tR=row.cells[3];const tAc=row.cells[4];const oTHTML=tT.innerHTML;const oAHTML=tA.innerHTML;const oRHTML=tR.innerHTML;const oAcHTML=tAc.innerHTML;tT.innerHTML="";const tDC=document.createElement('div');tDC.style.display='flex';tDC.style.flexDirection='column';tDC.style.gap='4px';const nTS=document.createElement("select");nTS.style.marginBottom='0';populateTempTimeDropdown(nTS,taskObj.time);tDC.appendChild(nTS);const nDS=document.createElement("select");nDS.style.marginBottom='0';["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;nDS.appendChild(o);});nDS.value=taskObj.duration||"30 min";tDC.appendChild(nDS);tT.appendChild(tDC);tA.innerHTML="";const aI=document.createElement("input");aI.type="text";aI.value=taskObj.activity;aI.style.width="100%";aI.style.marginBottom='0';tA.appendChild(aI);aI.focus();aI.select();tR.innerHTML="";tAc.innerHTML="";const sB=document.createElement("button");sB.textContent="Save";sB.className="btn btn-primary";sB.style.fontSize='0.85em';sB.style.padding='0.3em 0.6em';sB.addEventListener("click",(e)=>{e.stopPropagation();const nT=nTS.value;const nA=aI.value.trim();const nD=nDS.value;if(!nA){alert("Activity empty.");aI.focus();return;}const dR=getDayRecord();const tI=dR?.tasks?.findIndex(t=>t.id===taskObj.id);if(tI!==undefined&&tI>-1){dR.tasks[tI].time=nT;dR.tasks[tI].activity=nA;dR.tasks[tI].duration=nD;saveToLocalStorage();taskObj.time=nT;taskObj.activity=nA;taskObj.duration=nD;renderTaskTable(allData[currentClient],dR,currentDate);updateProgress();}else{console.error("Failed find task:",taskObj.id);renderTaskTable(allData[currentClient],getDayRecord(),currentDate);}});tAc.appendChild(sB);const cB=document.createElement("button");cB.textContent="Cancel";cB.className="btn btn-secondary btn-cancel-edit";cB.style.fontSize='0.85em';cB.style.padding='0.3em 0.6em';cB.addEventListener("click",(e)=>{e.stopPropagation();row.classList.remove('editing-task-row');tT.innerHTML=oTHTML;tA.innerHTML=oAHTML;tR.innerHTML=oRHTML;tAc.innerHTML=oAcHTML;const rEB=tAc.querySelector('.btn-icon:not(.btn-icon-delete)');const rDB=tAc.querySelector('.btn-icon-delete');if(rEB)rEB.addEventListener("click",(ev)=>{ev.stopPropagation();makeTaskEditable(row,taskObj);});if(rDB)rDB.addEventListener("click",(ev)=>{ev.stopPropagation();if(confirm(`Delete task: "${taskObj.activity}"?`)){removeTask(taskObj);row.remove();updateProgress();if(taskTableBody.querySelectorAll('tr.task-row').length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks)</td></tr>';}}});});tAc.appendChild(cB);} // Restored cancel logic more carefully
+        function populateTempTimeDropdown(sel,cur){const mO=timeSelect.options;for(let i=0;i<mO.length;i++){const c=mO[i].cloneNode(true);sel.appendChild(c);}if(Array.from(sel.options).some(o=>o.value===cur)){sel.value=cur;}}
+        function sortTasksByTimeInData(){if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r||!r.tasks||r.tasks.length<2)return;r.tasks.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));saveToLocalStorage();}
+        function sortTasksByTime(){sortTasksByTimeInData();if(currentClient&¤tDate){const dR=getDayRecord();renderTaskTable(allData[currentClient],dR,currentDate);}}
+        function convertTimeToMinutes(tS){if(!tS)return 9999;const sT={"Before School":360,"Study Hall":600,"Lunch":720,"After School":930,"Before Dinner":1080,"After Dinner":1200,"Before Bed":1320};if(sT[tS]!==undefined)return sT[tS];const m=tS.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(m){let h=parseInt(m[1],10);const mn=parseInt(m[2],10);const ampm=m[3].toUpperCase();if(isNaN(h)||isNaN(mn))return 9999;if(ampm==="PM"&&h<12)h+=12;if(ampm==="AM"&&h===12)h=0;return h*60+mn;}return 9999;}
+        function removeTask(tO){const r=getDayRecord();if(!r||!r.tasks)return;const i=r.tasks.findIndex(t=>t.id===tO.id);if(i!==-1){r.tasks.splice(i,1);saveToLocalStorage();}else{console.warn("Task not found:",tO.id);}}
+        function clearTasksForClientDate(){if(!currentClient||!currentDate){alert("Select client/date.");return;}if(confirm(`DELETE ALL daily tasks for ${currentClient} on ${currentDate}? This cannot be undone.`)){const r=getDayRecord();if(r){r.tasks=[];saveToLocalStorage();renderTaskTable(allData[currentClient],r,currentDate);updateProgress();}}}
+        function filterTaskTable(){const s=taskSearch.value.toLowerCase().trim();const rows=taskTableBody.querySelectorAll("tr.task-row");let match=false;rows.forEach(r=>{const aT=r.cells[1]?.textContent.toLowerCase()||"";const tT=r.cells[0]?.textContent.toLowerCase()||"";const v=aT.includes(s)||tT.includes(s);r.style.display=v?"":"none";if(v)match=true;});let nR=taskTableBody.querySelector('.no-match-row');if(!match&&s!==''&&rows.length>0){if(!nR){nR=taskTableBody.insertRow();nR.className='no-match-row';const c=nR.insertCell(0);c.colSpan=5;c.textContent="No tasks match search.";c.className='text-center no-data';}}else{if(nR)nR.remove();}}
+
+        // --- Export & Report ---
+        function exportData(){if(Object.keys(allData).length===0){alert("No data.");return;}try{const dS=JSON.stringify(allData,null,2);const dB=new Blob([dS],{type:"application/json;charset=utf-8"});const fN=`client-tracker-export-${new Date().toISOString().split('T')[0]}.json`;if(window.navigator&&window.navigator.msSaveOrOpenBlob){window.navigator.msSaveOrOpenBlob(dB,fN);}else{const dU=URL.createObjectURL(dB);const l=document.createElement("a");l.href=dU;l.download=fN;document.body.appendChild(l);l.click();document.body.removeChild(l);URL.revokeObjectURL(dU);}}catch(e){console.error("Export error:",e);alert("Error exporting.");}}
+        function generateReport(){if(!currentClient||!allData[currentClient]){alert("Select client.");return;}const cD=allData[currentClient];let rH=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report - ${escapeHtml(currentClient)}</title><style>body{font-family:'Inter',sans-serif;margin:20px;line-height:1.6;color:#1F2937;}.report-container{max-width:800px;margin:0 auto;}h1,h2,h3{border-bottom:1px solid #E5E7EB;padding-bottom:0.3em;margin-top:1.5em;font-weight:600;}h1{font-size:1.8em;color:#1D4ED8;border-bottom-width:2px;}h2{font-size:1.4em;margin-top:2em;}h3{font-size:1.1em;color:#4B5563;margin-top:1.5em;border-bottom-style:dashed;}table{width:100%;border-collapse:collapse;margin:0.5em 0 1.5em;font-size:0.9em;border:1px solid #E5E7EB;border-radius:0.375rem;overflow:hidden;}th{background-color:#F9FAFB;text-align:left;padding:10px;font-weight:500;text-transform:uppercase;font-size:0.8em;letter-spacing:0.05em;}td{padding:10px;vertical-align:top;border-top:1px solid #F3F4F6;}tbody tr:nth-child(even){background-color:#F9FAFB;}.notes-box{background-color:#F9FAFB;border:1px solid #E5E7EB;padding:10px;margin:10px 0;white-space:pre-wrap;border-radius:0.375rem;font-size:0.95em;}.gallery-item{margin-bottom:15px;border-bottom:1px solid #F3F4F6;padding-bottom:10px;}.gallery-img{max-width:250px;max-height:200px;margin-top:5px;border:1px solid #E5E7EB;display:block;border-radius:0.375rem;}.completed td:not(:last-child){text-decoration:line-through;color:#9CA3AF;opacity:0.8;}.weekly-task-indicator{font-size:0.8em;color:#60A5FA;font-style:italic;display:block;}.rating-value{font-weight:bold;color:#2563EB;}.no-data{color:#6B7280;font-style:italic;}ul{padding-left:20px;margin-top:0.5em;}li{margin-bottom:0.3em;}a{color:#2563EB;text-decoration:none;}a:hover{text-decoration:underline;}</style></head><body><div class="report-container"><h1>Client Report: ${escapeHtml(currentClient)}</h1><p><em>Generated: ${new Date().toLocaleString()}</em></p><h2>Client Info</h2><p><strong>Big Goal:</strong> ${escapeHtml(cD.bigGoal||"(Not Set)")}</p>`;const l=cD.links||{};if(l.canvas||l.classroom){rH+=`<p><strong>Links:</strong> `;if(l.canvas)rH+=`<a href="${escapeHtml(l.canvas)}" target="_blank">Canvas</a> `;if(l.classroom)rH+=` <a href="${escapeHtml(l.classroom)}" target="_blank">Classroom</a>`;rH+=`</p>`;}else{rH+=`<p class="no-data">No links saved.</p>`;}const wT=cD.weeklyTasks||{};let hWT=false;let wH=`<h2>Weekly Tasks</h2>`;Object.keys(wT).sort((a,b)=>["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(a)-["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(b)).forEach(d=>{const dT=wT[d]||[];if(dT.length>0){hWT=true;wH+=`<h3>${escapeHtml(d.charAt(0).toUpperCase()+d.slice(1))}</h3><ul>`;dT.forEach(t=>{wH+=`<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} ${t.duration?'('+escapeHtml(t.duration)+')':''}</li>`;});wH+=`</ul>`;}});if(hWT)rH+=wH;else rH+=`<h2>Weekly Tasks</h2><p class="no-data">No weekly tasks set.</p>`;const imgs=cD.images||[];if(imgs.length>0){rH+=`<h2>Images</h2>`;imgs.forEach(i=>{rH+=`<div class="gallery-item"><strong>${escapeHtml(i.title||"(Untitled)")}</strong><br/><a href="${i.dataUrl}" target="_blank"><img src="${i.dataUrl}" alt="${escapeHtml(i.title)}" class="gallery-img"/></a></div>`;});}else{rH+=`<h2>Images</h2><p class="no-data">No images saved.</p>`;}rH+=`<h2>Daily Records</h2>`;const dK=Object.keys(cD).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort();if(dK.length===0){rH+=`<p class="no-data">No daily records.</p>`;}else{dK.forEach(d=>{const r=cD[d];if(!r)return;const fD=formatDateForReport(d);const dR=(r.dayRating&&r.dayRating!=="0")?`<span class="rating-value">${r.dayRating}/5</span>`:"--";rH+=`<h3>${fD}  |  Day Rating: ${dR}</h3>`;if(r.dayNotes&&r.dayNotes.trim()!==""){rH+=`<div class="notes-box"><strong>Notes:</strong><br/>${escapeHtml(r.dayNotes).replace(/\n/g,"<br/>")}</div>`;}else{rH+=`<p class="no-data">No notes.</p>`;}const dT=r.tasks||[];const wd=getWeekdayFromDate(d);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=r.weeklyDone||{};const mT=[];dT.forEach(t=>mT.push({...t,_type:'daily'}));wL.forEach(wt=>mT.push({...wt,completed:!!wDM[wt.id],rating:"0",_type:'weekly'}));mT.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));if(mT.length===0){rH+=`<p class="no-data">No tasks.</p>`;}else{rH+=`<table><thead><tr><th>Time</th><th>Activity</th><th>Duration</th><th>Done?</th><th>Rating</th></tr></thead><tbody>`;let cC=0;mT.forEach(t=>{if(t.completed)cC++;const iCC=t.completed?'class="completed"':'';const rS=(t._type==="daily"&&t.rating!=="0")?`<span class="rating-value">${t.rating}/5</span>`:(t._type==="daily"?"--":"<span class='no-data'>(N/A)</span>");const wI=t._type==='weekly'?`<span class="weekly-task-indicator">(Weekly)</span>`:'';rH+=`<tr ${iCC}><td>${escapeHtml(t.time)}${wI}</td><td>${escapeHtml(t.activity)}</td><td>${escapeHtml(t.duration||'--')}</td><td>${t.completed?'Yes':'No'}</td><td>${rS}</td></tr>`;});rH+=`</tbody></table><p><strong>Completion:</strong> ${cC}/${mT.length} tasks</p>`;}});rH+=`<hr style="margin-top:2em;border-color:#E5E7EB;"><p style="text-align:center;font-size:0.8em;color:#6B7280;">End Report</p></div></body></html>`;const rW=window.open("","_blank");if(rW){rW.document.open();rW.document.write(rH);rW.document.close();}else{alert("Could not open report.");}}
+        function formatDateForReport(dS){try{const d=new Date(dS+'T12:00:00Z');return d.toLocaleDateString(undefined,{weekday:'short',year:'numeric',month:'long',day:'numeric'});}catch(e){return dS;}}
+
+        // --- LocalStorage & Utilities ---
+        function saveToLocalStorage(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(allData));}catch(e){if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED'){alert("Error: Storage limit!\nExport/clear data.");}else{alert("Error saving data.");}throw e;}}
+        function updateProgress(){if(!currentClient||!currentDate){resetProgressDashboard();return;}const r=getDayRecord();if(!r){resetProgressDashboard();return;}const cD=allData[currentClient];const dT=r.tasks||[];const wd=getWeekdayFromDate(currentDate);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=r.weeklyDone||{};const dDC=dT.filter(t=>t.completed).length;const wDC=wL.filter(wt=>wDM[wt.id]).length;const tD=dDC+wDC;const tT=dT.length+wL.length;if(tT===0){completionRateEl.textContent="-";completionBarEl.style.width="0%";}else{const p=Math.round((tD/tT)*100);completionRateEl.textContent=`${p}% (${tD}/${tT})`;completionBarEl.style.width=`${p}%`;}const rDT=dT.filter(t=>t.rating&&parseInt(t.rating,10)>0);if(rDT.length>0){const sR=rDT.reduce((a,t)=>a+parseInt(t.rating,10),0);const aR=(sR/rDT.length);averageTaskRatingEl.textContent=`${aR.toFixed(1)}/5 (${rDT.length})`;}else{averageTaskRatingEl.textContent="-";}const dR=r.dayRating||"0";displayDayRatingEl.textContent=(dR!=="0")?`${dR}/5`:"--";const allD=Object.keys(cD).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d<=currentDate).sort();let sDR=0;let cRD=0;allD.forEach(d=>{const dD=cD[d];if(dD&&dD.dayRating&&dD.dayRating!=="0"){sDR+=parseInt(dD.dayRating,10);cRD++;}});if(cRD>0){const aDRO=sDR/cRD;avgDayRatingUpToDateEl.textContent=`${aDRO.toFixed(1)}/5 (${cRD})`;const aP=Math.max(0,Math.min(100,(aDRO/5)*100));avgRatingBarEl.style.width=aP+"%";}else{avgDayRatingUpToDateEl.textContent="-";avgRatingBarEl.style.width="0%";}}
+        function getWeekdayFromDate(dS){try{const d=new Date(dS+'T12:00:00Z');const wd=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];return wd[d.getUTCDay()];}catch(e){return"";}}
+        function escapeHtml(str){if(typeof str!=='string')return"";const map={'&':'&','<':'<','>':'>','"':'"',"'":'''};return str.replace(/[&<>"']/g,(m)=>map[m]);}
+
+        // --- Multi-Day Planner ---
+        function openPlannerModal(){if(!currentClient){alert("Select client.");return;}plannerClientLabel.textContent=currentClient;plannerDays.innerHTML="";addPlannerDay();plannerModal.style.display="block";}
+        function closePlannerModal(){plannerModal.style.display="none";}
+        function addPlannerDay(){const dC=plannerDays.querySelectorAll(".day-plan").length;const sD=new Date(currentDate+'T12:00:00Z');sD.setUTCDate(sD.getUTCDate()+dC);const dS=sD.toISOString().split("T")[0];const dDiv=document.createElement("div");dDiv.className="day-plan";dDiv.dataset.date=dS;const dLbl=document.createElement("h4");dLbl.textContent=`Day ${dC+1}: ${formatDateForUI(dS)}`;dDiv.appendChild(dLbl);addPlannerTaskEntry(dDiv);const addTBtn=document.createElement("button");addTBtn.className="btn btn-secondary";addTBtn.textContent="+ Task";addTBtn.title="Add task";addTBtn.style.marginTop="0.5rem";addTBtn.style.padding='0.3em 0.8em';addTBtn.addEventListener("click",()=>addPlannerTaskEntry(dDiv,addTBtn));dDiv.appendChild(addTBtn);plannerDays.appendChild(dDiv);}
+        function addPlannerTaskEntry(dDiv,iB=null){const tE=document.createElement("div");tE.className="task-entry";const cC=document.createElement('div');cC.className='controls-container';const tG=document.createElement('div');const tL=document.createElement("label");tL.textContent="Time:";tL.style.marginBottom='2px';const tS=document.createElement("select");populateTempTimeDropdown(tS,"3:00 PM");tG.append(tL,tS);cC.appendChild(tG);const dG=document.createElement('div');const dL=document.createElement("label");dL.textContent="Duration:";dL.style.marginBottom='2px';const dS=document.createElement("select");["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;dS.appendChild(o);});dS.value="30 min";dG.append(dL,dS);cC.appendChild(dG);const aG=document.createElement('div');const aL=document.createElement("label");aL.textContent="Activity:";aL.style.marginBottom='2px';const aI=document.createElement("input");aI.type="text";aI.placeholder="Task...";aG.append(aL,aI);cC.appendChild(aG);tE.appendChild(cC);if(iB){dDiv.insertBefore(tE,iB);}else{dDiv.appendChild(tE);}}
+        function formatDateForUI(dS){try{const d=new Date(dS+'T12:00:00Z');return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});}catch(e){return dS;}}
+        function saveMultiDayPlan(){if(!currentClient)return;const dP=plannerDays.querySelectorAll(".day-plan");let tAC=0;dP.forEach(dD=>{const dS=dD.dataset.date;if(!dS)return;if(!allData[currentClient][dS]){allData[currentClient][dS]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}const dR=allData[currentClient][dS];if(!dR.tasks)dR.tasks=[];const tE=dD.querySelectorAll(".task-entry");tE.forEach(e=>{const tS=e.querySelector("select:nth-of-type(1)");const dS_sel=e.querySelector("select:nth-of-type(2)");const aI=e.querySelector("input[type='text']");if(tS&&dS_sel&&aI){const a=aI.value.trim();if(a){dR.tasks.push({id:`task_${Date.now()}_${Math.random().toString(36).substring(2,9)}`,time:tS.value,duration:dS_sel.value,activity:a,completed:false,rating:"0"});tAC++;}}});dR.tasks.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));});saveToLocalStorage();loadClientDate(currentClient,currentDate);closePlannerModal();alert(`${tAC} tasks added.`);}
+
+        // --- Weekly Planner ---
+        function openWeeklyModal(){if(!currentClient){alert("Select client.");return;}weeklyClientLabel.textContent=currentClient;buildWeeklyContent();weeklyModal.style.display="block";}
+        function closeWeeklyModal(){weeklyModal.style.display="none";}
+        function buildWeeklyContent(){weeklyContent.innerHTML="";const wd=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];if(!allData[currentClient].weeklyTasks)allData[currentClient].weeklyTasks={};const cWT=allData[currentClient].weeklyTasks;wd.forEach(day=>{const dS=document.createElement("div");dS.className="weekly-day-section";const h=document.createElement("h4");h.textContent=day.charAt(0).toUpperCase()+day.slice(1);dS.appendChild(h);const tL=document.createElement("div");tL.id=`weekly-tasks-${day}`;if(!cWT[day])cWT[day]=[];const dT=cWT[day];if(dT.length>0){dT.forEach(task=>{const tR=document.createElement("div");tR.className='weekly-task-row';const tT=document.createElement("span");tT.textContent=`[${escapeHtml(task.time)}] ${escapeHtml(task.activity)} (${escapeHtml(task.duration)})`;tR.appendChild(tT);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Remove";rB.style.marginLeft="auto";rB.addEventListener("click",()=>{if(confirm(`Remove "${task.activity}" for ${day}?`)){const i=dT.findIndex(t=>t.id===task.id);if(i!==-1){dT.splice(i,1);saveToLocalStorage();buildWeeklyContent();}}});tR.appendChild(rB);tL.appendChild(tR);});}else{tL.innerHTML=`<p class="no-data">No tasks.</p>`;}dS.appendChild(tL);const aR=document.createElement("div");aR.className='add-row';const tS=document.createElement("select");populateTempTimeDropdown(tS,"3:00 PM");tS.title="Time";const dS_sel=document.createElement("select");["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;dS_sel.appendChild(o);});dS_sel.value="30 min";dS_sel.title="Duration";const aI=document.createElement("input");aI.type="text";aI.placeholder="New weekly activity...";const aB=document.createElement("button");aB.textContent="+ Add";aB.className="btn btn-secondary";aB.title=`Add task for ${day}`;aB.addEventListener("click",()=>{const act=aI.value.trim();if(!act){alert("Enter activity.");aI.focus();return;}const nId=`wt_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;cWT[day].push({id:nId,time:tS.value,duration:dS_sel.value,activity:act});cWT[day].sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));saveToLocalStorage();buildWeeklyContent();});aR.append(tS,dS_sel,aI,aB);dS.appendChild(aR);weeklyContent.appendChild(dS);});}
+        function saveWeeklySchedule(){closeWeeklyModal();loadClientDate(currentClient,currentDate);}
+
+        // --- Image Handling ---
+        function openImageModal(){if(!currentClient){alert("Select client.");return;}imageClientLabel.textContent=currentClient;imageFileInput.value="";imagePreview.src="#";imagePreview.style.display="none";imageTitleInput.value="";imageModal.style.display="block";}
+        function closeImageModal(){imageModal.style.display="none";}
+        function handleFileInputChange(e){const f=e.target.files?e.target.files[0]:null;if(!f)return;if(!f.type.startsWith("image/")){alert("Select image.");e.target.value="";return;}if(f.size>10*1024*1024)alert("Warn: Image > 10MB.");const r=new FileReader();r.onload=(e)=>{imagePreview.src=e.target.result;imagePreview.style.display="block";};r.onerror=(e)=>{alert("Error reading file.");};r.readAsDataURL(f);}
+        function handlePasteImage(e){if(imageModal.style.display!=='block')return;const items=(e.clipboardData||window.clipboardData)?.items;if(!items)return;let fI=false;for(let i=0;i<items.length;i++){if(items[i].type.includes("image")){const b=items[i].getAsFile();if(b){if(b.size>10*1024*1024)alert("Warn: Pasted image > 10MB.");fI=true;const r=new FileReader();r.onload=(e)=>{imagePreview.src=e.target.result;imagePreview.style.display="block";};r.onerror=(e)=>{alert("Error reading paste.");};r.readAsDataURL(b);imageFileInput.value="";break;}}}}
+        function saveImage(){if(!imagePreview.src||imagePreview.src===window.location.href+"#"||imagePreview.style.display==='none'){alert("No image.");return;}if(!currentClient||!allData[currentClient])return;if(!allData[currentClient].images)allData[currentClient].images=[];const t=imageTitleInput.value.trim()||`Image (${formatDateForUI(currentDate)})`;const iDU=imagePreview.src;if(iDU.length>15*1024*1024){if(!confirm("SAVE WARNING: Large image?"))return;}allData[currentClient].images.push({title:t,dataUrl:iDU});try{saveToLocalStorage();}catch(e){allData[currentClient].images.pop();return;}closeImageModal();renderImageGallery();}
+        function renderImageGallery(){imageGallery.innerHTML="";if(!currentClient||!allData[currentClient]||!allData[currentClient].images||allData[currentClient].images.length===0){imageGallery.innerHTML='<h3 style="margin-top:0;">Image Gallery</h3><p class="no-data text-center">(No images)</p>';return;}const imgs=allData[currentClient].images;const h3=document.createElement("h3");h3.textContent="Image Gallery";h3.style.marginTop="0";imageGallery.appendChild(h3);[...imgs].reverse().forEach((imgObj,index)=>{const oI=imgs.length-1-index;const d=document.createElement("div");d.className="gallery-item";const th=document.createElement("img");th.src=imgObj.dataUrl;th.alt=escapeHtml(imgObj.title);th.title="Click view full";th.addEventListener("click",()=>{const iW=window.open("","_blank");iW.document.write(`<title>${escapeHtml(imgObj.title)}</title><style>body{margin:0;background:#333;}img{display:block;max-width:100%;max-height:100vh;margin:auto;}</style><body><img src="${imgObj.dataUrl}" alt="${escapeHtml(imgObj.title)}"></body>`);iW.document.close();});d.appendChild(th);const s=document.createElement("span");s.className="title";s.textContent=escapeHtml(imgObj.title);d.appendChild(s);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Remove image";rB.addEventListener("click",()=>{if(confirm(`Remove image "${escapeHtml(imgObj.title)}"?`)){imgs.splice(oI,1);saveToLocalStorage();renderImageGallery();}});d.appendChild(rB);imageGallery.appendChild(d);});}
+
+        // === END OF JAVASCRIPT ===
+    </script>
 
 </body>
 </html>
