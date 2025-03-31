@@ -1,170 +1,1486 @@
-    <script>
-        // === START OF CORRECTED JAVASCRIPT (v5) ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RESET Tracker - Single Page</title>
+  <style>
+    :root {
+      /* Color Palette & Variables */
+      --bg-main: #F4F7FC;       /* Soft background */
+      --bg-card: #FFFFFF;       /* Card background */
+      --border-color: #E2E8F0;  /* Light gray border */
+      --text-primary: #2D3748;  /* Dark grayish blue */
+      --text-secondary: #4A5568;/* Medium gray */
+      --text-light: #718096;    /* Lighter gray */
+      --primary-blue: #4A90E2;  /* Accent color for buttons */
+      --primary-blue-dark: #357ABD;
+      --success-green: #48BB78; /* For progress bars */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --radius: 6px;
+      --spacing-unit: 1rem;
+    }
 
-        // Wrap almost everything in DOMContentLoaded to ensure HTML exists
-        document.addEventListener('DOMContentLoaded', () => {
+    /* Basic Resets */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0 auto;
+      max-width: 850px;
+      background: var(--bg-main);
+      font-family: sans-serif;
+      color: var(--text-primary);
+      padding: var(--spacing-unit);
+      line-height: 1.4;
+    }
 
-            const STORAGE_KEY = "clientTrackerData_v5"; // Incremented key again
-            let allData = {};
-            let currentClient = null;
-            let currentDate   = null;
+    h1, h2, h3 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    h1 { margin-top: 1rem; font-size: 1.8rem; }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3rem;
+    }
+    h3 {
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
+      color: var(--primary-blue);
+      font-size: 1.15rem;
+    }
 
-            // --- DOM Elements --- (Ensure these match your HTML IDs EXACTLY)
-            const clientSelect = document.getElementById("clientSelect"), addClientBtn = document.getElementById("addClientBtn"), datePicker = document.getElementById("datePicker"), clearTasksBtn = document.getElementById("clearTasksBtn"), exportBtn = document.getElementById("exportBtn"), reportBtn = document.getElementById("reportBtn"), multiDayPlanBtn = document.getElementById("multiDayPlanBtn"), weeklyPlanBtn = document.getElementById("weeklyPlanBtn"), imageBtn = document.getElementById("imageBtn"), newClientForm = document.getElementById("newClientForm"), newClientName = document.getElementById("newClientName"), saveClientBtn = document.getElementById("saveClientBtn"), cancelClientBtn = document.getElementById("cancelClientBtn"), bigGoalInput = document.getElementById("bigGoalInput"), canvasLinkInput = document.getElementById("canvasLinkInput"), classroomLinkInput = document.getElementById("classroomLinkInput"), saveClientInfoBtn = document.getElementById("saveClientInfoBtn"), bigGoalDisplay = document.getElementById("bigGoalDisplay"), canvasLinkAnchor = document.getElementById("canvasLinkAnchor"), classroomLinkAnchor = document.getElementById("classroomLinkAnchor"), timeSelect = document.getElementById("timeSelect"), durationSelect = document.getElementById("durationSelect"), activityInput = document.getElementById("activityInput"), taskSearch = document.getElementById("taskSearch"), addBtn = document.getElementById("addBtn"), taskTableBody = document.getElementById("taskTable").querySelector("tbody"), dayRatingSelect = document.getElementById("dayRatingSelect"), dayNotesTextarea = document.getElementById("dayNotes"), imageGallery = document.getElementById("imageGallery"), completionRateEl = document.getElementById("completionRate"), completionBarEl = document.getElementById("completionBar"), averageTaskRatingEl = document.getElementById("averageTaskRating"), displayDayRatingEl = document.getElementById("displayDayRating"), avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate"), avgRatingBarEl = document.getElementById("avgRatingBar"), plannerModal = document.getElementById("plannerModal"), plannerClientLabel = document.getElementById("plannerClientLabel"), plannerDays = document.getElementById("plannerDays"), addDayBtn = document.getElementById("addDayBtn"), savePlanBtn = document.getElementById("savePlanBtn"), cancelPlanBtn = document.getElementById("cancelPlanBtn"), weeklyModal = document.getElementById("weeklyModal"), weeklyClientLabel = document.getElementById("weeklyClientLabel"), weeklyContent = document.getElementById("weeklyContent"), saveWeeklyBtn = document.getElementById("saveWeeklyBtn"), cancelWeeklyBtn = document.getElementById("cancelWeeklyBtn"), imageModal = document.getElementById("imageModal"), imageClientLabel = document.getElementById("imageClientLabel"), imageFileInput = document.getElementById("imageFileInput"), imagePreview = document.getElementById("imagePreview"), imageTitleInput = document.getElementById("imageTitle"), saveImageBtn = document.getElementById("saveImageBtn"), cancelImageBtn = document.getElementById("cancelImageBtn");
-            const editIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em"> <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /> <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /> </svg>`;
-            const deleteIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em"> <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /> </svg>`;
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.45em 0.8em;
+      margin: 0.3em 0.3em 0.3em 0;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #f2f2f2;
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: #fff;
+      border-color: var(--primary-blue);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+    }
 
-            // --- Initialization Code --- (Moved inside DOMContentLoaded)
-            function initializeApp() {
-                console.log("Initializing App..."); // Debug log
-                try {
-                    const stored = localStorage.getItem(STORAGE_KEY);
-                    if (stored) {
-                        allData = JSON.parse(stored);
-                        if (typeof allData !== 'object' || allData === null) {
-                            console.warn("Invalid data, resetting."); allData = {};
-                        }
-                    } else {
-                        allData = {};
-                    }
-                } catch (error) {
-                    console.error("Load error:", error); alert("Could not load data."); allData = {};
-                }
-                populateClientSelect();
-                const todayStr = new Date().toISOString().split("T")[0];
-                datePicker.value = todayStr; currentDate = todayStr;
-                const clientNames = Object.keys(allData).sort();
-                if (clientNames.length > 0) {
-                    currentClient = clientNames[0]; clientSelect.value = currentClient;
-                    loadClientDate(currentClient, currentDate);
-                } else {
-                    currentClient = null;
-                    bigGoalDisplay.textContent = "(Add client)";
-                    taskTableBody.innerHTML = '<tr><td colspan="5" class="text-center no-data">(Add client/date)</td></tr>';
-                    imageGallery.innerHTML = '<p class="no-data text-center">(No images)</p>';
-                    // Disable buttons if no client initially
-                    disableClientSpecificButtons(true);
-                }
-                populateTimeDropdown();
-                setupEventListeners();
-                console.log("App Initialized."); // Debug log
-            }
+    /* Controls Bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    .controls > div {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .controls label {
+      font-weight: bold;
+      margin-right: 0.2rem;
+      color: var(--text-secondary);
+    }
+    select, input[type="date"], input[type="text"], textarea {
+      font-size: 1em;
+      padding: 0.3em 0.45em;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    select:focus, input[type="text"]:focus, textarea:focus {
+      outline: 2px solid rgba(74,144,226,0.3);
+    }
 
-            // --- Event Listeners Setup ---
-            function setupEventListeners() {
-                 console.log("Setting up Event Listeners..."); // Debug log
-                // Ensure elements exist before adding listeners
-                if (clientSelect) clientSelect.addEventListener("change", onClientOrDateChange); else console.error("clientSelect not found");
-                if (datePicker) datePicker.addEventListener("change", onClientOrDateChange); else console.error("datePicker not found");
-                if (addClientBtn) addClientBtn.addEventListener("click", showNewClientForm); else console.error("addClientBtn not found");
-                if (saveClientBtn) saveClientBtn.addEventListener("click", saveNewClient); else console.error("saveClientBtn not found");
-                if (cancelClientBtn) cancelClientBtn.addEventListener("click", hideNewClientForm); else console.error("cancelClientBtn not found");
-                if (saveClientInfoBtn) saveClientInfoBtn.addEventListener("click", saveClientInfo); else console.error("saveClientInfoBtn not found");
-                if (addBtn) addBtn.addEventListener("click", addNewTask); else console.error("addBtn not found");
-                if (clearTasksBtn) clearTasksBtn.addEventListener("click", clearTasksForClientDate); else console.error("clearTasksBtn not found");
-                if (exportBtn) exportBtn.addEventListener("click", exportData); else console.error("exportBtn not found");
-                if (reportBtn) reportBtn.addEventListener("click", generateReport); else console.error("reportBtn not found");
-                if (dayRatingSelect) dayRatingSelect.addEventListener("change", onDayRatingChange); else console.error("dayRatingSelect not found");
-                if (dayNotesTextarea) dayNotesTextarea.addEventListener("input", onDayNotesChange); else console.error("dayNotesTextarea not found");
-                if (multiDayPlanBtn) multiDayPlanBtn.addEventListener("click", openPlannerModal); else console.error("multiDayPlanBtn not found");
-                if (addDayBtn) addDayBtn.addEventListener("click", addPlannerDay); else console.error("addDayBtn not found");
-                if (savePlanBtn) savePlanBtn.addEventListener("click", saveMultiDayPlan); else console.error("savePlanBtn not found");
-                if (cancelPlanBtn) cancelPlanBtn.addEventListener("click", closePlannerModal); else console.error("cancelPlanBtn not found");
-                if (weeklyPlanBtn) weeklyPlanBtn.addEventListener("click", openWeeklyModal); else console.error("weeklyPlanBtn not found");
-                if (saveWeeklyBtn) saveWeeklyBtn.addEventListener("click", saveWeeklySchedule); else console.error("saveWeeklyBtn not found");
-                if (cancelWeeklyBtn) cancelWeeklyBtn.addEventListener("click", closeWeeklyModal); else console.error("cancelWeeklyBtn not found");
-                if (imageBtn) imageBtn.addEventListener("click", openImageModal); else console.error("imageBtn not found");
-                if (cancelImageBtn) cancelImageBtn.addEventListener("click", closeImageModal); else console.error("cancelImageBtn not found");
-                if (saveImageBtn) saveImageBtn.addEventListener("click", saveImage); else console.error("saveImageBtn not found");
-                if (imageModal) imageModal.addEventListener("paste", handlePasteImage); else console.error("imageModal not found");
-                if (imageFileInput) imageFileInput.addEventListener("change", handleFileInputChange); else console.error("imageFileInput not found");
-                if (taskSearch) taskSearch.addEventListener("input", filterTaskTable); else console.error("taskSearch not found");
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      background-color: #fff;
+      box-shadow: var(--shadow-sm);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    th, td {
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 0.95em;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      font-size: 0.8em;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr.completed-task td:not(:last-child) {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
 
-                document.addEventListener("keydown", handleKeyboardShortcuts);
-                console.log("Event Listeners Setup Complete."); // Debug log
-            }
+    /* Reflection Section */
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      margin-top: 0.2rem;
+    }
 
-             // --- All other functions (populateClientSelect, loadClientDate, etc.) go here ---
-             // (Copy the FULL, correctly formatted functions from the previous step inside this DOMContentLoaded wrapper)
+    /* Progress Bars */
+    .progress-bar-container {
+      width: 100%;
+      background-color: #eee;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 0.3rem 0 1rem 0;
+    }
+    .progress-bar {
+      height: 20px;
+      background: var(--success-green);
+      color: #fff;
+      text-align: center;
+      font-weight: 600;
+      line-height: 20px;
+      transition: width 0.3s;
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .blue-bar {
+      background: var(--primary-blue);
+    }
 
-            // --- Client Management ---
-            function populateClientSelect(){clientSelect.innerHTML="";const cN=Object.keys(allData).sort();const hC=cN.length>0;clientSelect.disabled=!hC;disableClientSpecificButtons(!hC); if(!hC){const o=document.createElement("option");o.textContent="-- No Clients --";o.value="";clientSelect.appendChild(o);}else{cN.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;clientSelect.appendChild(o);});}}
-            function disableClientSpecificButtons(isDisabled) { multiDayPlanBtn.disabled = isDisabled; weeklyPlanBtn.disabled = isDisabled; imageBtn.disabled = isDisabled; reportBtn.disabled = isDisabled; clearTasksBtn.disabled = isDisabled; saveClientInfoBtn.disabled = isDisabled; }
-            function showNewClientForm(){newClientForm.style.display="flex";newClientName.value="";newClientName.focus();}
-            function hideNewClientForm(){newClientForm.style.display="none";}
-            function saveNewClient(){const n=newClientName.value.trim();if(!n){alert("Enter name.");return;}if(allData[n]){alert(`Client "${n}" exists.`);return;}allData[n]={bigGoal:"",links:{canvas:"",classroom:""},weeklyTasks:{monday:[],tuesday:[],wednesday:[],thursday:[],friday:[],saturday:[],sunday:[]},images:[]};saveToLocalStorage();populateClientSelect();clientSelect.value=n;currentClient=n;currentDate=datePicker.value;loadClientDate(currentClient,currentDate);hideNewClientForm();}
-            function saveClientInfo(){if(!currentClient){alert("Select client.");return;}const cD=allData[currentClient];if(!cD)return;cD.bigGoal=bigGoalInput.value.trim();if(!cD.links)cD.links={};cD.links.canvas=canvasLinkInput.value.trim();cD.links.classroom=classroomLinkInput.value.trim();saveToLocalStorage();renderClientInfo();const btn=saveClientInfoBtn;const oT=btn.textContent;btn.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em" style="margin-right: 0.4em;"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" /></svg> Saved!`;btn.style.backgroundColor='#10B981';btn.disabled=true;setTimeout(()=>{btn.innerHTML=oT;btn.style.backgroundColor='';btn.disabled=false;},1500);}
-            function renderClientInfo(){if(!currentClient||!allData[currentClient]){bigGoalDisplay.textContent="(Select client)";bigGoalInput.value="";canvasLinkInput.value="";classroomLinkInput.value="";canvasLinkAnchor.style.display="none";classroomLinkAnchor.style.display="none";return;}const cD=allData[currentClient];bigGoalDisplay.textContent=cD.bigGoal||"(No Goal Set)";bigGoalInput.value=cD.bigGoal||"";const l=cD.links||{};canvasLinkAnchor.style.display=(l.canvas&&l.canvas.startsWith('http'))?"inline-flex":"none";if(l.canvas)canvasLinkAnchor.href=l.canvas;canvasLinkInput.value=l.canvas||"";classroomLinkAnchor.style.display=(l.classroom&&l.classroom.startsWith('http'))?"inline-flex":"none";if(l.classroom)classroomLinkAnchor.href=l.classroom;classroomLinkInput.value=l.classroom||"";}
+    /* Image Gallery */
+    #imageGallery {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    #imageGallery h3 { margin-top: 0; }
+    .gallery-item {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.3rem;
+    }
+    .gallery-item:last-child { border-bottom: none; }
+    .gallery-item img {
+      max-height: 60px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .gallery-item img:hover { transform: scale(1.05); }
+    .gallery-item .title { font-weight: 600; }
 
-            // --- Core Data Loading & Display ---
-            function onClientOrDateChange(){currentClient=clientSelect.value;currentDate=datePicker.value;if(currentClient&¤tDate){loadClientDate(currentClient,currentDate);}else{taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(Select client/date)</td></tr>';renderClientInfo();resetReflectionFields();resetProgressDashboard();imageGallery.innerHTML='<p class="no-data text-center">(No images)</p>';disableClientSpecificButtons(true);}}
-            function loadClientDate(cN,dS){if(!cN||!dS)return;if(!allData[cN]){allData[cN]={bigGoal:"",links:{},weeklyTasks:{},images:[]};}if(!allData[cN][dS]){allData[cN][dS]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}const cD=allData[cN];const dR=cD[dS];renderClientInfo();dayRatingSelect.value=dR.dayRating||"0";dayNotesTextarea.value=dR.dayNotes||"";renderTaskTable(cD,dR,dS);renderImageGallery();updateProgress();taskSearch.value="";filterTaskTable();disableClientSpecificButtons(false);} // Enable buttons on load
-            function renderTaskTable(cD,dR,dS){taskTableBody.innerHTML="";const dT=dR.tasks||[];const wd=getWeekdayFromDate(dS);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=dR.weeklyDone||{};const allT=[];dT.forEach(t=>allT.push({...t,taskType:'daily'}));wL.forEach(wT=>allT.push({...wT,completed:!!wDM[wT.id],rating:"0",taskType:'weekly'}));allT.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));if(allT.length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks scheduled)</td></tr>';}else{allT.forEach(t=>addTaskRow(t,t.taskType));}}
-            function resetReflectionFields(){dayRatingSelect.value="0";dayNotesTextarea.value="";}
-            function resetProgressDashboard(){completionRateEl.textContent="-";completionBarEl.style.width="0%";averageTaskRatingEl.textContent="-";displayDayRatingEl.textContent="-";avgDayRatingUpToDateEl.textContent="-";avgRatingBarEl.style.width="0%";}
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      margin: 2rem auto;
+      padding: 1.5rem;
+      max-width: 700px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .modal-header { margin-bottom: 1rem; }
+    .modal-header h3 {
+      margin: 0;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .modal-close, [data-close] {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      border: none;
+      background: var(--accent-red, #E53E3E);
+      color: #fff;
+      font-weight: bold;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .day-plan, .weekly-day-section {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: #fdfdfd;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius);
+    }
+    .day-plan h4, .weekly-day-section h4 {
+      margin-top: 0; margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 1em;
+    }
 
-            // --- Reflection ---
-            function onDayRatingChange(){if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r)return;r.dayRating=dayRatingSelect.value;saveToLocalStorage();updateProgress();}
-            const debounce=(func,wait)=>{let timeout;return(...args)=>{clearTimeout(timeout);timeout=setTimeout(()=>func.apply(this,args),wait);};};
-            const debouncedSaveNotes=debounce(()=>{if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r)return;r.dayNotes=dayNotesTextarea.value;saveToLocalStorage();},500);
-            function onDayNotesChange(){debouncedSaveNotes();}
-            function getDayRecord(){if(!currentClient||!currentDate||!allData[currentClient])return null;if(!allData[currentClient][currentDate]){allData[currentClient][currentDate]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}return allData[currentClient][currentDate];}
+    /* Hide Google Calendar & Tasks if we want them GONE -> We literally won't include them in HTML */
 
-            // --- Time Dropdown ---
-            function populateTimeDropdown(){timeSelect.innerHTML="";for(let h=5;h<24;h++){for(let m=0;m<60;m+=15){const d=new Date();d.setHours(h,m);const l=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',hour12:true});const o=document.createElement("option");o.value=l;o.textContent=l;timeSelect.appendChild(o);}}const s=document.createElement("option");s.disabled=true;s.textContent="──────────";timeSelect.appendChild(s);const cT=["Before School","Study Hall","Lunch","After School","Before Dinner","After Dinner","Before Bed"];cT.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;timeSelect.appendChild(o);});const dF="3:00 PM";if(Array.from(timeSelect.options).some(o=>o.value===dF))timeSelect.value=dF;}
+    /* Media Queries */
+    @media (max-width: 600px) {
+      body { margin:0 auto; padding: 0.5rem;}
+      h1 { font-size: 1.4rem; }
+      .controls { flex-direction: column; }
+      .controls > div { gap: 0.2rem; }
+      table, th, td { font-size: 0.85em; }
+      .modal-content { margin: 1rem auto; padding: 1rem;}
+    }
+  </style>
+</head>
+<body>
 
-            // --- Task Management ---
-            function addNewTask(){if(!currentClient||!currentDate){alert("Select client/date.");return;}const t=timeSelect.value;const a=activityInput.value.trim();const d=durationSelect.value;if(!a){alert("Enter activity.");activityInput.focus();return;}const rec=getDayRecord();if(!rec)return;if(!rec.tasks)rec.tasks=[];const nT={id:`task_${Date.now()}_${Math.random().toString(36).substring(2,9)}`,time:t,activity:a,completed:false,rating:"0",duration:d};rec.tasks.push(nT);saveToLocalStorage();renderTaskTable(allData[currentClient],rec,currentDate);activityInput.value="";activityInput.focus();updateProgress();}
-            function addTaskRow(tO,tT){const r=taskTableBody.insertRow();r.className="task-row";r.dataset.taskId=tO.id;r.dataset.taskType=tT;r.dataset.timeValue=convertTimeToMinutes(tO.time);if(tO.completed)r.classList.add("completed-task");const tD=r.insertCell(0);tD.innerHTML=escapeHtml(tO.time);if(tO.duration)tD.innerHTML+=`<br><span style="font-size:0.8em;color:#6B7280;">${escapeHtml(tO.duration)}</span>`;if(tT==='weekly')tD.innerHTML+=`<span class="weekly-indicator">(Weekly)</span>`;const tA=r.insertCell(1);tA.textContent=tO.activity;const tDn=r.insertCell(2);const cK=document.createElement("input");cK.type="checkbox";cK.checked=tO.completed;cK.title="Mark done/undone";cK.className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500";cK.addEventListener("change",()=>{r.classList.toggle("completed-task",cK.checked);if(tT==='daily'){const dR=getDayRecord();const t=dR?.tasks?.find(t=>t.id===tO.id);if(t)t.completed=cK.checked;}else if(tT==='weekly'){const dR=getDayRecord();if(!dR.weeklyDone)dR.weeklyDone={};dR.weeklyDone[tO.id]=cK.checked;}saveToLocalStorage();updateProgress();});tDn.appendChild(cK);const tR=r.insertCell(3);if(tT==='daily'){const sL=document.createElement("select");sL.title="Rate task (1-5)";for(let i=0;i<=5;i++){const o=document.createElement("option");o.value=i;o.text=i===0?"–":i.toString();sL.appendChild(o);}sL.value=tO.rating||"0";sL.addEventListener("change",()=>{const dR=getDayRecord();const t=dR?.tasks?.find(t=>t.id===tO.id);if(t)t.rating=sL.value;saveToLocalStorage();updateProgress();});tR.appendChild(sL);}else{tR.innerHTML=`<span class="no-data">–</span>`;}const tAc=r.insertCell(4);tAc.style.textAlign='right';if(tT==='daily'){const eB=document.createElement("button");eB.innerHTML=editIconSVG;eB.className="btn btn-icon";eB.title="Edit task";eB.addEventListener("click",(e)=>{e.stopPropagation();makeTaskEditable(r,tO);});tAc.appendChild(eB);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Delete task";rB.addEventListener("click",(e)=>{e.stopPropagation();if(confirm(`Delete task: "${tO.activity}"?`)){removeTask(tO);r.remove();updateProgress();if(taskTableBody.querySelectorAll('tr.task-row').length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks)</td></tr>';}}});tAc.appendChild(rB);}}
-            function makeTaskEditable(row,taskObj){const cE=taskTableBody.querySelector('.editing-task-row');if(cE&&cE!==row){const oCB=cE.querySelector('.btn-cancel-edit');if(oCB)oCB.click();}row.classList.add('editing-task-row');const tdTime=row.cells[0];const tdAct=row.cells[1];const tdRating=row.cells[3];const tdActions=row.cells[4];const oTHTML=tdTime.innerHTML;const oAHTML=tdAct.innerHTML;const oRHTML=tdRating.innerHTML;const oAcHTML=tdActions.innerHTML;tdTime.innerHTML="";const tDC=document.createElement('div');tDC.style.display='flex';tDC.style.flexDirection='column';tDC.style.gap='4px';const nTS=document.createElement("select");nTS.style.marginBottom='0';populateTempTimeDropdown(nTS,taskObj.time);tDC.appendChild(nTS);const nDS=document.createElement("select");nDS.style.marginBottom='0';["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;nDS.appendChild(o);});nDS.value=taskObj.duration||"30 min";tDC.appendChild(nDS);tdTime.appendChild(tDC);tdAct.innerHTML="";const aI=document.createElement("input");aI.type="text";aI.value=taskObj.activity;aI.style.width="100%";aI.style.marginBottom='0';tdAct.appendChild(aI);aI.focus();aI.select();tdRating.innerHTML="";tdActions.innerHTML="";const sB=document.createElement("button");sB.textContent="Save";sB.className="btn btn-primary";sB.style.fontSize='0.85em';sB.style.padding='0.3em 0.6em';sB.addEventListener("click",(e)=>{e.stopPropagation();const nT=nTS.value;const nA=aI.value.trim();const nD=nDS.value;if(!nA){alert("Activity empty.");aI.focus();return;}const dR=getDayRecord();const tI=dR?.tasks?.findIndex(t=>t.id===taskObj.id);if(tI!==undefined&&tI>-1){dR.tasks[tI].time=nT;dR.tasks[tI].activity=nA;dR.tasks[tI].duration=nD;saveToLocalStorage();taskObj.time=nT;taskObj.activity=nA;taskObj.duration=nD;renderTaskTable(allData[currentClient],dR,currentDate);updateProgress();}else{console.error("Failed find task:",taskObj.id);renderTaskTable(allData[currentClient],getDayRecord(),currentDate);}});tAc.appendChild(sB);const cB=document.createElement("button");cB.textContent="Cancel";cB.className="btn btn-secondary btn-cancel-edit";cB.style.fontSize='0.85em';cB.style.padding='0.3em 0.6em';cB.addEventListener("click",(e)=>{e.stopPropagation();row.classList.remove('editing-task-row');tdTime.innerHTML=oTHTML;tdAct.innerHTML=oAHTML;tR.innerHTML=oRHTML;tAc.innerHTML=oAcHTML;const rEB=tAc.querySelector('.btn-icon:not(.btn-icon-delete)');const rDB=tAc.querySelector('.btn-icon-delete');if(rEB)rEB.addEventListener("click",(ev)=>{ev.stopPropagation();makeTaskEditable(row,taskObj);});if(rDB)rDB.addEventListener("click",(ev)=>{ev.stopPropagation();if(confirm(`Delete task: "${taskObj.activity}"?`)){removeTask(taskObj);row.remove();updateProgress();if(taskTableBody.querySelectorAll('tr.task-row').length===0){taskTableBody.innerHTML='<tr><td colspan="5" class="text-center no-data">(No tasks)</td></tr>';}}});});tAc.appendChild(cB);}
-            function populateTempTimeDropdown(sel,cur){const mO=timeSelect.options;for(let i=0;i<mO.length;i++){const c=mO[i].cloneNode(true);sel.appendChild(c);}if(Array.from(sel.options).some(o=>o.value===cur)){sel.value=cur;}}
-            function sortTasksByTimeInData(){if(!currentClient||!currentDate)return;const r=getDayRecord();if(!r||!r.tasks||r.tasks.length<2)return;r.tasks.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));saveToLocalStorage();}
-            function sortTasksByTime(){sortTasksByTimeInData();if(currentClient&¤tDate){const dR=getDayRecord();renderTaskTable(allData[currentClient],dR,currentDate);}}
-            function convertTimeToMinutes(tS){if(!tS)return 9999;const sT={"Before School":360,"Study Hall":600,"Lunch":720,"After School":930,"Before Dinner":1080,"After Dinner":1200,"Before Bed":1320};if(sT[tS]!==undefined)return sT[tS];const m=tS.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(m){let h=parseInt(m[1],10);const mn=parseInt(m[2],10);const ampm=m[3].toUpperCase();if(isNaN(h)||isNaN(mn))return 9999;if(ampm==="PM"&&h<12)h+=12;if(ampm==="AM"&&h===12)h=0;return h*60+mn;}return 9999;}
-            function removeTask(tO){const r=getDayRecord();if(!r||!r.tasks)return;const i=r.tasks.findIndex(t=>t.id===tO.id);if(i!==-1){r.tasks.splice(i,1);saveToLocalStorage();}else{console.warn("Task not found:",tO.id);}}
-            function clearTasksForClientDate(){if(!currentClient||!currentDate){alert("Select client/date.");return;}if(confirm(`DELETE ALL daily tasks for ${currentClient} on ${currentDate}? This cannot be undone.`)){const r=getDayRecord();if(r){r.tasks=[];saveToLocalStorage();renderTaskTable(allData[currentClient],r,currentDate);updateProgress();}}}
-            function filterTaskTable(){const s=taskSearch.value.toLowerCase().trim();const rows=taskTableBody.querySelectorAll("tr.task-row");let match=false;rows.forEach(r=>{const aT=r.cells[1]?.textContent.toLowerCase()||"";const tT=r.cells[0]?.textContent.toLowerCase()||"";const v=aT.includes(s)||tT.includes(s);r.style.display=v?"":"none";if(v)match=true;});let nR=taskTableBody.querySelector('.no-match-row');if(!match&&s!==''&&rows.length>0){if(!nR){nR=taskTableBody.insertRow();nR.className='no-match-row';const c=nR.insertCell(0);c.colSpan=5;c.textContent="No tasks match search.";c.className='text-center no-data';}}else{if(nR)nR.remove();}}
+<h1>RESET Tracker - Single Page</h1>
 
-            // --- Export & Report ---
-            function exportData(){if(Object.keys(allData).length===0){alert("No data.");return;}try{const dS=JSON.stringify(allData,null,2);const dB=new Blob([dS],{type:"application/json;charset=utf-8"});const fN=`client-tracker-export-${new Date().toISOString().split('T')[0]}.json`;if(window.navigator&&window.navigator.msSaveOrOpenBlob){window.navigator.msSaveOrOpenBlob(dB,fN);}else{const dU=URL.createObjectURL(dB);const l=document.createElement("a");l.href=dU;l.download=fN;document.body.appendChild(l);l.click();document.body.removeChild(l);URL.revokeObjectURL(dU);}}catch(e){console.error("Export error:",e);alert("Error exporting.");}}
-            function generateReport(){if(!currentClient||!allData[currentClient]){alert("Select client.");return;}const cD=allData[currentClient];let rH=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report - ${escapeHtml(currentClient)}</title><style>body{font-family:'Inter',sans-serif;margin:20px;line-height:1.6;color:#1F2937;}.report-container{max-width:800px;margin:0 auto;}h1,h2,h3{border-bottom:1px solid #E5E7EB;padding-bottom:0.3em;margin-top:1.5em;font-weight:600;}h1{font-size:1.8em;color:#1D4ED8;border-bottom-width:2px;}h2{font-size:1.4em;margin-top:2em;}h3{font-size:1.1em;color:#4B5563;margin-top:1.5em;border-bottom-style:dashed;}table{width:100%;border-collapse:collapse;margin:0.5em 0 1.5em;font-size:0.9em;border:1px solid #E5E7EB;border-radius:0.375rem;overflow:hidden;}th{background-color:#F9FAFB;text-align:left;padding:10px;font-weight:500;text-transform:uppercase;font-size:0.8em;letter-spacing:0.05em;}td{padding:10px;vertical-align:top;border-top:1px solid #F3F4F6;}tbody tr:nth-child(even){background-color:#F9FAFB;}.notes-box{background-color:#F9FAFB;border:1px solid #E5E7EB;padding:10px;margin:10px 0;white-space:pre-wrap;border-radius:0.375rem;font-size:0.95em;}.gallery-item{margin-bottom:15px;border-bottom:1px solid #F3F4F6;padding-bottom:10px;}.gallery-img{max-width:250px;max-height:200px;margin-top:5px;border:1px solid #E5E7EB;display:block;border-radius:0.375rem;}.completed td:not(:last-child){text-decoration:line-through;color:#9CA3AF;opacity:0.8;}.weekly-task-indicator{font-size:0.8em;color:#60A5FA;font-style:italic;display:block;}.rating-value{font-weight:bold;color:#2563EB;}.no-data{color:#6B7280;font-style:italic;}ul{padding-left:20px;margin-top:0.5em;}li{margin-bottom:0.3em;}a{color:#2563EB;text-decoration:none;}a:hover{text-decoration:underline;}</style></head><body><div class="report-container"><h1>Client Report: ${escapeHtml(currentClient)}</h1><p><em>Generated: ${new Date().toLocaleString()}</em></p><h2>Client Info</h2><p><strong>Big Goal:</strong> ${escapeHtml(cD.bigGoal||"(Not Set)")}</p>`;const l=cD.links||{};if(l.canvas||l.classroom){rH+=`<p><strong>Links:</strong> `;if(l.canvas)rH+=`<a href="${escapeHtml(l.canvas)}" target="_blank">Canvas</a> `;if(l.classroom)rH+=` <a href="${escapeHtml(l.classroom)}" target="_blank">Classroom</a>`;rH+=`</p>`;}else{rH+=`<p class="no-data">No links saved.</p>`;}const wT=cD.weeklyTasks||{};let hWT=false;let wH=`<h2>Weekly Tasks</h2>`;Object.keys(wT).sort((a,b)=>["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(a)-["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].indexOf(b)).forEach(d=>{const dT=wT[d]||[];if(dT.length>0){hWT=true;wH+=`<h3>${escapeHtml(d.charAt(0).toUpperCase()+d.slice(1))}</h3><ul>`;dT.forEach(t=>{wH+=`<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} ${t.duration?'('+escapeHtml(t.duration)+')':''}</li>`;});wH+=`</ul>`;}});if(hWT)rH+=wH;else rH+=`<h2>Weekly Tasks</h2><p class="no-data">No weekly tasks set.</p>`;const imgs=cD.images||[];if(imgs.length>0){rH+=`<h2>Images</h2>`;imgs.forEach(i=>{rH+=`<div class="gallery-item"><strong>${escapeHtml(i.title||"(Untitled)")}</strong><br/><a href="${i.dataUrl}" target="_blank"><img src="${i.dataUrl}" alt="${escapeHtml(i.title)}" class="gallery-img"/></a></div>`;});}else{rH+=`<h2>Images</h2><p class="no-data">No images saved.</p>`;}rH+=`<h2>Daily Records</h2>`;const dK=Object.keys(cD).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort();if(dK.length===0){rH+=`<p class="no-data">No daily records.</p>`;}else{dK.forEach(d=>{const r=cD[d];if(!r)return;const fD=formatDateForReport(d);const dR=(r.dayRating&&r.dayRating!=="0")?`<span class="rating-value">${r.dayRating}/5</span>`:"--";rH+=`<h3>${fD}  |  Day Rating: ${dR}</h3>`;if(r.dayNotes&&r.dayNotes.trim()!==""){rH+=`<div class="notes-box"><strong>Notes:</strong><br/>${escapeHtml(r.dayNotes).replace(/\n/g,"<br/>")}</div>`;}else{rH+=`<p class="no-data">No notes.</p>`;}const dT=r.tasks||[];const wd=getWeekdayFromDate(d);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=r.weeklyDone||{};const mT=[];dT.forEach(t=>mT.push({...t,_type:'daily'}));wL.forEach(wt=>mT.push({...wt,completed:!!wDM[wt.id],rating:"0",_type:'weekly'}));mT.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));if(mT.length===0){rH+=`<p class="no-data">No tasks.</p>`;}else{rH+=`<table><thead><tr><th>Time</th><th>Activity</th><th>Duration</th><th>Done?</th><th>Rating</th></tr></thead><tbody>`;let cC=0;mT.forEach(t=>{if(t.completed)cC++;const iCC=t.completed?'class="completed"':'';const rS=(t._type==="daily"&&t.rating!=="0")?`<span class="rating-value">${t.rating}/5</span>`:(t._type==="daily"?"--":"<span class='no-data'>(N/A)</span>");const wI=t._type==='weekly'?`<span class="weekly-task-indicator">(Weekly)</span>`:'';rH+=`<tr ${iCC}><td>${escapeHtml(t.time)}${wI}</td><td>${escapeHtml(t.activity)}</td><td>${escapeHtml(t.duration||'--')}</td><td>${t.completed?'Yes':'No'}</td><td>${rS}</td></tr>`;});rH+=`</tbody></table><p><strong>Completion:</strong> ${cC}/${mT.length} tasks</p>`;}});rH+=`<hr style="margin-top:2em;border-color:#E5E7EB;"><p style="text-align:center;font-size:0.8em;color:#6B7280;">End Report</p></div></body></html>`;const rW=window.open("","_blank");if(rW){rW.document.open();rW.document.write(rH);rW.document.close();}else{alert("Could not open report.");}}
-            function formatDateForReport(dS){try{const d=new Date(dS+'T12:00:00Z');return d.toLocaleDateString(undefined,{weekday:'short',year:'numeric',month:'long',day:'numeric'});}catch(e){return dS;}}
+<div class="controls">
+  <div>
+    <label>Client:</label>
+    <select id="clientSelect"></select>
+    <button class="btn" id="addClientBtn">+ Add Client</button>
+  </div>
+  <div>
+    <label>Date:</label>
+    <input type="date" id="datePicker" />
+  </div>
+  <button class="btn" id="clearTasksBtn">Clear Tasks</button>
+  <button class="btn" id="reportBtn">View Report</button>
+  <button class="btn" id="multiDayBtn">Multi-Day</button>
+  <button class="btn" id="weeklyBtn">Weekly</button>
+  <button class="btn" id="imageBtn">Images</button>
+  <button class="btn" id="exportBtn">Export</button>
+</div>
 
-            // --- LocalStorage & Utilities ---
-            function saveToLocalStorage(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(allData));}catch(e){if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED'){alert("Error: Storage limit!\nExport/clear data.");}else{alert("Error saving data.");}throw e;}}
-            function updateProgress(){if(!currentClient||!currentDate){resetProgressDashboard();return;}const r=getDayRecord();if(!r){resetProgressDashboard();return;}const cD=allData[currentClient];const dT=r.tasks||[];const wd=getWeekdayFromDate(currentDate);const wL=(cD.weeklyTasks&&cD.weeklyTasks[wd])?cD.weeklyTasks[wd]:[];const wDM=r.weeklyDone||{};const dDC=dT.filter(t=>t.completed).length;const wDC=wL.filter(wt=>wDM[wt.id]).length;const tD=dDC+wDC;const tT=dT.length+wL.length;if(tT===0){completionRateEl.textContent="-";completionBarEl.style.width="0%";}else{const p=Math.round((tD/tT)*100);completionRateEl.textContent=`${p}% (${tD}/${tT})`;completionBarEl.style.width=`${p}%`;}const rDT=dT.filter(t=>t.rating&&parseInt(t.rating,10)>0);if(rDT.length>0){const sR=rDT.reduce((a,t)=>a+parseInt(t.rating,10),0);const aR=(sR/rDT.length);averageTaskRatingEl.textContent=`${aR.toFixed(1)}/5 (${rDT.length})`;}else{averageTaskRatingEl.textContent="-";}const dR=r.dayRating||"0";displayDayRatingEl.textContent=(dR!=="0")?`${dR}/5`:"--";const allD=Object.keys(cD).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d<=currentDate).sort();let sDR=0;let cRD=0;allD.forEach(d=>{const dD=cD[d];if(dD&&dD.dayRating&&dD.dayRating!=="0"){sDR+=parseInt(dD.dayRating,10);cRD++;}});if(cRD>0){const aDRO=sDR/cRD;avgDayRatingUpToDateEl.textContent=`${aDRO.toFixed(1)}/5 (${cRD})`;const aP=Math.max(0,Math.min(100,(aDRO/5)*100));avgRatingBarEl.style.width=aP+"%";}else{avgDayRatingUpToDateEl.textContent="-";avgRatingBarEl.style.width="0%";}}
-            function getWeekdayFromDate(dS){try{const d=new Date(dS+'T12:00:00Z');const wd=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];return wd[d.getUTCDay()];}catch(e){return"";}}
-            function escapeHtml(str){if(typeof str!=='string')return"";const map={'&':'&','<':'<','>':'>','"':'"',"'":'''};return str.replace(/[&<>"']/g,(m)=>map[m]);}
+<!-- New Client Form -->
+<div id="newClientForm" style="display:none; margin: 0.5rem 0; padding: 0.7rem; background:#f7fcff; border:1px solid var(--border-color); border-radius:var(--radius);">
+  <label style="font-weight:600; margin-right:0.5rem;">New Client Name:</label>
+  <input type="text" id="newClientName" placeholder="e.g. John" style="width:180px; margin-right:0.5rem;" />
+  <button class="btn btn-primary" id="saveClientBtn">Save</button>
+  <button class="btn" id="cancelClientBtn">Cancel</button>
+</div>
 
-            // --- Multi-Day Planner ---
-            function openPlannerModal(){if(!currentClient){alert("Select client.");return;}plannerClientLabel.textContent=currentClient;plannerDays.innerHTML="";addPlannerDay();plannerModal.style.display="block";}
-            function closePlannerModal(){plannerModal.style.display="none";}
-            function addPlannerDay(){const dC=plannerDays.querySelectorAll(".day-plan").length;const sD=new Date(currentDate+'T12:00:00Z');sD.setUTCDate(sD.getUTCDate()+dC);const dS=sD.toISOString().split("T")[0];const dDiv=document.createElement("div");dDiv.className="day-plan";dDiv.dataset.date=dS;const dLbl=document.createElement("h4");dLbl.textContent=`Day ${dC+1}: ${formatDateForUI(dS)}`;dDiv.appendChild(dLbl);addPlannerTaskEntry(dDiv);const addTBtn=document.createElement("button");addTBtn.className="btn btn-secondary";addTBtn.textContent="+ Task";addTBtn.title="Add task";addTBtn.style.marginTop="0.5rem";addTBtn.style.padding='0.3em 0.8em';addTBtn.addEventListener("click",()=>addPlannerTaskEntry(dDiv,addTBtn));dDiv.appendChild(addTBtn);plannerDays.appendChild(dDiv);}
-            function addPlannerTaskEntry(dDiv,iB=null){const tE=document.createElement("div");tE.className="task-entry";const cC=document.createElement('div');cC.className='controls-container';const tG=document.createElement('div');const tL=document.createElement("label");tL.textContent="Time:";tL.style.marginBottom='2px';const tS=document.createElement("select");populateTempTimeDropdown(tS,"3:00 PM");tG.append(tL,tS);cC.appendChild(tG);const dG=document.createElement('div');const dL=document.createElement("label");dL.textContent="Duration:";dL.style.marginBottom='2px';const dS=document.createElement("select");["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;dS.appendChild(o);});dS.value="30 min";dG.append(dL,dS);cC.appendChild(dG);const aG=document.createElement('div');const aL=document.createElement("label");aL.textContent="Activity:";aL.style.marginBottom='2px';const aI=document.createElement("input");aI.type="text";aI.placeholder="Task...";aG.append(aL,aI);cC.appendChild(aG);tE.appendChild(cC);if(iB){dDiv.insertBefore(tE,iB);}else{dDiv.appendChild(tE);}}
-            function formatDateForUI(dS){try{const d=new Date(dS+'T12:00:00Z');return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});}catch(e){return dS;}}
-            function saveMultiDayPlan(){if(!currentClient)return;const dP=plannerDays.querySelectorAll(".day-plan");let tAC=0;dP.forEach(dD=>{const dS=dD.dataset.date;if(!dS)return;if(!allData[currentClient][dS]){allData[currentClient][dS]={dayRating:"0",dayNotes:"",tasks:[],weeklyDone:{}};}const dR=allData[currentClient][dS];if(!dR.tasks)dR.tasks=[];const tE=dD.querySelectorAll(".task-entry");tE.forEach(e=>{const tS=e.querySelector("select:nth-of-type(1)");const dS_sel=e.querySelector("select:nth-of-type(2)");const aI=e.querySelector("input[type='text']");if(tS&&dS_sel&&aI){const a=aI.value.trim();if(a){dR.tasks.push({id:`task_${Date.now()}_${Math.random().toString(36).substring(2,9)}`,time:tS.value,duration:dS_sel.value,activity:a,completed:false,rating:"0"});tAC++;}}});dR.tasks.sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));});saveToLocalStorage();loadClientDate(currentClient,currentDate);closePlannerModal();alert(`${tAC} tasks added.`);}
+<!-- Big Goal & Links -->
+<div style="margin-bottom:1rem; background:#fff; padding:0.8rem; border:1px solid var(--border-color); border-radius:var(--radius); box-shadow: var(--shadow-sm);">
+  <div style="margin-bottom:0.5rem;">
+    <label style="font-weight:600; margin-right:0.3rem;">Big Goal:</label>
+    <input type="text" id="bigGoalInput" placeholder="e.g. Get into Yale" style="width:200px; margin-right:1rem;" />
+    <label style="font-weight:600; margin-right:0.3rem;">Canvas:</label>
+    <input type="text" id="canvasLinkInput" style="width:150px; margin-right:1rem;" />
+    <label style="font-weight:600; margin-right:0.3rem;">Classroom:</label>
+    <input type="text" id="classroomLinkInput" style="width:150px;" />
+    <button class="btn btn-primary" id="saveClientInfoBtn" style="margin-top:0.5rem;">Save Info</button>
+  </div>
+  <div id="bigGoalDisplay" style="margin:0.3rem 0; font-weight:bold; color:var(--primary-blue);"></div>
+  <div>
+    <a href="#" id="canvasLinkAnchor" target="_blank" style="margin-right:1rem; display:none; font-weight:600;">Open Canvas</a>
+    <a href="#" id="classroomLinkAnchor" target="_blank" style="display:none; font-weight:600;">Open Classroom</a>
+  </div>
+</div>
 
-            // --- Weekly Planner ---
-            function openWeeklyModal(){if(!currentClient){alert("Select client.");return;}weeklyClientLabel.textContent=currentClient;buildWeeklyContent();weeklyModal.style.display="block";}
-            function closeWeeklyModal(){weeklyModal.style.display="none";}
-            function buildWeeklyContent(){weeklyContent.innerHTML="";const wd=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];if(!allData[currentClient].weeklyTasks)allData[currentClient].weeklyTasks={};const cWT=allData[currentClient].weeklyTasks;wd.forEach(day=>{const dS=document.createElement("div");dS.className="weekly-day-section";const h=document.createElement("h4");h.textContent=day.charAt(0).toUpperCase()+day.slice(1);dS.appendChild(h);const tL=document.createElement("div");tL.id=`weekly-tasks-${day}`;if(!cWT[day])cWT[day]=[];const dT=cWT[day];if(dT.length>0){dT.forEach(task=>{const tR=document.createElement("div");tR.className='weekly-task-row';const tT=document.createElement("span");tT.textContent=`[${escapeHtml(task.time)}] ${escapeHtml(task.activity)} (${escapeHtml(task.duration)})`;tR.appendChild(tT);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Remove";rB.style.marginLeft="auto";rB.addEventListener("click",()=>{if(confirm(`Remove "${task.activity}" for ${day}?`)){const i=dT.findIndex(t=>t.id===task.id);if(i!==-1){dT.splice(i,1);saveToLocalStorage();buildWeeklyContent();}}});tR.appendChild(rB);tL.appendChild(tR);});}else{tL.innerHTML=`<p class="no-data">No tasks.</p>`;}dS.appendChild(tL);const aR=document.createElement("div");aR.className='add-row';const tS=document.createElement("select");populateTempTimeDropdown(tS,"3:00 PM");tS.title="Time";const dS_sel=document.createElement("select");["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{const o=document.createElement("option");o.value=d;o.text=d;dS_sel.appendChild(o);});dS_sel.value="30 min";dS_sel.title="Duration";const aI=document.createElement("input");aI.type="text";aI.placeholder="New weekly activity...";const aB=document.createElement("button");aB.textContent="+ Add";aB.className="btn btn-secondary";aB.title=`Add task for ${day}`;aB.addEventListener("click",()=>{const act=aI.value.trim();if(!act){alert("Enter activity.");aI.focus();return;}const nId=`wt_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;cWT[day].push({id:nId,time:tS.value,duration:dS_sel.value,activity:act});cWT[day].sort((a,b)=>convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));saveToLocalStorage();buildWeeklyContent();});aR.append(tS,dS_sel,aI,aB);dS.appendChild(aR);weeklyContent.appendChild(dS);});}
-            function saveWeeklySchedule(){closeWeeklyModal();loadClientDate(currentClient,currentDate);}
+<!-- Reflection Section -->
+<h2>Daily Reflection</h2>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Day Rating (1–5):</label>
+  <select id="dayRatingSelect" style="margin-left:0.5rem;">
+    <option value="0">--</option>
+    <option value="1">1</option><option value="2">2</option>
+    <option value="3">3</option><option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</div>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Reflection Notes:</label><br/>
+  <textarea id="dayNotes" rows="3" placeholder="Notes for the day..."></textarea>
+</div>
 
-            // --- Image Handling ---
-            function openImageModal(){if(!currentClient){alert("Select client.");return;}imageClientLabel.textContent=currentClient;imageFileInput.value="";imagePreview.src="#";imagePreview.style.display="none";imageTitleInput.value="";imageModal.style.display="block";}
-            function closeImageModal(){imageModal.style.display="none";}
-            function handleFileInputChange(e){const f=e.target.files?e.target.files[0]:null;if(!f)return;if(!f.type.startsWith("image/")){alert("Select image.");e.target.value="";return;}if(f.size>10*1024*1024)alert("Warn: Image > 10MB.");const r=new FileReader();r.onload=(e)=>{imagePreview.src=e.target.result;imagePreview.style.display="block";};r.onerror=(e)=>{alert("Error reading file.");};r.readAsDataURL(f);}
-            function handlePasteImage(e){if(imageModal.style.display!=='block')return;const items=(e.clipboardData||window.clipboardData)?.items;if(!items)return;let fI=false;for(let i=0;i<items.length;i++){if(items[i].type.includes("image")){const b=items[i].getAsFile();if(b){if(b.size>10*1024*1024)alert("Warn: Pasted image > 10MB.");fI=true;const r=new FileReader();r.onload=(e)=>{imagePreview.src=e.target.result;imagePreview.style.display="block";};r.onerror=(e)=>{alert("Error reading paste.");};r.readAsDataURL(b);imageFileInput.value="";break;}}}}
-            function saveImage(){if(!imagePreview.src||imagePreview.src===window.location.href+"#"||imagePreview.style.display==='none'){alert("No image.");return;}if(!currentClient||!allData[currentClient])return;if(!allData[currentClient].images)allData[currentClient].images=[];const t=imageTitleInput.value.trim()||`Image (${formatDateForUI(currentDate)})`;const iDU=imagePreview.src;if(iDU.length>15*1024*1024){if(!confirm("SAVE WARNING: Large image?"))return;}allData[currentClient].images.push({title:t,dataUrl:iDU});try{saveToLocalStorage();}catch(e){allData[currentClient].images.pop();return;}closeImageModal();renderImageGallery();}
-            function renderImageGallery(){imageGallery.innerHTML="";if(!currentClient||!allData[currentClient]||!allData[currentClient].images||allData[currentClient].images.length===0){imageGallery.innerHTML='<h3 style="margin-top:0;">Image Gallery</h3><p class="no-data text-center">(No images)</p>';return;}const imgs=allData[currentClient].images;const h3=document.createElement("h3");h3.textContent="Image Gallery";h3.style.marginTop="0";imageGallery.appendChild(h3);[...imgs].reverse().forEach((imgObj,index)=>{const oI=imgs.length-1-index;const d=document.createElement("div");d.className="gallery-item";const th=document.createElement("img");th.src=imgObj.dataUrl;th.alt=escapeHtml(imgObj.title);th.title="Click view full";th.addEventListener("click",()=>{const iW=window.open("","_blank");iW.document.write(`<title>${escapeHtml(imgObj.title)}</title><style>body{margin:0;background:#333;}img{display:block;max-width:100%;max-height:100vh;margin:auto;}</style><body><img src="${imgObj.dataUrl}" alt="${escapeHtml(imgObj.title)}"></body>`);iW.document.close();});d.appendChild(th);const s=document.createElement("span");s.className="title";s.textContent=escapeHtml(imgObj.title);d.appendChild(s);const rB=document.createElement("button");rB.innerHTML=deleteIconSVG;rB.className="btn btn-icon btn-icon-delete";rB.title="Remove image";rB.addEventListener("click",()=>{if(confirm(`Remove image "${escapeHtml(imgObj.title)}"?`)){imgs.splice(oI,1);saveToLocalStorage();renderImageGallery();}});d.appendChild(rB);imageGallery.appendChild(d);});}
+<!-- Add New Task -->
+<h2>Add New Task</h2>
+<div style="margin-bottom:0.5rem;">
+  <label style="font-weight:600;">Time:</label>
+  <select id="timeSelect"></select>
+  <label style="font-weight:600; margin-left:1rem;">Duration:</label>
+  <select id="durationSelect">
+    <option value="5 min">5 min</option>
+    <option value="10 min">10 min</option>
+    <option value="15 min">15 min</option>
+    <option value="30 min" selected>30 min</option>
+    <option value="45 min">45 min</option>
+    <option value="1 hour">1 hour</option>
+    <option value="90 min">90 min</option>
+    <option value="2 hours">2 hours</option>
+  </select>
+</div>
+<div style="margin-bottom:0.8rem;">
+  <label style="font-weight:600;">Activity:</label>
+  <input type="text" id="activityInput" style="width:50%;" placeholder="e.g. Work on math..." />
+</div>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Search:</label>
+  <input type="text" id="taskSearch" style="width:35%;" placeholder="Filter tasks below..." />
+</div>
+<button class="btn btn-primary" id="addTaskBtn">Add Task</button>
 
-             // --- Final call to initialize ---
-             initializeApp();
+<!-- Task Table -->
+<table style="margin-top:1rem;">
+  <thead>
+    <tr>
+      <th style="width:18%;">Time & Duration</th>
+      <th style="width:37%;">Activity</th>
+      <th style="width:8%;">Done?</th>
+      <th style="width:12%;">Rating</th>
+      <th style="width:25%;">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="taskTable">
+    <tr><td colspan="5" style="text-align:center; color:#666;">(No tasks yet)</td></tr>
+  </tbody>
+</table>
 
-        }); // End of DOMContentLoaded listener
+<!-- Image Gallery -->
+<div id="imageGallery"></div>
 
-        // === END OF JAVASCRIPT ===
-    </script>
+<!-- Progress Dashboard -->
+<h2>Progress Dashboard</h2>
+<p><strong>Task Completion:</strong> <span id="completionRate">-</span></p>
+<div class="progress-bar-container">
+  <div id="completionBar" class="progress-bar" style="width:0%">0%</div>
+</div>
 
+<p><strong>Average Task Rating (this day):</strong> <span id="averageTaskRating">-</span></p>
+<hr style="margin:1rem 0;"/>
+<p><strong>Day Rating (this day):</strong> <span id="displayDayRating">-</span></p>
+<p><strong>Avg Day Rating (up to this date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
+<div class="progress-bar-container">
+  <div id="avgRatingBar" class="progress-bar blue-bar" style="width:0%">0/5</div>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:2rem; color:var(--text-light); font-size:0.9em; border-top:1px solid var(--border-color); padding-top:1rem; text-align:center;">
+  <p>Data is stored locally in your browser's <code>localStorage</code>. No server or external DB needed.</p>
+</div>
+
+<!-- 1) MULTI-DAY PLANNER MODAL -->
+<div id="multiDayModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" data-close="multiDayModal">X</button>
+    <div class="modal-header">
+      <h3>Multi-Day Task Planner</h3>
+    </div>
+    <p>Create tasks for multiple upcoming days at once.</p>
+    <div id="multiDaysContainer"></div>
+    <button class="btn" id="addAnotherDayBtn">Add Another Day</button>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveMultiDayBtn">Save All</button>
+      <button class="btn" data-close="multiDayModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2) WEEKLY PLANNER MODAL -->
+<div id="weeklyModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" data-close="weeklyModal">X</button>
+    <div class="modal-header">
+      <h3>Weekly Planner</h3>
+    </div>
+    <p>Set recurring tasks for each weekday.</p>
+    <div id="weeklyContainer"></div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveWeeklyBtn">Save Weekly</button>
+      <button class="btn" data-close="weeklyModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3) IMAGES MODAL -->
+<div id="imageModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" data-close="imageModal">X</button>
+    <div class="modal-header">
+      <h3>Add Image / Screenshot</h3>
+    </div>
+    <div>
+      <input type="file" id="imageFileInput" accept="image/*" />
+      <p style="color:var(--text-light); font-size:0.9em;">Or paste a screenshot (Ctrl+V).</p>
+    </div>
+    <img id="imagePreview" src="" alt="preview" style="display:none; max-width:100%; max-height:200px; margin:0.5rem 0; border:1px solid #ccc;" />
+    <div>
+      <label style="font-weight:600;">Title:</label><br/>
+      <input type="text" id="imageTitle" style="width:80%;" placeholder="Optional title">
+    </div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveImageBtn">Save Image</button>
+      <button class="btn" data-close="imageModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+/***************************************************************
+  SINGLE-PAGE RESET TRACKER (NO GOOGLE CALENDAR/TASKS SECTIONS)
+***************************************************************/
+
+let allData = {};
+const STORAGE_KEY = "multiClientDateData_SinglePage";
+
+/* DOM elements */
+const clientSelect       = document.getElementById("clientSelect");
+const addClientBtn       = document.getElementById("addClientBtn");
+const newClientForm      = document.getElementById("newClientForm");
+const newClientName      = document.getElementById("newClientName");
+const saveClientBtn      = document.getElementById("saveClientBtn");
+const cancelClientBtn    = document.getElementById("cancelClientBtn");
+
+const bigGoalInput       = document.getElementById("bigGoalInput");
+const canvasLinkInput    = document.getElementById("canvasLinkInput");
+const classroomLinkInput = document.getElementById("classroomLinkInput");
+const saveClientInfoBtn  = document.getElementById("saveClientInfoBtn");
+const bigGoalDisplay     = document.getElementById("bigGoalDisplay");
+const canvasLinkAnchor   = document.getElementById("canvasLinkAnchor");
+const classroomLinkAnchor= document.getElementById("classroomLinkAnchor");
+
+const datePicker         = document.getElementById("datePicker");
+const clearTasksBtn      = document.getElementById("clearTasksBtn");
+const reportBtn          = document.getElementById("reportBtn");
+const multiDayBtn        = document.getElementById("multiDayBtn");
+const weeklyBtn          = document.getElementById("weeklyBtn");
+const imageBtn           = document.getElementById("imageBtn");
+const exportBtn          = document.getElementById("exportBtn");
+
+const dayRatingSelect    = document.getElementById("dayRatingSelect");
+const dayNotesTextarea   = document.getElementById("dayNotes");
+
+const timeSelect         = document.getElementById("timeSelect");
+const durationSelect     = document.getElementById("durationSelect");
+const activityInput      = document.getElementById("activityInput");
+const taskSearch         = document.getElementById("taskSearch");
+const addTaskBtn         = document.getElementById("addTaskBtn");
+const taskTable          = document.getElementById("taskTable");
+
+const completionRateEl   = document.getElementById("completionRate");
+const completionBarEl    = document.getElementById("completionBar");
+const averageTaskRatingEl= document.getElementById("averageTaskRating");
+const displayDayRatingEl = document.getElementById("displayDayRating");
+const avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate");
+const avgRatingBarEl     = document.getElementById("avgRatingBar");
+
+const imageGallery       = document.getElementById("imageGallery");
+
+/* Multi-day modal */
+const multiDayModal      = document.getElementById("multiDayModal");
+const multiDaysContainer = document.getElementById("multiDaysContainer");
+const addAnotherDayBtn   = document.getElementById("addAnotherDayBtn");
+const saveMultiDayBtn    = document.getElementById("saveMultiDayBtn");
+
+/* Weekly modal */
+const weeklyModal        = document.getElementById("weeklyModal");
+const weeklyContainer    = document.getElementById("weeklyContainer");
+const saveWeeklyBtn      = document.getElementById("saveWeeklyBtn");
+
+/* Image modal */
+const imageModal         = document.getElementById("imageModal");
+const imageFileInput     = document.getElementById("imageFileInput");
+const imagePreview       = document.getElementById("imagePreview");
+const imageTitleInput    = document.getElementById("imageTitle");
+const saveImageBtn       = document.getElementById("saveImageBtn");
+
+let currentClient=null;
+let currentDate=null;
+
+window.addEventListener("load", ()=>{
+  /* Load from localStorage */
+  loadFromStorage();
+
+  buildTimeSelect(timeSelect);
+
+  buildClientDropdown();
+
+  // default date = today
+  const todayStr = new Date().toISOString().split("T")[0];
+  datePicker.value = todayStr;
+  currentDate = todayStr;
+
+  if (Object.keys(allData).length>0) {
+    currentClient = Object.keys(allData).sort()[0];
+    clientSelect.value = currentClient;
+    loadClientDate(currentClient, currentDate);
+  }
+
+  /* Events */
+  clientSelect.addEventListener("change", onClientOrDateChange);
+  datePicker.addEventListener("change", onClientOrDateChange);
+
+  addClientBtn.addEventListener("click",()=>{
+    newClientForm.style.display="block";
+    newClientName.value="";
+    newClientName.focus();
+  });
+  cancelClientBtn.addEventListener("click",()=>newClientForm.style.display="none");
+  saveClientBtn.addEventListener("click", saveNewClient);
+
+  saveClientInfoBtn.addEventListener("click", saveClientInfo);
+
+  addTaskBtn.addEventListener("click", addNewTask);
+  clearTasksBtn.addEventListener("click", clearDailyTasks);
+  reportBtn.addEventListener("click", generateReport);
+  multiDayBtn.addEventListener("click", ()=> openModal("multiDayModal"));
+  weeklyBtn.addEventListener("click", ()=> openModal("weeklyModal"));
+  imageBtn.addEventListener("click", ()=> openModal("imageModal"));
+
+  exportBtn.addEventListener("click", exportData);
+
+  dayRatingSelect.addEventListener("change", onDayRatingChange);
+  dayNotesTextarea.addEventListener("input", onDayNotesChange);
+
+  taskSearch.addEventListener("input", filterTasks);
+
+  // multi-day
+  addAnotherDayBtn.addEventListener("click", addMultiDayBlock);
+  saveMultiDayBtn.addEventListener("click", saveMultiDayPlan);
+
+  // weekly
+  saveWeeklyBtn.addEventListener("click", saveWeeklyPlan);
+
+  // images
+  imageFileInput.addEventListener("change", handleImageFileChange);
+  imageModal.addEventListener("paste", handleImagePaste);
+  saveImageBtn.addEventListener("click", saveImage);
+
+  // close modals
+  document.querySelectorAll("[data-close], .modal-close").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      const id= btn.dataset.close;
+      if (id) closeModal(id);
+      else btn.parentElement.parentElement.style.display="none";
+    });
+  });
+
+  // build weekly content now
+  buildWeeklyContent();
+
+  // add default multi-day block (hidden unless user opens modal)
+  addMultiDayBlock();
+
+  // keyboard shortcuts
+  document.addEventListener("keydown",(e)=>{
+    // ignore if typing in input/textarea/select
+    const tag=e.target.tagName;
+    if(["INPUT","TEXTAREA","SELECT"].includes(tag)) {
+      if(e.key==="Escape"){
+        closeModal("multiDayModal");
+        closeModal("weeklyModal");
+        closeModal("imageModal");
+      }
+      return;
+    }
+    // alt+a => add
+    if(e.altKey && e.key==="a"){ e.preventDefault();
+      if(activityInput.value.trim()!==""){ addNewTask();}
+      else activityInput.focus();
+    }
+    // alt+d => toggle last
+    if(e.altKey && e.key==="d"){ e.preventDefault();
+      const lastRow= taskTable.querySelector("tr:last-child");
+      if(lastRow){
+        const chk=lastRow.querySelector("input[type='checkbox']");
+        if(chk){
+          chk.checked=!chk.checked;
+          chk.dispatchEvent(new Event("change"));
+        }
+      }
+    }
+    // alt+s => sort
+    if(e.altKey && e.key==="s"){ e.preventDefault();
+      sortDailyTasks();
+    }
+    // escape => close modals
+    if(e.key==="Escape"){
+      closeModal("multiDayModal");
+      closeModal("weeklyModal");
+      closeModal("imageModal");
+    }
+  });
+});
+
+/* LOAD/SAVE */
+function loadFromStorage() {
+  const str= localStorage.getItem(STORAGE_KEY);
+  if(str){
+    try {
+      allData= JSON.parse(str);
+      if(!allData||typeof allData!=="object") allData={};
+    } catch(e){
+      allData={};
+    }
+  } else { allData={}; }
+}
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+  } catch(e){
+    if(e.name==="QuotaExceededError"){
+      alert("Storage limit exceeded!");
+    }
+  }
+}
+
+/* BUILD CLIENT DROPDOWN */
+function buildClientDropdown() {
+  clientSelect.innerHTML="";
+  const names= Object.keys(allData).sort();
+  if(!names.length){
+    const opt=document.createElement("option");
+    opt.value=""; opt.textContent="--No Clients--";
+    clientSelect.appendChild(opt);
+    clientSelect.disabled=true;
+    return;
+  }
+  clientSelect.disabled=false;
+  names.forEach(n=>{
+    const opt=document.createElement("option");
+    opt.value=n; opt.textContent=n;
+    clientSelect.appendChild(opt);
+  });
+}
+
+/* ADD CLIENT */
+function saveNewClient() {
+  const name= newClientName.value.trim();
+  if(!name){ alert("Enter name"); return;}
+  if(allData[name]) { alert("Client exists."); return;}
+  allData[name]={
+    bigGoal:"",
+    links:{canvas:"", classroom:""},
+    weeklyTasks:{
+      monday:[], tuesday:[], wednesday:[], thursday:[],
+      friday:[], saturday:[], sunday:[]
+    },
+    images:[]
+  };
+  saveToStorage();
+  buildClientDropdown();
+  clientSelect.value=name;
+  currentClient=name;
+  loadClientDate(name, currentDate);
+  newClientForm.style.display="none";
+}
+
+/* CLIENT/DATE CHANGE */
+function onClientOrDateChange() {
+  currentClient= clientSelect.value;
+  currentDate= datePicker.value;
+  loadClientDate(currentClient, currentDate);
+}
+
+/* LOAD CLIENT+DATE */
+function loadClientDate(cli, dt){
+  if(!cli||!dt) return;
+  if(!allData[cli]) {
+    allData[cli]={
+      bigGoal:"",
+      links:{canvas:"", classroom:""},
+      weeklyTasks:{
+        monday:[],tuesday:[],wednesday:[],thursday:[],
+        friday:[],saturday:[],sunday:[]
+      },
+      images:[]
+    };
+  }
+  if(!allData[cli][dt]) {
+    allData[cli][dt]={
+      dayRating:"0",
+      dayNotes:"",
+      tasks:[],
+      weeklyDone:{}
+    };
+  }
+  renderClientInfo(cli);
+  renderReflection(cli, dt);
+  renderTaskTable(cli, dt);
+  renderImageGallery(cli);
+  updateProgress(cli, dt);
+}
+
+/* CLIENT INFO */
+function renderClientInfo(cli) {
+  const cd= allData[cli];
+  bigGoalInput.value= cd.bigGoal||"";
+  bigGoalDisplay.textContent= cd.bigGoal||"(No big goal set)";
+  canvasLinkInput.value= cd.links?.canvas||"";
+  classroomLinkInput.value= cd.links?.classroom||"";
+
+  if(cd.links?.canvas) {
+    canvasLinkAnchor.href=cd.links.canvas;
+    canvasLinkAnchor.style.display="inline-block";
+  } else {canvasLinkAnchor.style.display="none";}
+  if(cd.links?.classroom){
+    classroomLinkAnchor.href= cd.links.classroom;
+    classroomLinkAnchor.style.display="inline-block";
+  } else {classroomLinkAnchor.style.display="none";}
+}
+function saveClientInfo() {
+  if(!currentClient)return;
+  const cd= allData[currentClient];
+  cd.bigGoal= bigGoalInput.value.trim();
+  if(!cd.links) cd.links={};
+  cd.links.canvas= canvasLinkInput.value.trim();
+  cd.links.classroom= classroomLinkInput.value.trim();
+  saveToStorage();
+  renderClientInfo(currentClient);
+  alert("Client info saved!");
+}
+
+/* REFLECTION */
+function renderReflection(cli, dt) {
+  const rec= allData[cli][dt];
+  dayRatingSelect.value= rec.dayRating||"0";
+  dayNotesTextarea.value= rec.dayNotes||"";
+}
+function onDayRatingChange() {
+  if(!currentClient||!currentDate)return;
+  const rec= allData[currentClient][currentDate];
+  if(!rec)return;
+  rec.dayRating= dayRatingSelect.value;
+  saveToStorage();
+  updateProgress(currentClient, currentDate);
+}
+function onDayNotesChange() {
+  if(!currentClient||!currentDate)return;
+  const rec= allData[currentClient][currentDate];
+  if(!rec)return;
+  rec.dayNotes= dayNotesTextarea.value;
+  saveToStorage();
+}
+
+/* TIME SELECT */
+function buildTimeSelect(sel) {
+  sel.innerHTML="";
+  for(let hour=5; hour<24; hour++){
+    for(let min=0; min<60; min+=15){
+      const d=new Date();
+      d.setHours(hour,min);
+      const label= d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit', hour12:true});
+      const opt= document.createElement("option");
+      opt.value=label; opt.textContent=label;
+      sel.appendChild(opt);
+    }
+  }
+  // add common
+  const sep= document.createElement("option");
+  sep.disabled=true; sep.textContent="-----";
+  sel.appendChild(sep);
+  const cTimes= ["Before School","During Study Hall","During Lunch",
+   "Right After School","Before Dinner","After Dinner","Before Bed"];
+  cTimes.forEach(t=>{
+    const o=document.createElement("option");
+    o.value=t; o.textContent=t;
+    sel.appendChild(o);
+  });
+  // default 3:00 PM if present
+  if(Array.from(sel.options).some(o=>o.value==="3:00 PM")) {
+    sel.value="3:00 PM";
+  }
+}
+
+/* DAILY TASKS */
+function renderTaskTable(cli, dt) {
+  taskTable.innerHTML="";
+  const rec= allData[cli][dt];
+  if(!rec) {
+    taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks yet)</td></tr>`;
+    return;
+  }
+  const daily= rec.tasks||[];
+  const wd= getWeekday(dt);
+  const wList= allData[cli].weeklyTasks[wd]||[];
+  const wDone= rec.weeklyDone||{};
+  const merged=[];
+  daily.forEach(t=> merged.push({...t,_type:"daily"}));
+  wList.forEach(wt=> merged.push({...wt, completed:!!wDone[wt.id], rating:"0", _type:"weekly"}));
+  merged.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+  if(!merged.length) {
+    taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks yet)</td></tr>`;
+    return;
+  }
+  merged.forEach(t=> addTaskRow(t, rec));
+}
+function addTaskRow(tObj, dayRec) {
+  const row= taskTable.insertRow();
+  if(tObj.completed) row.classList.add("completed-task");
+
+  // time
+  const cTime=row.insertCell(0);
+  cTime.innerHTML= tObj.time;
+  if(tObj.duration){
+    cTime.innerHTML+= `<br><small>(${tObj.duration})</small>`;
+  }
+  if(tObj._type==="weekly") {
+    cTime.innerHTML+= `<br><small style="color:#09f;font-weight:bold;">(Weekly)</small>`;
+  }
+
+  // activity
+  const cAct=row.insertCell(1);
+  cAct.textContent=tObj.activity;
+
+  // done
+  const cDone=row.insertCell(2);
+  const chk=document.createElement("input");
+  chk.type="checkbox";
+  chk.checked= tObj.completed;
+  chk.addEventListener("change",()=>{
+    row.classList.toggle("completed-task", chk.checked);
+    if(tObj._type==="daily"){
+      const idx= dayRec.tasks.indexOf(tObj);
+      if(idx>-1) dayRec.tasks[idx].completed= chk.checked;
+    } else {
+      if(!dayRec.weeklyDone) dayRec.weeklyDone={};
+      dayRec.weeklyDone[tObj.id]= chk.checked;
+    }
+    saveToStorage();
+    updateProgress(currentClient, currentDate);
+  });
+  cDone.appendChild(chk);
+
+  // rating
+  const cRate=row.insertCell(3);
+  if(tObj._type==="daily") {
+    const sel= document.createElement("select");
+    for(let i=0;i<=5;i++){
+      const o=document.createElement("option");
+      o.value=i; o.text= (i===0?"--":i.toString());
+      sel.appendChild(o);
+    }
+    sel.value=tObj.rating||"0";
+    sel.addEventListener("change",()=>{
+      tObj.rating=sel.value;
+      saveToStorage();
+      updateProgress(currentClient, currentDate);
+    });
+    cRate.appendChild(sel);
+  } else {
+    cRate.textContent="--";
+    cRate.style.color="#999";
+  }
+
+  // actions
+  const cActn=row.insertCell(4);
+  if(tObj._type==="daily") {
+    const rm=document.createElement("button");
+    rm.classList.add("btn");
+    rm.textContent="X";
+    rm.addEventListener("click",()=>{
+      if(confirm(`Remove "${tObj.activity}"?`)){
+        const idx= dayRec.tasks.indexOf(tObj);
+        if(idx>-1){
+          dayRec.tasks.splice(idx,1);
+          saveToStorage();
+          row.remove();
+          updateProgress(currentClient, currentDate);
+          if(!taskTable.rows.length){
+            taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks yet)</td></tr>`;
+          }
+        }
+      }
+    });
+    cActn.appendChild(rm);
+  } else {
+    cActn.innerHTML=`<small style="color:#666;">(Edit in Weekly Plan)</small>`;
+  }
+}
+
+function addNewTask() {
+  if(!currentClient||!currentDate) return;
+  const timeVal= timeSelect.value;
+  const durVal= durationSelect.value;
+  const actVal= activityInput.value.trim();
+  if(!actVal){ alert("Enter an activity"); return;}
+  const rec= allData[currentClient][currentDate];
+  if(!rec.tasks) rec.tasks=[];
+  rec.tasks.push({
+    time: timeVal,
+    duration: durVal,
+    activity: actVal,
+    completed:false,
+    rating:"0"
+  });
+  saveToStorage();
+  renderTaskTable(currentClient, currentDate);
+  updateProgress(currentClient, currentDate);
+  activityInput.value="";
+  sortDailyTasks();
+}
+function sortDailyTasks() {
+  if(!currentClient||!currentDate)return;
+  const rec= allData[currentClient][currentDate];
+  rec.tasks.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+  saveToStorage();
+  renderTaskTable(currentClient, currentDate);
+}
+function filterTasks() {
+  const txt= taskSearch.value.toLowerCase();
+  const rows= taskTable.querySelectorAll("tr");
+  rows.forEach(r=>{
+    if(!r.cells[1])return;
+    const timeStr= r.cells[0].textContent.toLowerCase();
+    const actStr= r.cells[1].textContent.toLowerCase();
+    r.style.display= (timeStr.includes(txt)||actStr.includes(txt))?"":"none";
+  });
+}
+function clearDailyTasks() {
+  if(!currentClient||!currentDate) return;
+  if(confirm("Clear all daily tasks? (Weekly remain)")){
+    const rec= allData[currentClient][currentDate];
+    if(!rec)return;
+    rec.tasks=[];
+    saveToStorage();
+    renderTaskTable(currentClient, currentDate);
+    updateProgress(currentClient, currentDate);
+  }
+}
+
+/* PROGRESS */
+function updateProgress(cli, dt){
+  const rec= allData[cli][dt];
+  if(!rec){
+    completionRateEl.textContent="-";
+    completionBarEl.style.width="0%";
+    completionBarEl.textContent="0%";
+    averageTaskRatingEl.textContent="-";
+    displayDayRatingEl.textContent="--";
+    avgDayRatingUpToDateEl.textContent="--";
+    avgRatingBarEl.style.width="0%";
+    avgRatingBarEl.textContent="0/5";
+    return;
+  }
+  const daily= rec.tasks||[];
+  const wd= getWeekday(dt);
+  const wList= allData[cli].weeklyTasks[wd]||[];
+  const wDone= rec.weeklyDone||{};
+  const dailyDone= daily.filter(t=>t.completed).length;
+  const weeklyDone= wList.filter(w=> wDone[w.id]).length;
+  const totalDone= dailyDone+weeklyDone;
+  const total= daily.length+ wList.length;
+  if(!total){
+    completionRateEl.textContent="-";
+    completionBarEl.style.width="0%";
+    completionBarEl.textContent="0%";
+    averageTaskRatingEl.textContent="-";
+  } else {
+    const pct= Math.round((totalDone/total)*100);
+    completionRateEl.textContent=`${pct}% (${totalDone}/${total})`;
+    completionBarEl.style.width=`${pct}%`;
+    completionBarEl.textContent=`${pct}%`;
+
+    const rated= daily.filter(t=> t.rating!=="0");
+    if(rated.length){
+      const sum= rated.reduce((acc,t)=> acc+parseInt(t.rating,10),0);
+      const avg= sum/rated.length;
+      averageTaskRatingEl.textContent= avg.toFixed(1)+"/5";
+    } else {
+      averageTaskRatingEl.textContent="No rated tasks";
+    }
+  }
+  // day rating
+  if(rec.dayRating && rec.dayRating!=="0") {
+    displayDayRatingEl.textContent= rec.dayRating+"/5";
+  } else {
+    displayDayRatingEl.textContent="--";
+  }
+
+  // avg day rating up to date
+  const allDates= Object.keys(allData[cli]).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&k<=dt).sort();
+  let sumDR=0, cntDR=0;
+  allDates.forEach(d=>{
+    const dr2= allData[cli][d].dayRating;
+    if(dr2 && dr2!=="0"){
+      sumDR+= parseInt(dr2,10);
+      cntDR++;
+    }
+  });
+  if(cntDR>0){
+    const avgdr= sumDR/cntDR;
+    avgDayRatingUpToDateEl.textContent= avgdr.toFixed(1)+"/5";
+    const p= (avgdr/5)*100;
+    avgRatingBarEl.style.width=`${p}%`;
+    avgRatingBarEl.textContent= avgdr.toFixed(1)+"/5";
+  } else {
+    avgDayRatingUpToDateEl.textContent="No day ratings";
+    avgRatingBarEl.style.width="0%";
+    avgRatingBarEl.textContent="0/5";
+  }
+}
+
+/* MULTI-DAY */
+function openModal(id){
+  document.getElementById(id).style.display="block";
+}
+function closeModal(id){
+  document.getElementById(id).style.display="none";
+}
+function addMultiDayBlock() {
+  const index= multiDaysContainer.querySelectorAll(".day-plan").length;
+  const baseDate= new Date(currentDate+"T12:00:00");
+  baseDate.setDate(baseDate.getDate()+index);
+  const ds= baseDate.toISOString().split("T")[0];
+
+  const div= document.createElement("div");
+  div.classList.add("day-plan");
+  div.dataset.date= ds;
+
+  const h4= document.createElement("h4");
+  h4.textContent=`Day ${index+1}: ${formatDate(ds)}`;
+  div.appendChild(h4);
+
+  const timeSel= document.createElement("select");
+  buildTimeSelect(timeSel);
+  const durSel= document.createElement("select");
+  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(val=>{
+    const o=document.createElement("option");
+    o.value=val; o.textContent=val;
+    durSel.appendChild(o);
+  });
+  durSel.value="30 min";
+  div.appendChild(timeSel);
+  div.appendChild(durSel);
+
+  const lab= document.createElement("label");
+  lab.style.display="block";
+  lab.style.marginTop="0.5rem";
+  lab.textContent="Activity:";
+  div.appendChild(lab);
+  const act=document.createElement("input");
+  act.type="text";
+  act.style.width="100%";
+  div.appendChild(act);
+
+  const addBtn= document.createElement("button");
+  addBtn.classList.add("btn");
+  addBtn.style.marginTop="0.5rem";
+  addBtn.textContent="+ Task for this day";
+  addBtn.addEventListener("click",()=>{
+    const sep=document.createElement("hr");
+    div.appendChild(sep);
+    const newTime= timeSel.cloneNode(true);
+    const newDur= durSel.cloneNode(true);
+    const newLab= lab.cloneNode(true);
+    const newAct= act.cloneNode(true);
+    div.appendChild(newTime);
+    div.appendChild(newDur);
+    div.appendChild(newLab);
+    div.appendChild(newAct);
+  });
+  div.appendChild(addBtn);
+
+  multiDaysContainer.appendChild(div);
+}
+function saveMultiDayPlan() {
+  const blocks= multiDaysContainer.querySelectorAll(".day-plan");
+  let tasksAdded=0;
+  blocks.forEach(block=>{
+    const ds= block.dataset.date;
+    if(!allData[currentClient][ds]){
+      allData[currentClient][ds]={dayRating:"0", dayNotes:"", tasks:[], weeklyDone:{}};
+    }
+    const rec= allData[currentClient][ds];
+    // gather sets of timeSel,durSel, then next input
+    const selects= block.querySelectorAll("select");
+    const inputs= block.querySelectorAll("input[type='text']");
+    for(let i=0; i<inputs.length; i++){
+      const actVal= inputs[i].value.trim();
+      if(!actVal) continue;
+      const timeIdx= i*2;
+      const durIdx= i*2+1;
+      const timeVal= selects[timeIdx]?.value||"3:00 PM";
+      const durVal= selects[durIdx]?.value||"30 min";
+      rec.tasks.push({
+        time: timeVal,
+        duration: durVal,
+        activity: actVal,
+        completed:false,
+        rating:"0"
+      });
+      tasksAdded++;
+    }
+  });
+  saveToStorage();
+  loadClientDate(currentClient, currentDate);
+  closeModal("multiDayModal");
+  alert(`Multi-day tasks saved! ${tasksAdded} tasks added.`);
+}
+
+/* WEEKLY */
+function buildWeeklyContent() {
+  if(!currentClient)return;
+  weeklyContainer.innerHTML="";
+  const wData= allData[currentClient].weeklyTasks;
+  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+  days.forEach(d=>{
+    const sec=document.createElement("div");
+    sec.classList.add("weekly-day-section");
+    const hd=document.createElement("h4");
+    hd.textContent= d[0].toUpperCase()+d.slice(1);
+    sec.appendChild(hd);
+
+    const tasksDiv= document.createElement("div");
+    (wData[d]||[]).forEach(task=>{
+      const row=document.createElement("div");
+      row.style.display="flex";
+      row.style.gap="0.5rem";
+      row.style.marginBottom="0.3rem";
+      const sp=document.createElement("span");
+      sp.textContent=`[${task.time}] ${task.activity} (${task.duration})`;
+      row.appendChild(sp);
+      const rm=document.createElement("button");
+      rm.classList.add("btn");
+      rm.textContent="X";
+      rm.addEventListener("click",()=>{
+        const idx= wData[d].indexOf(task);
+        if(idx>-1){
+          wData[d].splice(idx,1);
+          saveToStorage();
+          buildWeeklyContent();
+        }
+      });
+      row.appendChild(rm);
+      tasksDiv.appendChild(row);
+    });
+    sec.appendChild(tasksDiv);
+
+    const addRow=document.createElement("div");
+    addRow.style.display="flex";
+    addRow.style.gap="0.3rem";
+    addRow.style.marginTop="0.3rem";
+
+    const timeSel= document.createElement("select");
+    buildTimeSelect(timeSel);
+    const durSel= document.createElement("select");
+    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(val=>{
+      const o=document.createElement("option");
+      o.value=val; o.textContent=val;
+      durSel.appendChild(o);
+    });
+    durSel.value="30 min";
+
+    const inp= document.createElement("input");
+    inp.type="text";
+    inp.placeholder="Activity...";
+
+    const plus=document.createElement("button");
+    plus.classList.add("btn","btn-primary");
+    plus.textContent="+";
+    plus.addEventListener("click",()=>{
+      const v= inp.value.trim();
+      if(!v){ alert("Enter activity"); return;}
+      const newId=`wt_${Date.now()}_${Math.floor(Math.random()*999)}`;
+      wData[d].push({
+        id:newId,
+        time: timeSel.value,
+        duration: durSel.value,
+        activity: v
+      });
+      wData[d].sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+      saveToStorage();
+      buildWeeklyContent();
+    });
+
+    addRow.appendChild(timeSel);
+    addRow.appendChild(durSel);
+    addRow.appendChild(inp);
+    addRow.appendChild(plus);
+
+    sec.appendChild(addRow);
+
+    weeklyContainer.appendChild(sec);
+  });
+}
+function saveWeeklyPlan() {
+  closeModal("weeklyModal");
+  loadClientDate(currentClient, currentDate);
+  alert("Weekly updated!");
+}
+
+/* IMAGES */
+function renderImageGallery(cli){
+  imageGallery.innerHTML="";
+  if(!cli)return;
+  const arr= allData[cli].images||[];
+  if(!arr.length){
+    imageGallery.innerHTML=`<p style="color:#666;">(No images yet)</p>`;
+    return;
+  }
+  const h3=document.createElement("h3");
+  h3.textContent="Image Gallery";
+  imageGallery.appendChild(h3);
+  arr.forEach((imgObj, idx)=>{
+    const div=document.createElement("div");
+    div.classList.add("gallery-item");
+    const span=document.createElement("span");
+    span.classList.add("title");
+    span.textContent= imgObj.title+" ";
+    div.appendChild(span);
+
+    const im=document.createElement("img");
+    im.src=imgObj.dataUrl;
+    im.addEventListener("click",()=>{
+      const w= window.open("","_blank");
+      w.document.write(`<title>${imgObj.title}</title><img src="${imgObj.dataUrl}" style="max-width:100%;"/>`);
+      w.document.close();
+    });
+    div.appendChild(im);
+
+    const rmBtn=document.createElement("button");
+    rmBtn.classList.add("btn");
+    rmBtn.textContent="X";
+    rmBtn.addEventListener("click",()=>{
+      if(confirm(`Remove image "${imgObj.title}"?`)) {
+        arr.splice(idx,1);
+        saveToStorage();
+        renderImageGallery(cli);
+      }
+    });
+    div.appendChild(rmBtn);
+
+    imageGallery.appendChild(div);
+  });
+}
+function handleImageFileChange(e){
+  const file= e.target.files[0];
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=(evt)=>{
+    imagePreview.src= evt.target.result;
+    imagePreview.style.display="block";
+  };
+  r.readAsDataURL(file);
+}
+function handleImagePaste(e){
+  const items= e.clipboardData?.items||[];
+  for(let i=0;i<items.length;i++){
+    if(items[i].type.indexOf("image")===0){
+      const f= items[i].getAsFile();
+      if(f){
+        const r=new FileReader();
+        r.onload=(ev)=>{
+          imagePreview.src= ev.target.result;
+          imagePreview.style.display="block";
+        };
+        r.readAsDataURL(f);
+      }
+    }
+  }
+}
+function saveImage(){
+  if(!imagePreview.src){
+    alert("No image to save");
+    return;
+  }
+  if(!currentClient) {alert("No client selected");return;}
+  const title= imageTitleInput.value.trim()||"(Untitled)";
+  allData[currentClient].images.push({
+    title,
+    dataUrl:imagePreview.src
+  });
+  saveToStorage();
+  closeModal("imageModal");
+  imageFileInput.value="";
+  imagePreview.style.display="none";
+  imagePreview.src="";
+  imageTitleInput.value="";
+  renderImageGallery(currentClient);
+}
+
+/* REPORT */
+function generateReport(){
+  if(!currentClient) {alert("No client selected"); return;}
+  const cliData= allData[currentClient];
+  let html=`
+  <html><head><meta charset="UTF-8"/>
+  <title>RESET Tracker - ${escapeHtml(currentClient)}</title>
+  <style>
+    body { font-family: sans-serif; margin:20px; line-height:1.5; }
+    h1,h2,h3 { margin-bottom:0.4rem; }
+    h1{font-size:1.6rem; color:#4A90E2;}
+    table { width:100%; border-collapse:collapse; margin-bottom:1rem; }
+    table,th,td { border:1px solid #aaa; }
+    th,td { padding:6px; text-align:left; vertical-align:top; }
+    th { background:#f2f2f2; }
+    .notes { background:#eef; padding:6px; border:1px solid #ccc; margin:0.5rem 0;}
+    .weekly {color:#09f; font-style:italic;}
+    .gallery-img { max-width:200px; margin:0.5rem; border:1px solid #ccc;}
+  </style>
+  </head><body>
+  <h1>RESET Tracker Report for ${escapeHtml(currentClient)}</h1>
+  <p><em>Generated on ${new Date().toLocaleString()}</em></p>
+
+  <h2>Big Goal</h2>
+  <p>${escapeHtml(cliData.bigGoal||"(Not set)")}</p>
+
+  <h2>Weekly Tasks</h2>
+  `;
+  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+  days.forEach(d=>{
+    const arr= cliData.weeklyTasks[d]||[];
+    if(arr.length) {
+      html+= `<h3>${escapeHtml(d)}</h3><ul>`;
+      arr.forEach(t=>{
+        html+= `<li>[${escapeHtml(t.time)}] ${escapeHtml(t.activity)} (${escapeHtml(t.duration)})</li>`;
+      });
+      html+= `</ul>`;
+    }
+  });
+
+  // images
+  const imgs= cliData.images||[];
+  if(imgs.length>0){
+    html+= `<h2>Images</h2>`;
+    imgs.forEach(img=>{
+      html+= `<div><strong>${escapeHtml(img.title)}</strong><br/>
+        <img class="gallery-img" src="${img.dataUrl}" alt="img"/>
+      </div>`;
+    });
+  }
+
+  // daily
+  const dateKeys= Object.keys(cliData).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+  if(!dateKeys.length){
+    html+= `<h2>Daily Records</h2><p>(No daily records)</p>`;
+  } else {
+    html+= `<h2>Daily Records</h2>`;
+    dateKeys.forEach(d=>{
+      const rec= cliData[d];
+      if(!rec)return;
+      html+= `<h3>${d} (Rating: ${rec.dayRating||"0"}/5)</h3>`;
+      if(rec.dayNotes){
+        html+= `<div class="notes">${escapeHtml(rec.dayNotes).replace(/\n/g,"<br/>")}</div>`;
+      }
+      // tasks
+      const dailyT= rec.tasks||[];
+      const wd= getWeekday(d);
+      const wList= cliData.weeklyTasks[wd]||[];
+      const doneMap= rec.weeklyDone||{};
+      const merged=[];
+      dailyT.forEach(t=> merged.push({...t,_type:"daily"}));
+      wList.forEach(wt=> merged.push({...wt,_type:"weekly", completed:!!doneMap[wt.id], rating:"(weekly)"}));
+      merged.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+      if(!merged.length) {
+        html+= `<p>No tasks</p>`;
+        return;
+      }
+      html+= `<table><thead>
+        <tr><th>Time</th><th>Activity</th><th>Done?</th><th>Rating</th></tr>
+      </thead><tbody>`;
+      let doneCount=0;
+      merged.forEach(t=>{
+        if(t.completed) doneCount++;
+        let ratingStr=(t._type==="daily"&&t.rating!=="0")? t.rating+"/5" : (t._type==="weekly" ? "(weekly)" : "--");
+        html+= `<tr style="${t.completed?'text-decoration:line-through;color:#888;':''}">
+         <td>${escapeHtml(t.time)}${t.duration?`<br><small>(${escapeHtml(t.duration)})</small>`:""}${t._type==="weekly"?'<br><small class="weekly">(Weekly)</small>':''}</td>
+         <td>${escapeHtml(t.activity)}</td>
+         <td>${t.completed?"Yes":"No"}</td>
+         <td>${ratingStr}</td>
+        </tr>`;
+      });
+      html+= `</tbody></table>`;
+      html+= `<p>Completed: ${doneCount}/${merged.length}</p>`;
+    });
+  }
+
+  html+= `</body></html>`;
+  const w= window.open("","_blank");
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+/* EXPORT */
+function exportData(){
+  const str= JSON.stringify(allData,null,2);
+  const blob= new Blob([str], {type:"application/json"});
+  const url= URL.createObjectURL(blob);
+  const a= document.createElement("a");
+  a.href=url;
+  a.download=`reset-singlepage-export-${(new Date()).toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* UTILS */
+function timeToMin(str) {
+  if(!str)return 9999;
+  const map={
+    "Before School":360,
+    "During Study Hall":600,
+    "During Lunch":720,
+    "Right After School":930,
+    "Before Dinner":1080,
+    "After Dinner":1200,
+    "Before Bed":1320
+  };
+  if(map[str]!==undefined) return map[str];
+  const match= str.match(/(\d{1,2}):(\d{2})\s?(AM|PM)/i);
+  if(match){
+    let hh=parseInt(match[1],10);
+    const mm=parseInt(match[2],10);
+    let ampm=match[3].toUpperCase();
+    if(ampm==="PM"&&hh<12) hh+=12;
+    if(ampm==="AM"&&hh===12) hh=0;
+    return hh*60+mm;
+  }
+  return 9999;
+}
+function getWeekday(ds) {
+  const d=new Date(ds+"T00:00:00");
+  const i= d.getDay(); // 0=Sun
+  const arr=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+  return arr[i];
+}
+function formatDate(ds) {
+  const d=new Date(ds+"T12:00:00");
+  return d.toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
+}
+function escapeHtml(str) {
+  if(!str)return "";
+  return str
+   .replace(/&/g,"&amp;")
+   .replace(/</g,"&lt;")
+   .replace(/>/g,"&gt;")
+   .replace(/"/g,"&quot;")
+   .replace(/'/g,"&#039;");
+}
+</script>
 </body>
 </html>
