@@ -1,1518 +1,1636 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RESET Client Tracker (Merged Client List)</title>
+  <title>RESET Tracker - Merged Version</title>
   <style>
-    /* Light background */
+    :root {
+      /* Color Palette & Variables */
+      --bg-main: #F4F7FC;       /* Soft background */
+      --bg-card: #FFFFFF;       /* Card background */
+      --border-color: #E2E8F0;  /* Light gray border */
+      --text-primary: #2D3748;  /* Dark grayish blue */
+      --text-secondary: #4A5568;/* Medium gray */
+      --text-light: #718096;    /* Lighter gray */
+      --primary-blue: #4A90E2;  /* Accent color for buttons */
+      --primary-blue-dark: #357ABD;
+      --success-green: #48BB78; /* For progress bars */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --radius: 6px;
+      --spacing-unit: 1rem;
+    }
+
+    /* Basic Resets */
+    * { box-sizing: border-box; }
     body {
-      background-color: #EAF6FF;
+      margin: 0 auto;
+      max-width: 850px;
+      background: var(--bg-main);
       font-family: sans-serif;
-      margin: 20px;
-      max-width: 720px;
+      color: var(--text-primary);
+      padding: var(--spacing-unit);
+      line-height: 1.4;
     }
-    h1, h2 {
-      margin-bottom: 0.5em;
+
+    h1, h2, h3 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
-    select, input[type="date"] {
+    h1 { margin-top: 1rem; font-size: 1.8rem; }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3rem;
+    }
+    h3 {
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
+      color: var(--primary-blue);
+      font-size: 1.15rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.45em 0.8em;
+      margin: 0.3em 0.3em 0.3em 0;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s ease;
+      user-select: none; /* Prevent text selection on double click */
+    }
+    .btn:hover {
+      background-color: #f2f2f2;
+    }
+    .btn:active {
+        background-color: #e8e8e8; /* Slight feedback on click */
+    }
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: #fff;
+      border-color: var(--primary-blue);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+    }
+     .btn-primary:active {
+        background-color: #2a5a8a;
+    }
+
+    /* Controls Bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    .controls > div {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .controls label {
+      font-weight: bold;
+      margin-right: 0.2rem;
+      color: var(--text-secondary);
+    }
+    select, input[type="date"], input[type="text"], textarea {
       font-size: 1em;
-      margin-right: 0.5em;
+      padding: 0.3em 0.45em;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background: #fff;
     }
+    select:focus, input[type="text"]:focus, textarea:focus {
+      outline: 2px solid rgba(74,144,226,0.3);
+    }
+    input.accountability-input { /* specific style for accountability column */
+      width: 98%;
+      font-size: 0.9em;
+      padding: 0.2em 0.3em;
+    }
+
+    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1em;
+      margin-top: 0.5rem;
       background-color: #fff;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
+      box-shadow: var(--shadow-sm);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
     }
     th, td {
-      padding: 0.5em;
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem;
       text-align: left;
       vertical-align: middle;
+      font-size: 0.95em;
     }
-    .task-row input[type="checkbox"] {
-      transform: scale(1.2);
-      cursor: pointer;
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      font-size: 0.8em;
     }
-    .btn {
-      cursor: pointer;
-      padding: 0.4em 0.8em;
-      margin: 0.5em 0.3em 0.5em 0;
-      border: 1px solid #ccc;
-      background-color: #f5f5f5;
-    }
-    #footer {
-      margin-top: 2em;
-      font-size: 0.9em;
-      color: #666;
-    }
-    .controls {
-      margin-bottom: 1em;
-    }
-    /* Completed-task styling */
-    .completed-task {
+    tr:last-child td { border-bottom: none; }
+    tr.completed-task td:not(:nth-last-child(1), :nth-last-child(2)) { /* cross out everything but accountability & actions */
       text-decoration: line-through;
-      color: #888;
-      background-color: #f8f8f8;
+      color: var(--text-light);
     }
-    /* Progress panel */
-    #progressDashboard {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #fefefe;
+    tr.editing td {
+        background-color: #fffbea;
     }
-    /* Title bar with a darker blue to stand out */
-    .title-bar {
-      background-color: #BCDDFE;
-      padding: 10px;
-      border-radius: 4px;
-      margin-bottom: 1em;
+
+    /* Client Info Section */
+    .client-info-card {
+      margin-bottom:1rem;
+      background:#fff;
+      padding:0.8rem;
+      border:1px solid var(--border-color);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow-sm);
     }
-    /* New client form */
-    #newClientForm {
-      display: none;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #f0f8ff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    .client-info-edit-view, .client-info-display-view {
+      margin-bottom: 0.5rem;
     }
-    /* Progress bar */
+    .client-info-display-view .info-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        min-width: 80px;
+        display: inline-block;
+    }
+    .client-info-display-view span.info-value {
+      font-weight: bold;
+      color: var(--primary-blue);
+      margin-right: 1rem;
+      display: inline-block;
+    }
+    .client-info-display-view a {
+      margin-right: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--primary-blue);
+    }
+     .client-info-display-view a:hover {
+        text-decoration: underline;
+        color: var(--primary-blue-dark);
+     }
+
+    /* Reflection Section */
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      margin-top: 0.2rem;
+    }
+
+    /* Progress Bars */
     .progress-bar-container {
       width: 100%;
-      background-color: #f1f1f1;
-      border-radius: 4px;
-      margin: 5px 0;
+      background-color: #eee;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 0.3rem 0 1rem 0;
     }
     .progress-bar {
       height: 20px;
-      background-color: #4CAF50;
-      border-radius: 4px;
+      background: var(--success-green);
+      color: #fff;
       text-align: center;
-      color: white;
-      font-weight: bold;
+      font-weight: 600;
+      line-height: 20px;
+      transition: width 0.3s;
+      border-radius: var(--radius) 0 0 var(--radius);
     }
-    /* Multi-day planner modal */
-    #plannerModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 100;
+    .blue-bar {
+      background: var(--primary-blue);
     }
-    .modal-content {
-      background-color: #fff;
-      margin: 50px auto;
-      padding: 20px;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 5px;
-      max-height: 80vh;
-      overflow-y: auto;
+
+    /* Image Gallery */
+    #imageGallery {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
     }
-    .day-plan {
-      margin-bottom: 15px;
-      padding: 10px;
-      background-color: #f5f5f5;
-      border-radius: 4px;
-    }
-    .time-container {
+    #imageGallery h3 { margin-top: 0; }
+    .gallery-item {
+      margin-bottom: 0.5rem;
       display: flex;
-      gap: 10px;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.3rem;
     }
-    /* Weekly planner modal */
-    #weeklyModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 100;
-    }
-    .weekly-modal-content {
-      background-color: #fff;
-      margin: 50px auto;
-      padding: 20px;
-      width: 80%;
-      max-width: 800px;
-      border-radius: 5px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    .weekly-day-section {
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      background-color: #fafafa;
+    .gallery-item:last-child { border-bottom: none; }
+    .gallery-item img {
+      max-height: 60px;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    .weekly-day-section h4 {
-      margin-top: 0;
-    }
-    /* Image modal */
-    #imageModal {
+    .gallery-item img:hover { transform: scale(1.05); }
+    .gallery-item .title { font-weight: 600; flex-grow: 1; margin-left: 0.5rem; }
+
+    /* Modals */
+    .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 100;
-    }
-    .image-modal-content {
-      background-color: #fff;
-      margin: 50px auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 700px;
-      border-radius: 5px;
-      max-height: 80vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      padding: 2rem 1rem;
       overflow-y: auto;
     }
-    #imagePreview {
-      max-width: 100%;
-      max-height: 200px;
-      margin-top: 10px;
-      display: block;
-      border: 1px solid #ccc;
+    .modal-content {
+      background: var(--bg-card);
+      margin: 2rem auto;
+      padding: 1.5rem;
+      max-width: 700px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      position: relative;
     }
-    /* Gallery */
-    #imageGallery {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #fefefe;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    .modal-header { margin-bottom: 1rem; }
+    .modal-header h3 {
+      margin: 0;
+      color: var(--text-primary);
+      font-weight: 600;
     }
-    .gallery-item {
-      margin-bottom: 10px;
-    }
-    .gallery-item img {
-      max-width: 200px;
-      margin-right: 10px;
-      vertical-align: middle;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .gallery-item .title {
+    .modal-close, [data-close] {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      border: none;
+      background: #E53E3E;
+      color: #fff;
       font-weight: bold;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      border-radius: 4px;
     }
-    /* Mobile responsiveness */
+    .day-plan, .weekly-day-section {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: #fdfdfd;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius);
+    }
+    .day-plan h4, .weekly-day-section h4 {
+      margin-top: 0; margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 1em;
+    }
+
+    /* Media Queries */
     @media (max-width: 600px) {
-      body {
-        margin: 10px;
-        padding: 0;
-      }
-      table {
-        font-size: 14px;
-      }
-      .controls {
-        display: flex;
-        flex-direction: column;
-      }
-      .controls select, .controls input, .controls button {
-        margin-bottom: 10px;
-        width: 100%;
-      }
-      /* Stack the cells vertically on small screens */
-      .task-row {
-        display: block;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-      }
-      .task-row td {
-        display: block;
-        border: none;
-        border-bottom: 1px solid #eee;
-      }
-      .task-row td:last-child {
-        border-bottom: none;
-      }
+      body { margin:0 auto; padding: 0.5rem;}
+      h1 { font-size: 1.4rem; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .controls > div { gap: 0.2rem; margin-bottom: 0.5rem;}
+      .controls button { width: 100%; margin-left: 0; margin-right: 0;}
+      table, th, td { font-size: 0.85em; }
+      .modal-content { margin: 1rem auto; padding: 1rem;}
+      .client-info-edit-view input[type="text"] { width: 100%; margin-bottom: 0.5rem; }
+      .client-info-display-view .info-label { min-width: 60px; }
+      #taskTable td:nth-child(1), #taskTable th:nth-child(1) { width: 20%; }
+      #taskTable td:nth-child(2), #taskTable th:nth-child(2) { width: 35%; }
+      #taskTable td:nth-child(4), #taskTable th:nth-child(4) { width: 20%; }
     }
   </style>
 </head>
 <body>
 
-<div class="title-bar">
-  <h1>RESET Client Tracker (Merged Client List)</h1>
-</div>
+<h1>RESET Tracker (Merged) - Single Page</h1>
 
 <div class="controls">
-  <!-- Client selection -->
-  <label><strong>Client:</strong></label>
-  <select id="clientSelect"></select>
-  <button class="btn" id="addClientBtn">+ Add Client</button>
-
-  <!-- Date selection -->
-  <label><strong>Date:</strong></label>
-  <input type="date" id="datePicker" />
-
-  <!-- Clear tasks & Export & Report -->
+  <!-- Client + "Add Client" -->
+  <div>
+    <label>Client:</label>
+    <select id="clientSelect"></select>
+    <button class="btn" id="addClientBtn">+ Add Client</button>
+  </div>
+  <!-- Date picker -->
+  <div>
+    <label>Date:</label>
+    <input type="date" id="datePicker" />
+  </div>
+  <!-- Other controls -->
   <button class="btn" id="clearTasksBtn">Clear Tasks</button>
-  <button class="btn" id="exportBtn">Export Data</button>
   <button class="btn" id="reportBtn">View Report</button>
-
-  <!-- Multi-day & Weekly plan & Images -->
-  <button class="btn" id="multiDayPlanBtn">Multi-Day Plan</button>
-  <button class="btn" id="weeklyPlanBtn">Weekly Plan</button>
-  <button class="btn" id="imageBtn">Add Image</button>
+  <button class="btn" id="multiDayBtn">Multi-Day</button>
+  <button class="btn" id="weeklyBtn">Weekly</button>
+  <button class="btn" id="imageBtn">Images</button>
+  <button class="btn" id="exportBtn">Export</button>
 </div>
 
-<!-- New client form -->
-<div id="newClientForm">
-  <label><strong>New Client Name:</strong></label>
-  <input type="text" id="newClientName" placeholder="Enter client name">
-  <button class="btn" id="saveClientBtn">Save</button>
+<!-- New Client Form -->
+<div id="newClientForm" style="display:none; margin: 0.5rem 0; padding: 0.7rem; background:#f7fcff; border:1px solid var(--border-color); border-radius:6px;">
+  <label style="font-weight:600; margin-right:0.5rem;">New Client Name:</label>
+  <input type="text" id="newClientName" placeholder="e.g. John" style="width:180px; margin-right:0.5rem;" />
+  <button class="btn btn-primary" id="saveClientBtn">Save</button>
   <button class="btn" id="cancelClientBtn">Cancel</button>
 </div>
 
-<!-- Day rating dropdown -->
-<div style="margin-bottom:1em;">
-  <label><strong>Day Rating (1–5):</strong></label>
-  <select id="dayRatingSelect" class="rating-dropdown">
+<!-- Big Goal & Links -->
+<div class="client-info-card">
+  <div class="client-info-edit-view" style="display:none;">
+      <div style="margin-bottom:0.5rem;">
+        <label style="font-weight:600; margin-right:0.3rem;">Big Goal:</label>
+        <input type="text" id="bigGoalInput" placeholder="e.g. Get into Yale" style="width:98%;" />
+      </div>
+      <div style="margin-bottom:0.5rem;">
+        <label style="font-weight:600; margin-right:0.3rem;">Canvas:</label>
+        <input type="text" id="canvasLinkInput" placeholder="https://..." style="width:98%;" />
+      </div>
+      <div style="margin-bottom:0.5rem;">
+        <label style="font-weight:600; margin-right:0.3rem;">Classroom:</label>
+        <input type="text" id="classroomLinkInput" placeholder="https://..." style="width:98%;" />
+      </div>
+      <button class="btn btn-primary" id="saveClientInfoBtn">Save Info</button>
+      <button class="btn" id="cancelClientInfoEditBtn">Cancel</button>
+  </div>
+  <div class="client-info-display-view" style="display:none;">
+    <div><span class="info-label">Goal:</span> <span class="info-value" id="bigGoalDisplay"></span></div>
+    <div><span class="info-label">Links:</span>
+        <a href="#" id="canvasLinkAnchor" target="_blank" style="display:none;">Canvas</a>
+        <a href="#" id="classroomLinkAnchor" target="_blank" style="display:none;">Classroom</a>
+        <span id="noLinksMsg" style="color: var(--text-light); font-style: italic; display: none;">(No links set)</span>
+    </div>
+    <button class="btn" id="editClientInfoBtn" style="margin-top: 0.5rem; font-size:0.85em; padding:0.3em 0.6em;">Edit Info</button>
+  </div>
+</div>
+
+<!-- Reflection Section -->
+<h2>Daily Reflection</h2>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Day Rating (1–5):</label>
+  <select id="dayRatingSelect" style="margin-left:0.5rem;">
     <option value="0">--</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
+    <option value="1">1</option><option value="2">2</option>
+    <option value="3">3</option><option value="4">4</option>
     <option value="5">5</option>
   </select>
 </div>
-
-<!-- Quick daily notes -->
-<div style="margin-bottom:1em;">
-  <label><strong>Daily Notes:</strong></label><br/>
-  <textarea id="dayNotes" rows="3" style="width:98%;" placeholder="Any quick notes for today..."></textarea>
-  <br/>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Reflection Notes:</label><br/>
+  <textarea id="dayNotes" rows="3" placeholder="Notes for the day..."></textarea>
 </div>
 
-<hr/>
-
+<!-- Add New Task -->
 <h2>Add New Task</h2>
-<div class="time-container">
-  <div>
-    <label for="timeSelect">Time:</label>
-    <select id="timeSelect" class="time-dropdown"></select>
-  </div>
-  <div>
-    <label for="durationSelect">Duration:</label>
-    <select id="durationSelect">
-      <option value="5 min">5 minutes</option>
-      <option value="10 min">10 minutes</option>
-      <option value="15 min">15 minutes</option>
-      <option value="30 min" selected>30 minutes</option>
-      <option value="45 min">45 minutes</option>
-      <option value="1 hour">1 hour</option>
-      <option value="90 min">90 minutes</option>
-      <option value="2 hours">2 hours</option>
-    </select>
-  </div>
+<div style="margin-bottom:0.5rem;">
+  <label style="font-weight:600;">Time:</label>
+  <select id="timeSelect"></select>
+  <label style="font-weight:600; margin-left:1rem;">Duration:</label>
+  <select id="durationSelect">
+    <option value="5 min">5 min</option>
+    <option value="10 min">10 min</option>
+    <option value="15 min">15 min</option>
+    <option value="30 min" selected>30 min</option>
+    <option value="45 min">45 min</option>
+    <option value="1 hour">1 hour</option>
+    <option value="90 min">90 min</option>
+    <option value="2 hours">2 hours</option>
+  </select>
 </div>
-<br>
-
-<label for="activityInput">Activity:</label>
-<input type="text" id="activityInput" style="width:98%;" placeholder="e.g. Work on Chemistry assignment" />
-<br><br>
-<div style="margin-bottom:10px;">
-  <input type="text" id="taskSearch" placeholder="Search tasks..." style="width:50%;">
+<div style="margin-bottom:0.8rem;">
+  <label style="font-weight:600;">Activity:</label>
+  <input type="text" id="activityInput" style="width:50%;" placeholder="e.g. Work on math..." />
 </div>
-<button class="btn" id="addBtn">Add Task</button>
+<div style="margin-bottom:1rem;">
+  <label style="font-weight:600;">Search:</label>
+  <input type="text" id="taskSearch" style="width:35%;" placeholder="Filter tasks below..." />
+</div>
+<button class="btn btn-primary" id="addTaskBtn">Add Task</button>
 
-<table id="taskTable">
+<!-- Task Table -->
+<table style="margin-top:1rem;">
   <thead>
     <tr>
-      <th style="width:15%">Time</th>
-      <th style="width:35%">Activity</th>
-      <th style="width:10%">Done?</th>
-      <th style="width:15%">Task Rating</th>
-      <th style="width:25%">Actions</th>
+      <th style="width:15%;">Time & Duration</th>
+      <th style="width:30%;">Activity</th>
+      <th style="width:8%;">Done?</th>
+      <th style="width:22%;">Accountability</th>
+      <th style="width:25%;">Actions</th>
     </tr>
   </thead>
-  <tbody>
-    <!-- Rows dynamically inserted here -->
+  <tbody id="taskTable">
+    <tr><td colspan="5" style="text-align:center; color:#666;">(No tasks yet)</td></tr>
   </tbody>
 </table>
 
-<!-- Image gallery area -->
+<!-- Image Gallery -->
 <div id="imageGallery"></div>
 
-<div id="progressDashboard">
-  <h3>Progress Dashboard</h3>
-  
-  <p><strong>Task Completion:</strong> <span id="completionRate">-</span></p>
-  <div class="progress-bar-container">
-    <div id="completionBar" class="progress-bar" style="width: 0%">0%</div>
-  </div>
-  
-  <p><strong>Average Task Rating (this day):</strong> <span id="averageTaskRating">-</span></p>
-  
-  <hr/>
-  
-  <p><strong>Day Rating (this day):</strong> <span id="displayDayRating">-</span></p>
-  
-  <p><strong>Avg Day Rating (up to this date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
-  <div class="progress-bar-container">
-    <div id="avgRatingBar" class="progress-bar" style="width: 0%; background-color: #2196F3;">0/5</div>
-  </div>
+<!-- Progress Dashboard -->
+<h2>Progress Dashboard</h2>
+<p><strong>Task Completion:</strong> <span id="completionRate">-</span></p>
+<div class="progress-bar-container">
+  <div id="completionBar" class="progress-bar" style="width:0%">0%</div>
 </div>
 
-<!-- Multi-Day Planner Modal -->
-<div id="plannerModal">
+<hr style="margin:1.5rem 0; border: none; border-top: 1px solid var(--border-color);"/>
+
+<p><strong>Day Rating (this day):</strong> <span id="displayDayRating">-</span></p>
+<p><strong>Avg Day Rating (up to this date):</strong> <span id="avgDayRatingUpToDate">-</span></p>
+<div class="progress-bar-container">
+  <div id="avgRatingBar" class="progress-bar blue-bar" style="width:0%">0/5</div>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:2rem; color:var(--text-light); font-size:0.9em; border-top:1px solid var(--border-color); padding-top:1rem; text-align:center;">
+  <p>Data is stored locally in your browser's <code>localStorage</code>. No server or external DB needed.</p>
+</div>
+
+<!-- 1) MULTI-DAY PLANNER MODAL -->
+<div id="multiDayModal" class="modal-overlay">
   <div class="modal-content">
-    <h3>Multi-Day Task Planner</h3>
-    
-    <p>Create a series of tasks across multiple days</p>
-    
-    <div id="plannerDays">
-      <!-- Day plans will be added here -->
+    <button class="modal-close" data-close="multiDayModal">X</button>
+    <div class="modal-header">
+      <h3>Multi-Day Task Planner</h3>
     </div>
-    
-    <button class="btn" id="addDayBtn">Add Another Day</button>
-    
-    <div style="margin-top:20px;">
-      <button class="btn" id="savePlanBtn">Save All Tasks</button>
-      <button class="btn" id="cancelPlanBtn">Cancel</button>
+    <p>Create tasks for multiple upcoming days at once.</p>
+    <div id="multiDaysContainer"></div>
+    <button class="btn" id="addAnotherDayBtn">Add Another Day</button>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveMultiDayBtn">Save All</button>
+      <button class="btn" data-close="multiDayModal">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- Weekly Plan Modal -->
-<div id="weeklyModal">
-  <div class="weekly-modal-content">
-    <h3>Weekly Planner for: <span id="weeklyClientLabel"></span></h3>
-    <p>Set tasks for each weekday. These tasks will appear automatically on those days.</p>
-    
-    <div id="weeklyContent"></div>
-    
-    <div style="margin-top:20px;">
-      <button class="btn" id="saveWeeklyBtn">Save Weekly Schedule</button>
-      <button class="btn" id="cancelWeeklyBtn">Cancel</button>
+<!-- 2) WEEKLY PLANNER MODAL -->
+<div id="weeklyModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" data-close="weeklyModal">X</button>
+    <div class="modal-header">
+      <h3>Weekly Planner for <span id="weeklyClientNameLabel"></span></h3>
+    </div>
+    <p>Set recurring tasks for each weekday.</p>
+    <div id="weeklyContainer"></div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveWeeklyBtn">Save Weekly</button>
+      <button class="btn" data-close="weeklyModal">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- Image Modal -->
-<div id="imageModal">
-  <div class="image-modal-content">
-    <h3>Add an Image / Screenshot</h3>
-    
+<!-- 3) IMAGES MODAL -->
+<div id="imageModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" data-close="imageModal">X</button>
+    <div class="modal-header">
+      <h3>Add Image / Screenshot</h3>
+    </div>
     <div>
-      <input type="file" id="imageFileInput" accept="image/*">
-      <p style="color:#666;font-size:0.9em;">
-        Or paste a screenshot directly (click here, then Ctrl+V).
-      </p>
+      <input type="file" id="imageFileInput" accept="image/*" />
+      <p style="color:var(--text-light); font-size:0.9em;">Or paste a screenshot (Ctrl+V).</p>
     </div>
-    
-    <img id="imagePreview" src="" alt="(Preview will appear here)" style="display:none;">
-    
-    <div style="margin-top:10px;">
-      <label>Image Title:</label><br/>
-      <input type="text" id="imageTitle" style="width:90%;">
+    <img id="imagePreview" src="" alt="preview" style="display:none; max-width:100%; max-height:200px; margin:0.5rem 0; border:1px solid #ccc;" />
+    <div>
+      <label style="font-weight:600;">Title:</label><br/>
+      <input type="text" id="imageTitle" style="width:80%;" placeholder="Optional title">
     </div>
-    
-    <div style="margin-top:10px;">
-      <button class="btn" id="saveImageBtn">Save Image</button>
-      <button class="btn" id="cancelImageBtn">Cancel</button>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" id="saveImageBtn">Save Image</button>
+      <button class="btn" data-close="imageModal">Cancel</button>
     </div>
   </div>
-</div>
-
-<div id="footer">
-  <p>Data is stored in your browser's localStorage, keyed by client AND date. Add day notes, tasks, etc.</p>
-  <p style="font-size: 0.8em; color:#444;">
-    <em>Save as plain-text .html, then open in your web browser (ideally via an HTTP server).</em>
-  </p>
 </div>
 
 <script>
-// --------------------------------------------------
-// 1) Default "starter" clients you want to preload:
-// --------------------------------------------------
-const defaultClientNames = [
+/***************************************************************
+  SINGLE-PAGE RESET TRACKER (MERGED VERSION)
+  - Default clients loaded + Big Goal/Canvas Link
+  - Accountability field (no per-task rating)
+  - Day rating, reflection, multi-day, weekly tasks, images
+***************************************************************/
+
+const STORAGE_KEY = "multiClientDateData_SinglePage_v2";
+
+/* 1) Default clients to preload if not in storage */
+const defaultClients = [
   "Giancarlo","Walter","Brendan B","Kai","Rafferty","Bardez",
   "KariBella","Zeb","Griffin","Charlie","Troy","Owen",
   "Sean","Bethany","DannyMike","Zelda","Whoadie"
 ];
 
-// "allData" from localStorage
+/* MAIN DATA */
 let allData = {};
 let currentClient = null;
-let currentDate   = null;
+let currentDate = null;
 
-// DOM references
-const clientSelect        = document.getElementById("clientSelect");
-const datePicker          = document.getElementById("datePicker");
-const clearTasksBtn       = document.getElementById("clearTasksBtn");
-const exportBtn           = document.getElementById("exportBtn");
-const reportBtn           = document.getElementById("reportBtn");
-const multiDayPlanBtn     = document.getElementById("multiDayPlanBtn");
+/* DOM references */
+const clientSelect       = document.getElementById("clientSelect");
+const addClientBtn       = document.getElementById("addClientBtn");
+const newClientForm      = document.getElementById("newClientForm");
+const newClientName      = document.getElementById("newClientName");
+const saveClientBtn      = document.getElementById("saveClientBtn");
+const cancelClientBtn    = document.getElementById("cancelClientBtn");
 
-const dayRatingSelect     = document.getElementById("dayRatingSelect");
-const dayNotesTextarea    = document.getElementById("dayNotes");
-
-const timeSelect          = document.getElementById("timeSelect");
-const durationSelect      = document.getElementById("durationSelect");
-const activityInput       = document.getElementById("activityInput");
-const taskSearch          = document.getElementById("taskSearch");
-const addBtn              = document.getElementById("addBtn");
-const taskTableBody       = document.getElementById("taskTable").querySelector("tbody");
-
-// New client elements
-const addClientBtn        = document.getElementById("addClientBtn");
-const newClientForm       = document.getElementById("newClientForm");
-const newClientName       = document.getElementById("newClientName");
-const saveClientBtn       = document.getElementById("saveClientBtn");
-const cancelClientBtn     = document.getElementById("cancelClientBtn");
-
-// Multi-day planner elements
-const plannerModal        = document.getElementById("plannerModal");
-const plannerDays         = document.getElementById("plannerDays");
-const addDayBtn           = document.getElementById("addDayBtn");
-const savePlanBtn         = document.getElementById("savePlanBtn");
-const cancelPlanBtn       = document.getElementById("cancelPlanBtn");
-
-// Progress elements
-const completionRateEl       = document.getElementById("completionRate");
-const completionBarEl        = document.getElementById("completionBar");
-const averageTaskRatingEl    = document.getElementById("averageTaskRating");
-const displayDayRatingEl     = document.getElementById("displayDayRating");
-const avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate");
-const avgRatingBarEl         = document.getElementById("avgRatingBar");
-
-// WEEKLY PLANNER
-const weeklyPlanBtn      = document.getElementById("weeklyPlanBtn");
-const weeklyModal        = document.getElementById("weeklyModal");
-const weeklyContent      = document.getElementById("weeklyContent");
-const weeklyClientLabel  = document.getElementById("weeklyClientLabel");
-const saveWeeklyBtn      = document.getElementById("saveWeeklyBtn");
-const cancelWeeklyBtn    = document.getElementById("cancelWeeklyBtn");
-
-// IMAGES
+const datePicker         = document.getElementById("datePicker");
+const clearTasksBtn      = document.getElementById("clearTasksBtn");
+const reportBtn          = document.getElementById("reportBtn");
+const multiDayBtn        = document.getElementById("multiDayBtn");
+const weeklyBtn          = document.getElementById("weeklyBtn");
 const imageBtn           = document.getElementById("imageBtn");
+const exportBtn          = document.getElementById("exportBtn");
+
+const dayRatingSelect    = document.getElementById("dayRatingSelect");
+const dayNotesTextarea   = document.getElementById("dayNotes");
+
+const timeSelect         = document.getElementById("timeSelect");
+const durationSelect     = document.getElementById("durationSelect");
+const activityInput      = document.getElementById("activityInput");
+const taskSearch         = document.getElementById("taskSearch");
+const addTaskBtn         = document.getElementById("addTaskBtn");
+const taskTable          = document.getElementById("taskTable").querySelector("tbody");
+
+const completionRateEl   = document.getElementById("completionRate");
+const completionBarEl    = document.getElementById("completionBar");
+const displayDayRatingEl = document.getElementById("displayDayRating");
+const avgDayRatingUpToDateEl = document.getElementById("avgDayRatingUpToDate");
+const avgRatingBarEl     = document.getElementById("avgRatingBar");
+const imageGallery       = document.getElementById("imageGallery");
+
+/* Client info elements */
+const clientInfoEditView = document.querySelector(".client-info-edit-view");
+const clientInfoDisplayView = document.querySelector(".client-info-display-view");
+const bigGoalInput       = document.getElementById("bigGoalInput");
+const canvasLinkInput    = document.getElementById("canvasLinkInput");
+const classroomLinkInput = document.getElementById("classroomLinkInput");
+const saveClientInfoBtn  = document.getElementById("saveClientInfoBtn");
+const cancelClientInfoEditBtn = document.getElementById("cancelClientInfoEditBtn");
+const editClientInfoBtn  = document.getElementById("editClientInfoBtn");
+const bigGoalDisplay     = document.getElementById("bigGoalDisplay");
+const canvasLinkAnchor   = document.getElementById("canvasLinkAnchor");
+const classroomLinkAnchor= document.getElementById("classroomLinkAnchor");
+const noLinksMsg         = document.getElementById("noLinksMsg");
+
+/* Multi-day modal */
+const multiDayModal      = document.getElementById("multiDayModal");
+const multiDaysContainer = document.getElementById("multiDaysContainer");
+const addAnotherDayBtn   = document.getElementById("addAnotherDayBtn");
+const saveMultiDayBtn    = document.getElementById("saveMultiDayBtn");
+
+/* Weekly modal */
+const weeklyModal        = document.getElementById("weeklyModal");
+const weeklyContainer    = document.getElementById("weeklyContainer");
+const weeklyClientNameLabel = document.getElementById("weeklyClientNameLabel");
+const saveWeeklyBtn      = document.getElementById("saveWeeklyBtn");
+
+/* Image modal */
 const imageModal         = document.getElementById("imageModal");
 const imageFileInput     = document.getElementById("imageFileInput");
 const imagePreview       = document.getElementById("imagePreview");
 const imageTitleInput    = document.getElementById("imageTitle");
 const saveImageBtn       = document.getElementById("saveImageBtn");
-const cancelImageBtn     = document.getElementById("cancelImageBtn");
-const imageGallery       = document.getElementById("imageGallery");
 
-// --------------------------------------------------
-// On Load
-// --------------------------------------------------
+/***************************************************************
+  ON LOAD
+***************************************************************/
 window.addEventListener("load", () => {
-  // 1) Load from localStorage
-  const stored = localStorage.getItem("multiClientDateData");
-  if (stored) {
-    allData = JSON.parse(stored);
-  } else {
-    allData = {};
-  }
+  loadFromStorage();
 
-  // 2) Make sure default clients exist in allData
-  defaultClientNames.forEach(name => {
-    if (!allData[name]) {
-      allData[name] = {};
-    }
-    if (!allData[name].weeklyTasks) {
-      allData[name].weeklyTasks = {
-        monday: [], tuesday: [], wednesday: [], thursday: [],
-        friday: [], saturday: [], sunday: []
+  // Make sure default clients exist
+  defaultClients.forEach(c => {
+    if (!allData[c]) {
+      allData[c] = {
+        bigGoal:"",
+        links:{canvas:"", classroom:""},
+        weeklyTasks:{ monday:[], tuesday:[], wednesday:[], thursday:[], friday:[], saturday:[], sunday:[] },
+        images:[]
       };
-    }
-    if (!allData[name].images) {
-      allData[name].images = [];
     }
   });
 
-  // 3) Build the client dropdown from allData keys
+  buildTimeSelect(timeSelect);
+
   buildClientDropdown();
 
-  // 4) Default selection: first client in alphabetical order + today’s date
-  const allClients = Object.keys(allData).sort();
-  if (allClients.length > 0) {
-    currentClient = allClients[0];
-  } else {
-    // If somehow no clients, we create a blank one
-    currentClient = "FirstClient";
-    allData[currentClient] = {weeklyTasks:{monday:[],tuesday:[],wednesday:[],thursday:[],friday:[],saturday:[],sunday:[]}, images:[]};
-  }
-  clientSelect.value = currentClient;
-
+  // Default date = today
   const todayStr = new Date().toISOString().split("T")[0];
   datePicker.value = todayStr;
   currentDate = todayStr;
 
-  // 5) Set up event listeners
+  // If we have any clients, pick the first alphabetically
+  const allClients = Object.keys(allData).sort();
+  if (allClients.length > 0) {
+    currentClient = allClients[0];
+    clientSelect.value = currentClient;
+    loadClientDate(currentClient, currentDate);
+  } else {
+    // no clients at all => show the client info edit to fill in
+    taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No clients - add one!)</td></tr>`;
+    clientInfoEditView.style.display = "block";
+    clientInfoDisplayView.style.display = "none";
+  }
+
+  /* event listeners */
   clientSelect.addEventListener("change", onClientOrDateChange);
   datePicker.addEventListener("change", onClientOrDateChange);
+
+  addClientBtn.addEventListener("click",()=>{
+    newClientForm.style.display="block";
+    newClientName.value="";
+    newClientName.focus();
+  });
+  cancelClientBtn.addEventListener("click",()=>newClientForm.style.display="none");
+  saveClientBtn.addEventListener("click", saveNewClient);
+
+  saveClientInfoBtn.addEventListener("click", saveClientInfo);
+  editClientInfoBtn.addEventListener("click", () => {
+    clientInfoEditView.style.display = "block";
+    clientInfoDisplayView.style.display = "none";
+    if (currentClient && allData[currentClient]) {
+      bigGoalInput.value = allData[currentClient].bigGoal || "";
+      canvasLinkInput.value = allData[currentClient].links?.canvas || "";
+      classroomLinkInput.value = allData[currentClient].links?.classroom || "";
+    }
+  });
+  cancelClientInfoEditBtn.addEventListener("click", () => {
+    if (currentClient) renderClientInfo(currentClient);
+  });
+
+  addTaskBtn.addEventListener("click", addNewTask);
+  clearTasksBtn.addEventListener("click", clearDailyTasks);
+  reportBtn.addEventListener("click", generateReport);
+  multiDayBtn.addEventListener("click", ()=> openModal("multiDayModal"));
+  weeklyBtn.addEventListener("click", ()=> openModal("weeklyModal"));
+  imageBtn.addEventListener("click", ()=> openModal("imageModal"));
+
+  exportBtn.addEventListener("click", exportData);
+
   dayRatingSelect.addEventListener("change", onDayRatingChange);
   dayNotesTextarea.addEventListener("input", onDayNotesChange);
 
-  addBtn.addEventListener("click", addNewTask);
-  clearTasksBtn.addEventListener("click", clearTasksForClientDate);
-  exportBtn.addEventListener("click", exportData);
-  reportBtn.addEventListener("click", generateReport);
+  taskSearch.addEventListener("input", filterTasks);
 
-  // New client form
-  addClientBtn.addEventListener("click", showNewClientForm);
-  saveClientBtn.addEventListener("click", saveNewClient);
-  cancelClientBtn.addEventListener("click", hideNewClientForm);
+  // multi-day
+  addAnotherDayBtn.addEventListener("click", addMultiDayBlock);
+  saveMultiDayBtn.addEventListener("click", saveMultiDayPlan);
 
-  // Multi-day planner
-  multiDayPlanBtn.addEventListener("click", openPlannerModal);
-  addDayBtn.addEventListener("click", addPlannerDay);
-  savePlanBtn.addEventListener("click", saveMultiDayPlan);
-  cancelPlanBtn.addEventListener("click", closePlannerModal);
+  // weekly
+  saveWeeklyBtn.addEventListener("click", saveWeeklyPlan);
 
-  // Weekly planner
-  weeklyPlanBtn.addEventListener("click", openWeeklyModal);
-  saveWeeklyBtn.addEventListener("click", saveWeeklySchedule);
-  cancelWeeklyBtn.addEventListener("click", closeWeeklyModal);
-
-  // Images
-  imageBtn.addEventListener("click", openImageModal);
-  cancelImageBtn.addEventListener("click", closeImageModal);
+  // images
+  imageFileInput.addEventListener("change", handleImageFileChange);
+  imageModal.addEventListener("paste", handleImagePaste);
   saveImageBtn.addEventListener("click", saveImage);
-  imageModal.addEventListener("paste", handlePasteImage);
-  imageFileInput.addEventListener("change", handleFileInputChange);
 
-  // Task search
-  taskSearch.addEventListener("input", () => {
-    const searchText = taskSearch.value.toLowerCase();
-    const rows = taskTableBody.querySelectorAll("tr");
-    rows.forEach(row => {
-      const activity = row.cells[1].textContent.toLowerCase();
-      row.style.display = activity.includes(searchText) ? "" : "none";
+  // close modals
+  document.querySelectorAll("[data-close], .modal-close").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      const modal = btn.closest('.modal-overlay');
+      if (modal) {
+        modal.style.display="none";
+      }
     });
   });
 
   // Keyboard shortcuts
-  setupKeyboardShortcuts();
+  document.addEventListener("keydown",(e)=>{
+    const tag=e.target.tagName;
+    const isModalOpen = document.querySelector('.modal-overlay[style*="display: block"]');
+    if(["INPUT","TEXTAREA","SELECT"].includes(tag)) {
+      if(e.key==="Escape" && isModalOpen){
+        isModalOpen.style.display="none";
+      }
+      // Press Enter on <input id="activityInput"> => addNewTask
+      if (e.key === 'Enter' && tag === 'INPUT' && e.target.id==="activityInput") {
+        e.preventDefault();
+        addNewTask();
+      }
+      return;
+    }
+    // alt+a => add task
+    if(e.altKey && e.key==="a"){
+      e.preventDefault();
+      if(activityInput.value.trim()!==""){ addNewTask();}
+      else activityInput.focus();
+    }
+    // alt+d => toggle last task done
+    if(e.altKey && e.key==="d"){
+      e.preventDefault();
+      const lastRow= taskTable.querySelector("tr:last-child:not(.editing)");
+      if(lastRow){
+        const chk= lastRow.querySelector("input[type='checkbox']");
+        if(chk){
+          chk.checked=!chk.checked;
+          chk.dispatchEvent(new Event("change"));
+        }
+      }
+    }
+    // alt+s => sort tasks
+    if(e.altKey && e.key==="s"){
+      e.preventDefault();
+      sortDailyTasks();
+    }
+    // escape => close modals
+    if(e.key==="Escape" && isModalOpen){
+      e.preventDefault();
+      isModalOpen.style.display="none";
+    }
+  });
 
-  // Populate the time dropdown
-  populateTimeDropdown();
-
-  // Load the data for current client + date
-  loadClientDate(currentClient, currentDate);
+  // Add default multi-day block (hidden unless they open modal)
+  addMultiDayBlock();
 });
 
-// --------------------------------------------------
-// Build the client dropdown from allData keys
-// --------------------------------------------------
+/***************************************************************
+  LOAD / SAVE
+***************************************************************/
+function loadFromStorage() {
+  const str = localStorage.getItem(STORAGE_KEY);
+  let parsedData = {};
+  if (str) {
+    try {
+      parsedData = JSON.parse(str);
+    } catch (e) {
+      console.error("Error parsing localStorage:", e);
+      alert("Could not parse stored data. Starting fresh.");
+      parsedData = {};
+    }
+  }
+  if (!parsedData || typeof parsedData!=='object') parsedData={};
+
+  // Ensure each client's data structure is valid
+  Object.keys(parsedData).forEach(cli => {
+    if (!parsedData[cli].weeklyTasks) {
+      parsedData[cli].weeklyTasks = {
+        monday:[], tuesday:[], wednesday:[], thursday:[], friday:[], saturday:[], sunday:[]
+      };
+    }
+    if (!parsedData[cli].images) {
+      parsedData[cli].images = [];
+    }
+    if (typeof parsedData[cli].bigGoal==='undefined') parsedData[cli].bigGoal="";
+    if (!parsedData[cli].links) parsedData[cli].links={canvas:"", classroom:""};
+  });
+
+  allData = parsedData;
+}
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+  } catch(e){
+    if(e.name==="QuotaExceededError" || e.name==='NS_ERROR_DOM_QUOTA_REACHED'){
+      alert("Storage limit exceeded! Please export data or remove old entries/images.");
+    } else {
+      console.error("Error saving to localStorage:", e);
+      alert("Could not save data. Changes might not persist.");
+    }
+  }
+}
+
+/***************************************************************
+  CLIENT DROPDOWN
+***************************************************************/
 function buildClientDropdown() {
-  clientSelect.innerHTML = "";
-  const clientNamesSorted = Object.keys(allData).sort();
-  clientNamesSorted.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
+  clientSelect.innerHTML="";
+  const names= Object.keys(allData).sort();
+  if(!names.length){
+    const opt=document.createElement("option");
+    opt.value=""; opt.textContent="--No Clients--";
+    clientSelect.appendChild(opt);
+    clientSelect.disabled=true;
+    return;
+  }
+  clientSelect.disabled=false;
+  names.forEach(n=>{
+    const opt=document.createElement("option");
+    opt.value=n; opt.textContent=n;
     clientSelect.appendChild(opt);
   });
 }
 
-// --------------------------------------------------
-// Show/hide new client form
-// --------------------------------------------------
-function showNewClientForm() {
-  newClientForm.style.display = "block";
-  newClientName.value = "";
-  newClientName.focus();
-}
-function hideNewClientForm() {
-  newClientForm.style.display = "none";
-}
-
-// --------------------------------------------------
-// Save a new client into allData
-// --------------------------------------------------
+/***************************************************************
+  ADD CLIENT
+***************************************************************/
 function saveNewClient() {
-  const name = newClientName.value.trim();
-  if (!name) {
-    alert("Please enter a client name");
-    return;
-  }
-  // If it already exists in allData, just alert
-  if (allData[name]) {
-    alert(`Client "${name}" already exists (showing existing).`);
+  const name= newClientName.value.trim();
+  if(!name){ alert("Enter name"); return;}
+  if(allData[name]) {
+    alert(`Client "${name}" already exists. Showing existing data.`);
     clientSelect.value = name;
     currentClient = name;
     loadClientDate(name, currentDate);
-    hideNewClientForm();
+    newClientForm.style.display="none";
     return;
   }
-  // Otherwise create it
-  allData[name] = {
-    weeklyTasks: {
-      monday:[], tuesday:[], wednesday:[], thursday:[],
-      friday:[], saturday:[], sunday:[]
-    },
+  allData[name]={
+    bigGoal:"",
+    links:{canvas:"", classroom:""},
+    weeklyTasks:{ monday:[], tuesday:[], wednesday:[], thursday:[], friday:[], saturday:[], sunday:[] },
     images:[]
   };
-  saveToLocalStorage();
-
-  // Rebuild dropdown
+  saveToStorage();
   buildClientDropdown();
-
-  // Select new client
-  clientSelect.value = name;
-  currentClient = name;
-  loadClientDate(currentClient, currentDate);
-
-  hideNewClientForm();
-  alert(`New client "${name}" created!`);
+  clientSelect.value=name;
+  currentClient=name;
+  loadClientDate(name, currentDate);
+  newClientForm.style.display="none";
+  alert(`New client "${name}" created.`);
 }
 
-// --------------------------------------------------
-// On client or date change
-// --------------------------------------------------
+/***************************************************************
+  CLIENT/DATE CHANGE
+***************************************************************/
 function onClientOrDateChange() {
-  currentClient = clientSelect.value;
-  currentDate = datePicker.value;
+  currentClient= clientSelect.value;
+  currentDate= datePicker.value;
   loadClientDate(currentClient, currentDate);
 }
 
-// --------------------------------------------------
-// Load tasks, notes, etc. for the current client/date
-// --------------------------------------------------
-function loadClientDate(cli, dt) {
-  // Ensure day record
-  if (!allData[cli][dt]) {
-    allData[cli][dt] = {
-      dayRating: "0",
-      dayNotes: "",
-      tasks: [],
-      weeklyDone: {}
-    };
-    saveToLocalStorage();
-  }
-  const rec = allData[cli][dt];
-  
-  // Set rating & notes
-  dayRatingSelect.value = rec.dayRating || "0";
-  dayNotesTextarea.value = rec.dayNotes || "";
-
-  // Clear table
-  taskTableBody.innerHTML = "";
-
-  // Show daily tasks
-  const tasks = rec.tasks || [];
-  tasks.forEach(t => addTaskRow(t));
-
-  // Show weekly tasks
-  const weekday = getWeekdayFromDate(dt);
-  const weeklyList = allData[cli].weeklyTasks[weekday] || [];
-  weeklyList.forEach(wt => addWeeklyTaskRow(wt, dt));
-
-  // Render images
-  renderImageGallery();
-
-  // Update progress
-  updateProgress();
-}
-
-// --------------------------------------------------
-// Day rating / day notes
-// --------------------------------------------------
-function onDayRatingChange() {
-  const rec = allData[currentClient][currentDate];
-  if (!rec) return;
-  rec.dayRating = dayRatingSelect.value;
-  saveToLocalStorage();
-  updateProgress();
-}
-function onDayNotesChange() {
-  const rec = allData[currentClient][currentDate];
-  if (!rec) return;
-  rec.dayNotes = dayNotesTextarea.value;
-  saveToLocalStorage();
-}
-
-// --------------------------------------------------
-// Time dropdown (5am-11:45pm + common times)
-// --------------------------------------------------
-function populateTimeDropdown() {
-  timeSelect.innerHTML = "";
-  // 15-min increments from 5:00 AM up to 11:45 PM
-  for (let hour = 5; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const suffix = hour < 12 ? "AM" : "PM";
-      let displayHour = hour % 12;
-      if (displayHour === 0) displayHour = 12;
-      const minStr = minute === 0 ? "00" : minute.toString();
-      const label = `${displayHour}:${minStr} ${suffix}`;
-      const opt = document.createElement("option");
-      opt.value = label;
-      opt.textContent = label;
-      timeSelect.appendChild(opt);
-    }
-  }
-  // Separator
-  const sep = document.createElement("option");
-  sep.disabled = true;
-  sep.textContent = "---- Common Times ----";
-  timeSelect.appendChild(sep);
-  // Common times
-  const commonTimes = [
-    "Before School","During Study Hall","During Lunch",
-    "Right After School","Before Dinner","After Dinner","Before Bed"
-  ];
-  commonTimes.forEach(ct => {
-    const opt = document.createElement("option");
-    opt.value = ct;
-    opt.textContent = ct;
-    timeSelect.appendChild(opt);
-  });
-}
-
-// --------------------------------------------------
-// Add new task (daily) + sort
-// --------------------------------------------------
-function addNewTask() {
-  if (!currentClient || !currentDate) return;
-  const timeVal = timeSelect.value;
-  const durVal  = durationSelect.value;
-  const actVal  = activityInput.value.trim();
-  if (!actVal) {
-    alert("Please fill in the Activity field.");
+/***************************************************************
+  LOAD CLIENT+DATE
+***************************************************************/
+function loadClientDate(cli, dt){
+  if(!cli || !dt) {
+    taskTable.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#666;">(Select Client & Date)</td></tr>`;
+    renderClientInfo(null);
+    dayRatingSelect.value="0";
+    dayNotesTextarea.value="";
     return;
   }
-  const rec = allData[currentClient][currentDate];
-  const newTask = {
+  if(!allData[cli]) {
+    allData[cli] = {
+      bigGoal:"",
+      links:{canvas:"", classroom:""},
+      weeklyTasks:{ monday:[], tuesday:[], wednesday:[], thursday:[], friday:[], saturday:[], sunday:[] },
+      images:[]
+    };
+  }
+  if(!allData[cli][dt]) {
+    allData[cli][dt] = {
+      dayRating:"0",
+      dayNotes:"",
+      tasks:[],
+      weeklyDone:{}
+    };
+  }
+  renderClientInfo(cli);
+  renderReflection(cli, dt);
+  renderTaskTable(cli, dt);
+  renderImageGallery(cli);
+  updateProgress(cli, dt);
+  buildWeeklyContent(); // rebuild weekly modal if opened
+}
+
+/***************************************************************
+  CLIENT INFO (big goal / links)
+***************************************************************/
+function renderClientInfo(cli){
+  if(!cli || !allData[cli]) {
+    clientInfoEditView.style.display="block";
+    clientInfoDisplayView.style.display="none";
+    bigGoalInput.value="";
+    canvasLinkInput.value="";
+    classroomLinkInput.value="";
+    return;
+  }
+  const cd= allData[cli];
+  const goal = cd.bigGoal || "";
+  const canvas = cd.links?.canvas || "";
+  const classroom = cd.links?.classroom || "";
+  const hasInfo = goal || canvas || classroom;
+  if(hasInfo){
+    clientInfoEditView.style.display="none";
+    clientInfoDisplayView.style.display="block";
+    bigGoalDisplay.textContent= goal || "(No goal set)";
+    let linksExist = false;
+    if(canvas) {
+      canvasLinkAnchor.href= canvas.startsWith("http")? canvas : "//"+canvas;
+      canvasLinkAnchor.style.display="inline";
+      linksExist=true;
+    } else {
+      canvasLinkAnchor.style.display="none";
+    }
+    if(classroom) {
+      classroomLinkAnchor.href= classroom.startsWith("http")? classroom : "//"+classroom;
+      classroomLinkAnchor.style.display="inline";
+      linksExist=true;
+    } else {
+      classroomLinkAnchor.style.display="none";
+    }
+    noLinksMsg.style.display = linksExist?"none":"inline";
+  } else {
+    clientInfoEditView.style.display="block";
+    clientInfoDisplayView.style.display="none";
+    bigGoalInput.value=goal;
+    canvasLinkInput.value=canvas;
+    classroomLinkInput.value=classroom;
+  }
+}
+function saveClientInfo() {
+  if(!currentClient)return;
+  const cd= allData[currentClient];
+  cd.bigGoal= bigGoalInput.value.trim();
+  cd.links.canvas= canvasLinkInput.value.trim();
+  cd.links.classroom= classroomLinkInput.value.trim();
+  saveToStorage();
+  renderClientInfo(currentClient);
+  alert("Client info saved!");
+}
+
+/***************************************************************
+  REFLECTION
+***************************************************************/
+function renderReflection(cli, dt){
+  const rec= allData[cli][dt];
+  dayRatingSelect.value= rec.dayRating||"0";
+  dayNotesTextarea.value= rec.dayNotes||"";
+}
+function onDayRatingChange(){
+  if(!currentClient || !currentDate) return;
+  const rec= allData[currentClient][currentDate];
+  rec.dayRating= dayRatingSelect.value;
+  saveToStorage();
+  updateProgress(currentClient, currentDate);
+}
+function onDayNotesChange(){
+  if(!currentClient || !currentDate) return;
+  const rec= allData[currentClient][currentDate];
+  rec.dayNotes= dayNotesTextarea.value;
+  saveToStorage();
+}
+
+/***************************************************************
+  BUILD TIME SELECT
+***************************************************************/
+function buildTimeSelect(sel, defaultVal="3:00 PM"){
+  sel.innerHTML="";
+  let foundDefault=false;
+  for(let hour=5; hour<24; hour++){
+    for(let min=0; min<60; min+=15){
+      const d=new Date();
+      d.setHours(hour,min);
+      const label= d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit', hour12:true});
+      const opt= document.createElement("option");
+      opt.value=label; opt.textContent=label;
+      sel.appendChild(opt);
+      if(label===defaultVal) foundDefault=true;
+    }
+  }
+  const sep= document.createElement("option");
+  sep.disabled=true; sep.textContent="-----";
+  sel.appendChild(sep);
+  const cTimes= ["Before School","During Study Hall","During Lunch",
+   "Right After School","Before Dinner","After Dinner","Before Bed"];
+  cTimes.forEach(t=>{
+    const o=document.createElement("option");
+    o.value=t; o.textContent=t;
+    sel.appendChild(o);
+    if(t===defaultVal) foundDefault=true;
+  });
+  if(foundDefault) {
+    sel.value= defaultVal;
+  } else {
+    sel.value= "3:00 PM"; // fallback
+  }
+}
+
+/***************************************************************
+  DAILY TASKS
+***************************************************************/
+function renderTaskTable(cli, dt){
+  taskTable.innerHTML="";
+  if(!cli||!dt||!allData[cli][dt]) {
+    taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks)</td></tr>`;
+    return;
+  }
+  const rec= allData[cli][dt];
+  const daily= rec.tasks||[];
+  const wd= getWeekday(dt);
+  const wList= allData[cli].weeklyTasks?.[wd]||[];
+  const wDone= rec.weeklyDone||{};
+  const merged=[];
+  daily.forEach(t=> merged.push({...t, _type:"daily"}));
+  wList.forEach(wt=>{
+    merged.push({
+      ...wt,
+      completed: !!wDone[wt.id],
+      accountability:"(Weekly)",
+      _type:"weekly"
+    });
+  });
+  merged.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+  if(!merged.length){
+    taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks yet)</td></tr>`;
+    return;
+  }
+  merged.forEach(tObj=> addTaskRow(tObj, rec));
+}
+function addTaskRow(tObj, dayRec){
+  const row= taskTable.insertRow();
+  if(tObj.completed) row.classList.add("completed-task");
+  const cTime= row.insertCell(0);
+  cTime.innerHTML= tObj.time || "No Time";
+  if(tObj.duration){
+    cTime.innerHTML+= `<br><small>(${tObj.duration})</small>`;
+  }
+  if(tObj._type==="weekly"){
+    cTime.innerHTML+= `<br><small style="color:#09f;font-weight:bold;">(Weekly)</small>`;
+  }
+  const cAct= row.insertCell(1);
+  cAct.textContent= tObj.activity;
+
+  const cDone= row.insertCell(2);
+  const chk= document.createElement("input");
+  chk.type="checkbox";
+  chk.checked= tObj.completed;
+  chk.addEventListener("change", ()=>{
+    row.classList.toggle("completed-task", chk.checked);
+    if(tObj._type==="daily"){
+      const idx= dayRec.tasks.findIndex(tsk=> tsk===tObj);
+      if(idx>-1){
+        dayRec.tasks[idx].completed= chk.checked;
+        saveToStorage();
+        updateProgress(currentClient, currentDate);
+      } else {
+        // fallback if not found by reference
+        console.warn("Couldn't find daily task to update.");
+      }
+    } else {
+      if(!dayRec.weeklyDone) dayRec.weeklyDone={};
+      dayRec.weeklyDone[tObj.id]= chk.checked;
+      saveToStorage();
+      updateProgress(currentClient, currentDate);
+    }
+  });
+  cDone.appendChild(chk);
+
+  // Accountability
+  const cAcc= row.insertCell(3);
+  if(tObj._type==="daily"){
+    const accInput=document.createElement("input");
+    accInput.type="text";
+    accInput.placeholder="How checked?";
+    accInput.className="accountability-input";
+    accInput.value= tObj.accountability || "";
+    accInput.addEventListener("input", ()=>{
+      const idx= dayRec.tasks.findIndex(tsk=> tsk===tObj);
+      if(idx>-1){
+        dayRec.tasks[idx].accountability= accInput.value;
+        saveToStorage();
+      }
+    });
+    cAcc.appendChild(accInput);
+  } else {
+    cAcc.textContent="--";
+    cAcc.style.color="#999";
+  }
+
+  const cActn= row.insertCell(4);
+  if(tObj._type==="daily"){
+    const editBtn= document.createElement("button");
+    editBtn.textContent="✎";
+    editBtn.classList.add("btn");
+    editBtn.style.marginRight="5px";
+    editBtn.addEventListener("click", ()=> makeTaskEditable(row, tObj));
+    cActn.appendChild(editBtn);
+
+    const rmBtn= document.createElement("button");
+    rmBtn.textContent="X";
+    rmBtn.classList.add("btn");
+    rmBtn.addEventListener("click", ()=>{
+      if(confirm(`Remove task "${tObj.activity}"?`)){
+        const idx= dayRec.tasks.indexOf(tObj);
+        if(idx>-1){
+          dayRec.tasks.splice(idx,1);
+          saveToStorage();
+          row.remove();
+          updateProgress(currentClient, currentDate);
+          if(!taskTable.rows.length){
+            taskTable.innerHTML=`<tr><td colspan="5" style="text-align:center;color:#666;">(No tasks yet)</td></tr>`;
+          }
+        }
+      }
+    });
+    cActn.appendChild(rmBtn);
+  } else {
+    cActn.innerHTML=`<small style="color:#666;">(Edit in Weekly Plan)</small>`;
+  }
+}
+function addNewTask(){
+  if(!currentClient||!currentDate)return;
+  const timeVal=timeSelect.value;
+  const durVal= durationSelect.value;
+  const actVal= activityInput.value.trim();
+  if(!actVal){ alert("Enter an activity"); return;}
+  const rec= allData[currentClient][currentDate];
+  const newTask={
     time: timeVal,
     duration: durVal,
     activity: actVal,
-    completed: false,
-    rating: "0"
+    completed:false,
+    accountability:""
   };
   rec.tasks.push(newTask);
-  saveToLocalStorage();
-
-  addTaskRow(newTask);
-  activityInput.value = "";
-
-  // Sort tasks by time
-  sortTasksByTime();
-  updateProgress();
+  rec.tasks.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+  saveToStorage();
+  renderTaskTable(currentClient, currentDate);
+  updateProgress(currentClient, currentDate);
+  activityInput.value="";
+  activityInput.focus();
 }
-
-// --------------------------------------------------
-// Add daily task row to table
-// --------------------------------------------------
-function addTaskRow(taskObj) {
-  const row = taskTableBody.insertRow();
-  row.classList.add("task-row");
-  if (taskObj.completed) {
-    row.classList.add("completed-task");
-  }
-
-  // Time + duration
-  const tdTime = row.insertCell(0);
-  tdTime.innerHTML = taskObj.time;
-  if (taskObj.duration) {
-    tdTime.innerHTML += `<br><span style="font-size:0.8em; color:#666;">${taskObj.duration}</span>`;
-  }
-
-  // Activity
-  const tdAct = row.insertCell(1);
-  tdAct.textContent = taskObj.activity;
-
-  // Completed?
-  const tdComp = row.insertCell(2);
-  const chk = document.createElement("input");
-  chk.type = "checkbox";
-  chk.checked = taskObj.completed;
-  chk.addEventListener("change", () => {
-    taskObj.completed = chk.checked;
-    row.classList.toggle("completed-task", chk.checked);
-    saveToLocalStorage();
-    updateProgress();
-  });
-  tdComp.appendChild(chk);
-
-  // Rating
-  const tdRating = row.insertCell(3);
-  const sel = document.createElement("select");
-  ["0","1","2","3","4","5"].forEach(v => {
-    const op = document.createElement("option");
-    op.value = v;
-    op.textContent = (v === "0") ? "--" : v;
-    sel.appendChild(op);
-  });
-  sel.value = taskObj.rating || "0";
-  sel.addEventListener("change", () => {
-    taskObj.rating = sel.value;
-    saveToLocalStorage();
-    updateProgress();
-  });
-  tdRating.appendChild(sel);
-
-  // Actions
-  const tdActn = row.insertCell(4);
-  const editBtn = document.createElement("button");
-  editBtn.classList.add("btn");
-  editBtn.textContent = "✎";
-  editBtn.style.marginRight = "6px";
-  editBtn.addEventListener("click", () => {
-    makeTaskEditable(row, taskObj);
-  });
-  tdActn.appendChild(editBtn);
-
-  const rmBtn = document.createElement("button");
-  rmBtn.classList.add("btn");
-  rmBtn.textContent = "X";
-  rmBtn.addEventListener("click", () => {
-    removeTask(taskObj);
-    row.remove();
-    updateProgress();
-  });
-  tdActn.appendChild(rmBtn);
+function sortDailyTasks(){
+  if(!currentClient||!currentDate)return;
+  const rec= allData[currentClient][currentDate];
+  if(!rec||!rec.tasks)return;
+  rec.tasks.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+  saveToStorage();
+  renderTaskTable(currentClient, currentDate);
 }
-
-// --------------------------------------------------
-// Add row for weekly tasks (non-editable here)
-// --------------------------------------------------
-function addWeeklyTaskRow(wTask, dt) {
-  // Access daily record’s "weeklyDone"
-  if (!allData[currentClient][dt].weeklyDone) {
-    allData[currentClient][dt].weeklyDone = {};
-  }
-  const doneMap = allData[currentClient][dt].weeklyDone;
-  const isDone = !!doneMap[wTask.id];
-
-  const row = taskTableBody.insertRow();
-  row.classList.add("task-row");
-  if (isDone) {
-    row.classList.add("completed-task");
-  }
-
-  // Time
-  const tdTime = row.insertCell(0);
-  tdTime.innerHTML = "(Weekly) " + wTask.time;
-  if (wTask.duration) {
-    tdTime.innerHTML += `<br><span style="font-size:0.8em; color:#666;">${wTask.duration}</span>`;
-  }
-
-  // Activity
-  row.insertCell(1).textContent = wTask.activity;
-
-  // Done?
-  const tdComp = row.insertCell(2);
-  const chk = document.createElement("input");
-  chk.type = "checkbox";
-  chk.checked = isDone;
-  chk.addEventListener("change", () => {
-    doneMap[wTask.id] = chk.checked;
-    row.classList.toggle("completed-task", chk.checked);
-    saveToLocalStorage();
-    updateProgress();
-  });
-  tdComp.appendChild(chk);
-
-  // Rating column
-  row.insertCell(3).textContent = "(Weekly)";
-
-  // Actions
-  row.insertCell(4).innerHTML = `<em style="color:#888;">(Edit in Weekly Plan)</em>`;
-}
-
-// --------------------------------------------------
-// Make a daily task editable
-// --------------------------------------------------
-function makeTaskEditable(row, taskObj) {
-  const oldTime = taskObj.time;
-  const oldDur  = taskObj.duration || "30 min";
-  const oldAct  = taskObj.activity;
-
-  // Time cell
-  const tdTime = row.cells[0];
-  tdTime.innerHTML = "";
-  const timeSel = document.createElement("select");
-  populateTempTimeDropdown(timeSel, oldTime);
-  tdTime.appendChild(timeSel);
-
-  const durSel = document.createElement("select");
-  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
-    const op = document.createElement("option");
-    op.value = d;
-    op.textContent = d;
-    durSel.appendChild(op);
-  });
-  durSel.value = oldDur;
-  tdTime.appendChild(document.createElement("br"));
-  tdTime.appendChild(durSel);
-
-  // Activity cell
-  const tdAct = row.cells[1];
-  tdAct.innerHTML = "";
-  const inp = document.createElement("input");
-  inp.type = "text";
-  inp.value = oldAct;
-  inp.style.width = "98%";
-  tdAct.appendChild(inp);
-
-  // Overwrite actions
-  const tdActn = row.cells[4];
-  const oldHtml = tdActn.innerHTML;
-  tdActn.innerHTML = "";
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
-  saveBtn.classList.add("btn");
-  saveBtn.addEventListener("click", () => {
-    const newA = inp.value.trim();
-    if (!newA) {
-      alert("Activity cannot be empty.");
+function filterTasks(){
+  const txt= taskSearch.value.toLowerCase();
+  const rows= taskTable.querySelectorAll("tr");
+  let visibleCount=0;
+  rows.forEach(r=>{
+    if(r.cells.length<5){
+      if(txt) r.style.display="none";
+      else r.style.display="";
       return;
     }
-    taskObj.time = timeSel.value;
-    taskObj.duration = durSel.value;
-    taskObj.activity = newA;
-    saveToLocalStorage();
-    // Refresh row
-    loadClientDate(currentClient, currentDate);
+    const timeStr= r.cells[0]?.textContent.toLowerCase()||"";
+    const actStr= r.cells[1]?.textContent.toLowerCase()||"";
+    const accStr= r.cells[3]?.querySelector('input')?.value?.toLowerCase()|| r.cells[3]?.textContent?.toLowerCase()||"";
+    const isVisible= timeStr.includes(txt)|| actStr.includes(txt)|| accStr.includes(txt);
+    r.style.display= isVisible?"":"none";
+    if(isVisible) visibleCount++;
   });
-  tdActn.appendChild(saveBtn);
-  inp.focus();
 }
-
-// --------------------------------------------------
-// Helper for time dropdown in edit mode
-// --------------------------------------------------
-function populateTempTimeDropdown(selectElem, currentVal) {
-  for (let i=0; i<timeSelect.options.length; i++) {
-    const clone = timeSelect.options[i].cloneNode(true);
-    selectElem.appendChild(clone);
+function clearDailyTasks(){
+  if(!currentClient||!currentDate) return;
+  const rec= allData[currentClient][currentDate];
+  if(!rec||!rec.tasks||!rec.tasks.length){
+    alert("No daily tasks to clear.");
+    return;
   }
-  selectElem.value = currentVal;
-}
-
-// --------------------------------------------------
-// Remove a daily task
-// --------------------------------------------------
-function removeTask(taskObj) {
-  const rec = allData[currentClient][currentDate];
-  const idx = rec.tasks.indexOf(taskObj);
-  if (idx > -1) {
-    rec.tasks.splice(idx,1);
-    saveToLocalStorage();
+  if(confirm(`Clear ALL ${rec.tasks.length} daily task(s)? (Weekly tasks remain)`)){
+    rec.tasks=[];
+    saveToStorage();
+    renderTaskTable(currentClient, currentDate);
+    updateProgress(currentClient, currentDate);
   }
 }
 
-// --------------------------------------------------
-// Clear tasks
-// --------------------------------------------------
-function clearTasksForClientDate() {
-  if (!currentClient || !currentDate) return;
-  if (confirm(`Clear ALL tasks for ${currentClient} on ${currentDate}?`)) {
-    allData[currentClient][currentDate].tasks = [];
-    saveToLocalStorage();
-    loadClientDate(currentClient, currentDate);
-  }
-}
+/***************************************************************
+  EDIT TASK
+***************************************************************/
+function makeTaskEditable(row, taskObj){
+  if(row.classList.contains("editing")||taskObj._type==="weekly") return;
+  row.classList.add("editing");
 
-// --------------------------------------------------
-// Export data to JSON file
-// --------------------------------------------------
-function exportData() {
-  const dataStr = JSON.stringify(allData, null, 2);
-  const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-  const exportLink = document.createElement("a");
-  exportLink.setAttribute("href", dataUri);
-  exportLink.setAttribute("download", `planner-export-${new Date().toISOString().split('T')[0]}.json`);
-  exportLink.click();
-}
+  const tdTime=row.cells[0];
+  const tdAct=row.cells[1];
+  const tdAcc=row.cells[3];
+  const tdActions=row.cells[4];
 
-// --------------------------------------------------
-// Save to localStorage
-// --------------------------------------------------
-function saveToLocalStorage() {
-  try {
-    localStorage.setItem("multiClientDateData", JSON.stringify(allData));
-  } catch (err) {
-    if (err.name === "QuotaExceededError") {
-      alert("Storage limit exceeded! Please export data & clear old entries/images.");
-    } else {
-      console.error("Error saving data:", err);
-      alert("Problem saving data; changes may not persist.");
+  const oldTime= taskObj.time;
+  const oldAct= taskObj.activity;
+  const oldDur= taskObj.duration||"30 min";
+  const oldAcc= taskObj.accountability||"";
+
+  tdTime.innerHTML="";
+  const newTimeSel=document.createElement("select");
+  buildTimeSelect(newTimeSel, oldTime);
+  tdTime.appendChild(newTimeSel);
+
+  const newDurSel= document.createElement("select");
+  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(dur=>{
+    const opt= document.createElement("option");
+    opt.value=dur; opt.textContent=dur;
+    newDurSel.appendChild(opt);
+  });
+  newDurSel.value= oldDur;
+  tdTime.appendChild(document.createElement("br"));
+  tdTime.appendChild(newDurSel);
+
+  tdAct.innerHTML="";
+  const actField=document.createElement("input");
+  actField.type="text";
+  actField.value= oldAct;
+  actField.style.width="98%";
+  tdAct.appendChild(actField);
+
+  const accInput= document.createElement("input");
+  accInput.type="text";
+  accInput.className="accountability-input";
+  accInput.placeholder="How checked?";
+  accInput.value= oldAcc;
+  tdAcc.innerHTML="";
+  tdAcc.appendChild(accInput);
+
+  const originalActions= tdActions.innerHTML;
+  tdActions.innerHTML="";
+  const saveBtn= document.createElement("button");
+  saveBtn.textContent="Save";
+  saveBtn.classList.add("btn","btn-primary");
+  saveBtn.addEventListener("click",()=>{
+    const newT= newTimeSel.value;
+    const newD= newDurSel.value;
+    const newA= actField.value.trim();
+    if(!newA){
+      alert("Activity cannot be empty");
+      return;
     }
-  }
+    taskObj.time= newT;
+    taskObj.duration= newD;
+    taskObj.activity= newA;
+    taskObj.accountability= accInput.value;
+    saveToStorage();
+    row.classList.remove("editing");
+    // re-sort & reload
+    sortDailyTasks();
+  });
+  tdActions.appendChild(saveBtn);
+
+  const cancelBtn= document.createElement("button");
+  cancelBtn.textContent="Cancel";
+  cancelBtn.classList.add("btn");
+  cancelBtn.addEventListener("click",()=>{
+    row.classList.remove("editing");
+    renderTaskTable(currentClient, currentDate);
+  });
+  tdActions.appendChild(cancelBtn);
+  actField.focus();
 }
 
-// --------------------------------------------------
-// Update progress dashboard
-// --------------------------------------------------
-function updateProgress() {
-  const rec = allData[currentClient][currentDate];
-  if (!rec) return;
-  const tasks = rec.tasks || [];
-
-  // Weekly tasks
-  const wd = getWeekdayFromDate(currentDate);
-  const wList = allData[currentClient].weeklyTasks[wd] || [];
-  const wDone = rec.weeklyDone || {};
-  const weeklyDoneCount = wList.filter(wt => wDone[wt.id]).length;
-
-  const dailyDoneCount = tasks.filter(t => t.completed).length;
-  const totalDone = weeklyDoneCount + dailyDoneCount;
-  const totalTasks = wList.length + tasks.length;
-
-  if (totalTasks === 0) {
-    completionRateEl.textContent = "-";
-    completionBarEl.style.width = "0%";
-    completionBarEl.textContent = "0%";
-    averageTaskRatingEl.textContent = "-";
+/***************************************************************
+  PROGRESS
+***************************************************************/
+function updateProgress(cli, dt){
+  if(!cli||!dt||!allData[cli]||!allData[cli][dt]){
+    completionRateEl.textContent="-";
+    completionBarEl.style.width="0%";
+    completionBarEl.textContent="0%";
+    displayDayRatingEl.textContent="--";
+    avgDayRatingUpToDateEl.textContent="--";
+    avgRatingBarEl.style.width="0%";
+    avgRatingBarEl.textContent="0/5";
+    return;
+  }
+  const rec= allData[cli][dt];
+  const daily= rec.tasks||[];
+  const wd= getWeekday(dt);
+  const wList= allData[cli].weeklyTasks?.[wd]||[];
+  const wDone= rec.weeklyDone||{};
+  const dailyDone= daily.filter(t=>t.completed).length;
+  const weeklyDoneCount= wList.filter(w=> wDone[w.id]).length;
+  const totalDone= dailyDone+weeklyDoneCount;
+  const total= daily.length + wList.length;
+  if(!total){
+    completionRateEl.textContent="-";
+    completionBarEl.style.width="0%";
+    completionBarEl.textContent="0%";
   } else {
-    const pct = Math.round((totalDone / totalTasks) * 100);
-    completionRateEl.textContent = `${pct}% (${totalDone}/${totalTasks})`;
-    completionBarEl.style.width = `${pct}%`;
-    completionBarEl.textContent = `${pct}%`;
-
-    // Average task rating (daily tasks only)
-    const rated = tasks.filter(t => t.rating !== "0");
-    if (rated.length > 0) {
-      const sum = rated.reduce((acc, t) => acc + parseInt(t.rating, 10), 0);
-      const avg = sum / rated.length;
-      averageTaskRatingEl.textContent = avg.toFixed(1) + " / 5";
-    } else {
-      averageTaskRatingEl.textContent = "No task ratings yet";
-    }
+    const pct=Math.round((totalDone/total)*100);
+    completionRateEl.textContent=`${pct}% (${totalDone}/${total})`;
+    completionBarEl.style.width=`${pct}%`;
+    completionBarEl.textContent=`${pct}%`;
   }
-
   // Day rating
-  const dr = rec.dayRating;
-  if (dr && dr !== "0") {
-    displayDayRatingEl.textContent = dr + "/5";
+  if(rec.dayRating && rec.dayRating!=="0"){
+    displayDayRatingEl.textContent= rec.dayRating+"/5";
   } else {
-    displayDayRatingEl.textContent = "--";
+    displayDayRatingEl.textContent="--";
   }
-
-  // Avg day rating up to this date
-  const allDates = Object.keys(allData[currentClient]).filter(d => d.match(/^\d{4}-\d{2}-\d{2}$/) && d <= currentDate);
-  let sumDR = 0, countDR = 0;
-  allDates.forEach(d => {
-    const dayR = allData[currentClient][d].dayRating;
-    if (dayR && dayR !== "0") {
-      sumDR += parseInt(dayR, 10);
-      countDR++;
+  // Avg day rating up to date
+  const allDates= Object.keys(allData[cli]).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k) && k<=dt).sort();
+  let sumDR=0, cntDR=0;
+  allDates.forEach(dKey=>{
+    const dr= allData[cli][dKey].dayRating;
+    if(dr && dr!=="0"){
+      sumDR+= parseInt(dr,10);
+      cntDR++;
     }
   });
-  if (countDR > 0) {
-    const avgdr = sumDR / countDR;
-    avgDayRatingUpToDateEl.textContent = avgdr.toFixed(1) + "/5";
-    const barPct = (avgdr / 5)*100;
-    avgRatingBarEl.style.width = `${barPct}%`;
-    avgRatingBarEl.textContent = `${avgdr.toFixed(1)}/5`;
+  if(cntDR>0){
+    const avg= sumDR/cntDR;
+    avgDayRatingUpToDateEl.textContent= avg.toFixed(1)+"/5";
+    const p=Math.max(0, Math.min(100,(avg/5)*100));
+    avgRatingBarEl.style.width=`${p}%`;
+    avgRatingBarEl.textContent=`${avg.toFixed(1)}/5`;
   } else {
-    avgDayRatingUpToDateEl.textContent = "No day ratings yet";
-    avgRatingBarEl.style.width = "0%";
-    avgRatingBarEl.textContent = "0/5";
+    avgDayRatingUpToDateEl.textContent="No rated days";
+    avgRatingBarEl.style.width="0%";
+    avgRatingBarEl.textContent="0/5";
   }
 }
 
-// --------------------------------------------------
-// Sort daily tasks by time
-// --------------------------------------------------
-function sortTasksByTime() {
-  const rec = allData[currentClient][currentDate];
-  if (!rec || !rec.tasks) return;
-  rec.tasks.sort((a,b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
-  saveToLocalStorage();
-  loadClientDate(currentClient, currentDate);
-}
-
-// Converts "1:30 PM" or "Before School" to a numeric for sorting
-function convertTimeToMinutes(str) {
-  const specialTimes = {
-    "Before School": 360,
-    "During Study Hall": 600,
-    "During Lunch": 720,
-    "Right After School": 840,
-    "Before Dinner": 1020,
-    "After Dinner": 1140,
-    "Before Bed": 1320
-  };
-  if (specialTimes[str] !== undefined) {
-    return specialTimes[str];
-  }
-  try {
-    const [timePart, ampm] = str.split(" ");
-    const [hh, mm] = timePart.split(":").map(Number);
-    let hours = hh;
-    if (ampm.toUpperCase() === "PM" && hours < 12) hours += 12;
-    if (ampm.toUpperCase() === "AM" && hours === 12) hours = 0;
-    return hours*60 + mm;
-  } catch {
-    return 9999;
+/***************************************************************
+  MULTI-DAY PLANNER
+***************************************************************/
+function openModal(id){
+  const modal=document.getElementById(id);
+  if(modal) {
+    modal.style.display="block";
+    if(id==="weeklyModal"){
+      weeklyClientNameLabel.textContent=currentClient||"Selected Client";
+      buildWeeklyContent();
+    }
+    if(id==="imageModal"){
+      imagePreview.src="";
+      imagePreview.style.display="none";
+      imageFileInput.value="";
+      imageTitleInput.value="";
+    }
+    if(id==="multiDayModal"){
+      multiDaysContainer.innerHTML="";
+      addMultiDayBlock();
+    }
   }
 }
-
-// Helper to get weekday name
-function getWeekdayFromDate(ds) {
-  const d = new Date(ds);
-  const dayIdx = d.getDay(); // 0=Sun,1=Mon,...
-  const map = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
-  return map[dayIdx] || "sunday";
-}
-
-// --------------------------------------------------
-// Multi-day planner
-// --------------------------------------------------
-function openPlannerModal() {
-  plannerDays.innerHTML = "";
-  // Start with 1 day block
-  addPlannerDay();
-  plannerModal.style.display = "block";
-}
-function closePlannerModal() {
-  plannerModal.style.display = "none";
-}
-function addPlannerDay() {
-  const index = plannerDays.querySelectorAll(".day-plan").length;
-  // base date = currentDate + index
-  const base = new Date(currentDate);
-  base.setDate(base.getDate() + index);
-  const ds = base.toISOString().split("T")[0];
-
-  const div = document.createElement("div");
+function addMultiDayBlock(){
+  const index= multiDaysContainer.querySelectorAll(".day-plan").length;
+  const base= new Date(currentDate+"T12:00:00");
+  base.setDate(base.getDate()+ index+1);
+  const ds= base.toISOString().split("T")[0];
+  const div= document.createElement("div");
   div.classList.add("day-plan");
-  div.dataset.date = ds;
+  div.dataset.date= ds;
+  const h4= document.createElement("h4");
+  h4.textContent=`Day ${index+1}: ${formatDate(ds)}`;
+  div.appendChild(h4);
 
-  const hd = document.createElement("h4");
-  hd.textContent = `Day ${index+1}: ${formatDate(ds)}`;
-  div.appendChild(hd);
-
-  // Time/Duration
-  const container = document.createElement("div");
-  
-  const timeLabel = document.createElement("label");
-  timeLabel.textContent = "Time:";
-  container.appendChild(timeLabel);
-
-  const timeSel = document.createElement("select");
-  populateTempTimeDropdown(timeSel, "3:00 PM");
-  container.appendChild(timeSel);
-
-  const durLabel = document.createElement("label");
-  durLabel.textContent = " Duration:";
-  durLabel.style.marginLeft = "10px";
-  container.appendChild(durLabel);
-
-  const durSel = document.createElement("select");
-  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d => {
-    const op = document.createElement("option");
-    op.value = d;
-    op.textContent = d;
-    durSel.appendChild(op);
+  // time + duration
+  const timeSel= document.createElement("select");
+  buildTimeSelect(timeSel);
+  const durSel= document.createElement("select");
+  ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(d=>{
+    const o=document.createElement("option");
+    o.value=d; o.textContent=d;
+    durSel.appendChild(o);
   });
-  durSel.value = "30 min";
+  durSel.value="30 min";
+
+  const labelAct= document.createElement("label");
+  labelAct.textContent="Activity:";
+  labelAct.style.display="block";
+  labelAct.style.marginTop="0.5rem";
+
+  const actInp= document.createElement("input");
+  actInp.type="text";
+  actInp.placeholder="e.g. Complete math...";
+  actInp.style.width="100%";
+
+  const container= document.createElement("div");
+  container.appendChild(document.createTextNode("Time: "));
+  container.appendChild(timeSel);
+  container.appendChild(document.createTextNode("  Duration: "));
   container.appendChild(durSel);
 
   div.appendChild(container);
+  div.appendChild(labelAct);
+  div.appendChild(actInp);
 
-  // Activity
-  const labelA = document.createElement("label");
-  labelA.textContent = "Activity:";
-  labelA.style.display = "block";
-  labelA.style.marginTop = "8px";
-  div.appendChild(labelA);
-
-  const inpA = document.createElement("input");
-  inpA.type = "text";
-  inpA.placeholder = "e.g. Complete Math assignment";
-  inpA.style.width = "100%";
-  div.appendChild(inpA);
-
-  // "Add Another Task to this day"
-  const addTaskBtn = document.createElement("button");
+  // add button for tasks on same day
+  const addTaskBtn= document.createElement("button");
   addTaskBtn.classList.add("btn");
-  addTaskBtn.textContent = "Add Another Task to this Day";
-  addTaskBtn.style.marginTop = "8px";
-  addTaskBtn.addEventListener("click", () => {
-    const cloneContainer = container.cloneNode(true);
-    const cloneLabel = labelA.cloneNode(true);
-    const cloneInp = inpA.cloneNode(true);
-    cloneInp.value = "";
+  addTaskBtn.textContent="+ Task for this day";
+  addTaskBtn.style.marginTop="0.5rem";
+  addTaskBtn.addEventListener("click", ()=>{
+    // replicate last set
+    const newTimeSel= timeSel.cloneNode(true);
+    newTimeSel.value= timeSel.value;
+    const newDurSel= durSel.cloneNode(true);
+    newDurSel.value= durSel.value;
+    const newActLabel= labelAct.cloneNode(true);
+    const newActInp= actInp.cloneNode(true);
+    newActInp.value="";
     div.insertBefore(document.createElement("hr"), addTaskBtn);
-    div.insertBefore(cloneContainer, addTaskBtn);
-    div.insertBefore(cloneLabel, addTaskBtn);
-    div.insertBefore(cloneInp, addTaskBtn);
+    div.insertBefore(newTimeSel, addTaskBtn);
+    div.insertBefore(document.createTextNode(" Duration: "), addTaskBtn);
+    div.insertBefore(newDurSel, addTaskBtn);
+    div.insertBefore(document.createElement("br"), addTaskBtn);
+    div.insertBefore(newActLabel, addTaskBtn);
+    div.insertBefore(newActInp, addTaskBtn);
   });
   div.appendChild(addTaskBtn);
 
-  plannerDays.appendChild(div);
+  multiDaysContainer.appendChild(div);
 }
-
-function saveMultiDayPlan() {
-  const dayPlans = plannerDays.querySelectorAll(".day-plan");
-  let taskCount = 0;
-
-  dayPlans.forEach(dayPlan => {
-    const ds = dayPlan.dataset.date;
-    if (!allData[currentClient][ds]) {
-      allData[currentClient][ds] = { dayRating:"0", dayNotes:"", tasks:[], weeklyDone:{} };
+function saveMultiDayPlan(){
+  const blocks= multiDaysContainer.querySelectorAll(".day-plan");
+  let tasksAdded=0;
+  let datesAffected= new Set();
+  blocks.forEach(b=>{
+    const ds= b.dataset.date;
+    if(!allData[currentClient][ds]){
+      allData[currentClient][ds]= { dayRating:"0", dayNotes:"", tasks:[], weeklyDone:{} };
     }
-    const rec = allData[currentClient][ds];
-    
-    // Each dayPlan has multiple sets of (selectTime, selectDur) + inputActivity
-    // We'll pair them in sets of 1 container + 1 activity
-    const containers = dayPlan.querySelectorAll("div>select"); 
-    const textInputs = dayPlan.querySelectorAll('input[type="text"]');
+    const rec= allData[currentClient][ds];
+    const sets= b.querySelectorAll("select");
+    const textInputs= b.querySelectorAll("input[type='text']");
 
-    // Because each "Add Another Task" creates pairs of <select> (time/dur) + activity
-    // We'll handle them in matching indexes
-    // Each "container" has 2 selects (time, dur).
-    // But we didn't nest them in a single parent, so let's handle them carefully
-    // Easiest approach: each "Activity" input corresponds to a pair of selects
-    // in the same sequence
-    // We'll just do them in order:
-    // (first 2 selects, first input), (next 2 selects, next input), etc.
-
-    let selIndex = 0;
-    for (let i = 0; i < textInputs.length; i++) {
-      // We want to find the 2 selects before each input
-      // Actually we cloned entire container, so we can just do:
-      //   2 selects => then 1 activity
-      //   next 2 selects => next activity
-      // But a simpler approach is to just gather them in chunk of 2
-      // We'll do something a bit manual:
-
-      const timeSel = dayPlan.querySelectorAll("select")[selIndex];
-      const durSel  = dayPlan.querySelectorAll("select")[selIndex+1];
-      selIndex += 2;
-
-      const activityVal = textInputs[i].value.trim();
-      if (activityVal) {
+    // For each "set" of 2 selects (time/dur) + 1 input
+    let selIndex=0;
+    textInputs.forEach((inp,i)=>{
+      const actVal= inp.value.trim();
+      if(actVal){
+        const timeVal= sets[selIndex].value;
+        const durVal= sets[selIndex+1].value;
+        selIndex+=2;
         rec.tasks.push({
-          time: timeSel.value,
-          duration: durSel.value,
-          activity: activityVal,
-          completed: false,
-          rating: "0"
+          time: timeVal,
+          duration: durVal,
+          activity: actVal,
+          completed:false,
+          accountability:""
         });
-        taskCount++;
+        tasksAdded++;
+        datesAffected.add(ds);
+      } else {
+        selIndex+=2;
       }
+    });
+    if(rec.tasks.length>0) {
+      rec.tasks.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
     }
   });
-
-  saveToLocalStorage();
-  loadClientDate(currentClient, currentDate);
-  closePlannerModal();
-  alert(`Multi-day plan saved! ${taskCount} tasks added.`);
-}
-
-function formatDate(ds) {
-  const d = new Date(ds);
-  return d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
-}
-
-// --------------------------------------------------
-// Weekly Planner
-// --------------------------------------------------
-function openWeeklyModal() {
-  weeklyClientLabel.textContent = currentClient;
-  buildWeeklyContent();
-  weeklyModal.style.display = "block";
-}
-function closeWeeklyModal() {
-  weeklyModal.style.display = "none";
-}
-function buildWeeklyContent() {
-  weeklyContent.innerHTML = "";
-  const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
-  const wData = allData[currentClient].weeklyTasks;
-
-  days.forEach(d => {
-    const sec = document.createElement("div");
-    sec.classList.add("weekly-day-section");
-    const hd = document.createElement("h4");
-    hd.textContent = d[0].toUpperCase()+d.slice(1);
-    sec.appendChild(hd);
-
-    const dayTasks = wData[d];
-    const tasksDiv = document.createElement("div");
-
-    dayTasks.forEach(task => {
-      const row = document.createElement("div");
-      row.style.marginBottom = "5px";
-      row.textContent = `[${task.time}] ${task.activity}`;
-      // remove
-      const rm = document.createElement("button");
-      rm.classList.add("btn");
-      rm.textContent = "X";
-      rm.style.marginLeft = "10px";
-      rm.addEventListener("click", () => {
-        const idx = dayTasks.indexOf(task);
-        if (idx > -1) {
-          dayTasks.splice(idx,1);
-          saveToLocalStorage();
-          buildWeeklyContent();
-        }
-      });
-      row.appendChild(rm);
-      tasksDiv.appendChild(row);
-    });
-
-    sec.appendChild(tasksDiv);
-
-    // Input row
-    const addRow = document.createElement("div");
-    addRow.style.marginTop = "10px";
-
-    // Time select
-    const selTime = document.createElement("select");
-    populateTempTimeDropdown(selTime, "3:00 PM");
-    addRow.appendChild(selTime);
-
-    // Duration
-    const selDur = document.createElement("select");
-    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(dur => {
-      const opt = document.createElement("option");
-      opt.value = dur;
-      opt.textContent = dur;
-      selDur.appendChild(opt);
-    });
-    selDur.value = "30 min";
-    addRow.appendChild(selDur);
-
-    // Activity
-    const inpA = document.createElement("input");
-    inpA.type = "text";
-    inpA.placeholder = "Activity...";
-    inpA.style.width = "200px";
-    inpA.style.marginLeft = "5px";
-    addRow.appendChild(inpA);
-
-    const plus = document.createElement("button");
-    plus.textContent = "+";
-    plus.classList.add("btn");
-    plus.style.marginLeft = "10px";
-    plus.addEventListener("click", () => {
-      const val = inpA.value.trim();
-      if (!val) {
-        alert("Please enter an activity");
-        return;
-      }
-      const newId = `weekly_${Date.now()}_${Math.floor(Math.random()*1000)}`;
-      wData[d].push({
-        id: newId,
-        time: selTime.value,
-        duration: selDur.value,
-        activity: val
-      });
-      saveToLocalStorage();
-      buildWeeklyContent();
-    });
-    addRow.appendChild(plus);
-
-    sec.appendChild(addRow);
-
-    weeklyContent.appendChild(sec);
-  });
-}
-function saveWeeklySchedule() {
-  // Data is saved on each add/remove, so just close and reload
-  closeWeeklyModal();
-  loadClientDate(currentClient, currentDate);
-  alert("Weekly schedule saved!");
-}
-
-// --------------------------------------------------
-// Images
-// --------------------------------------------------
-function openImageModal() {
-  imageModal.style.display = "block";
-  imageFileInput.value = "";
-  imageTitleInput.value = "";
-  imagePreview.style.display = "none";
-  imagePreview.src = "";
-}
-function closeImageModal() {
-  imageModal.style.display = "none";
-}
-function handleFileInputChange() {
-  const file = imageFileInput.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = evt => {
-    imagePreview.src = evt.target.result;
-    imagePreview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-}
-function handlePasteImage(e) {
-  const items = e.clipboardData?.items || [];
-  for (let i=0; i<items.length; i++){
-    if (items[i].type.indexOf("image") === 0) {
-      const file = items[i].getAsFile();
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = evt => {
-          imagePreview.src = evt.target.result;
-          imagePreview.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
+  if(tasksAdded>0){
+    saveToStorage();
+    if(datesAffected.has(currentDate)){
+      loadClientDate(currentClient, currentDate);
     }
+    alert(`Multi-day plan saved! ${tasksAdded} tasks added total.`);
+  } else {
+    alert("No new tasks were entered to save.");
   }
+  multiDayModal.style.display="none";
 }
-function saveImage() {
-  if (!imagePreview.src) {
-    alert("No image selected or pasted");
+
+/***************************************************************
+  WEEKLY
+***************************************************************/
+function buildWeeklyContent(){
+  weeklyContainer.innerHTML="";
+  if(!currentClient||!allData[currentClient]){
+    weeklyContainer.innerHTML=`<p>(Select client first)</p>`;
     return;
   }
-  const titleVal = imageTitleInput.value.trim() || "(Untitled)";
-  allData[currentClient].images.push({
-    title: titleVal,
-    dataUrl: imagePreview.src
+  const wData= allData[currentClient].weeklyTasks;
+  if(!wData) return;
+  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+  days.forEach(d=>{
+    const sec=document.createElement("div");
+    sec.classList.add("weekly-day-section");
+    const hd=document.createElement("h4");
+    hd.textContent= d[0].toUpperCase()+d.slice(1);
+    sec.appendChild(hd);
+
+    const tasksDiv=document.createElement("div");
+    const dayTasks=wData[d]||[];
+    if(!dayTasks.length){
+      tasksDiv.innerHTML=`<p style="font-size:0.9em;color:#888;">(No tasks for ${hd.textContent})</p>`;
+    } else {
+      dayTasks.forEach(task=>{
+        const row=document.createElement("div");
+        row.style.display="flex";
+        row.style.gap="0.5rem";
+        row.style.alignItems="center";
+        row.style.marginBottom="5px";
+        const txt=document.createElement("span");
+        txt.textContent=`[${task.time}] ${task.activity} (${task.duration||'N/A'})`;
+        txt.style.flexGrow="1";
+        row.appendChild(txt);
+        const rm=document.createElement("button");
+        rm.classList.add("btn");
+        rm.textContent="X";
+        rm.addEventListener("click",()=>{
+          if(confirm(`Remove weekly task "${task.activity}"?`)){
+            const idx= dayTasks.indexOf(task);
+            if(idx>-1){
+              dayTasks.splice(idx,1);
+              saveToStorage();
+              buildWeeklyContent();
+            }
+          }
+        });
+        row.appendChild(rm);
+        tasksDiv.appendChild(row);
+      });
+    }
+    sec.appendChild(tasksDiv);
+
+    // Add input row
+    const addRow=document.createElement("div");
+    addRow.style.marginTop="0.5rem";
+    addRow.style.display="flex";
+    addRow.style.gap="0.5rem";
+    // time select
+    const timeSel=document.createElement("select");
+    buildTimeSelect(timeSel);
+    // duration
+    const durSel=document.createElement("select");
+    ["5 min","10 min","15 min","30 min","45 min","1 hour","90 min","2 hours"].forEach(val=>{
+      const o=document.createElement("option");
+      o.value=val; o.textContent=val;
+      durSel.appendChild(o);
+    });
+    durSel.value="30 min";
+    // activity
+    const inp=document.createElement("input");
+    inp.type="text";
+    inp.placeholder="Weekly activity...";
+    inp.style.flexGrow="1";
+    const plus=document.createElement("button");
+    plus.textContent="+";
+    plus.classList.add("btn","btn-primary");
+    plus.addEventListener("click",()=>{
+      const val= inp.value.trim();
+      if(!val){ alert("Enter an activity first."); return;}
+      const newId=`wt_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;
+      dayTasks.push({
+        id:newId,
+        time: timeSel.value,
+        duration: durSel.value,
+        activity: val
+      });
+      dayTasks.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+      saveToStorage();
+      buildWeeklyContent();
+    });
+    addRow.appendChild(timeSel);
+    addRow.appendChild(durSel);
+    addRow.appendChild(inp);
+    addRow.appendChild(plus);
+    sec.appendChild(addRow);
+
+    weeklyContainer.appendChild(sec);
   });
-  saveToLocalStorage();
-  closeImageModal();
-  renderImageGallery();
 }
-function renderImageGallery() {
-  imageGallery.innerHTML = "";
-  const imgs = allData[currentClient].images || [];
-  if (imgs.length === 0) return;
+function saveWeeklyPlan(){
+  weeklyModal.style.display="none";
+  loadClientDate(currentClient, currentDate);
+  alert("Weekly schedule saved.");
+}
 
-  const hd = document.createElement("h3");
-  hd.textContent = "Image Gallery";
-  imageGallery.appendChild(hd);
+/***************************************************************
+  IMAGES
+***************************************************************/
+function renderImageGallery(cli){
+  imageGallery.innerHTML="";
+  if(!cli||!allData[cli]) {
+    imageGallery.innerHTML=`<p>(Select a client to see images)</p>`;
+    return;
+  }
+  const arr= allData[cli].images||[];
+  if(!arr.length){
+    imageGallery.innerHTML=`<p style="color:#999;">(No images)</p>`;
+    return;
+  }
+  const h3=document.createElement("h3");
+  h3.textContent="Image Gallery";
+  imageGallery.appendChild(h3);
 
-  imgs.forEach((imgObj, idx) => {
-    const div = document.createElement("div");
+  arr.forEach((imgObj, idx)=>{
+    const div=document.createElement("div");
     div.classList.add("gallery-item");
-
-    const titleSpan = document.createElement("span");
-    titleSpan.classList.add("title");
-    titleSpan.textContent = imgObj.title + " ";
-    div.appendChild(titleSpan);
-
-    const im = document.createElement("img");
-    im.src = imgObj.dataUrl;
-    im.style.maxHeight = "60px";
-    im.style.cursor = "pointer";
-    im.addEventListener("click", () => {
-      window.open(imgObj.dataUrl, "_blank");
+    const im=document.createElement("img");
+    im.src=imgObj.dataUrl;
+    im.alt=imgObj.title||"(Untitled)";
+    im.addEventListener("click",()=>{
+      const w= window.open("","_blank");
+      if(w){
+        w.document.write(`<title>${escapeHtml(imgObj.title||"Image")}</title><body style="margin:0;background:#333;"><img src="${im.src}" style="max-width:100%;max-height:100vh;display:block;margin:auto;" /></body>`);
+        w.document.close();
+      }
     });
     div.appendChild(im);
 
-    const rm = document.createElement("button");
+    const ttl=document.createElement("span");
+    ttl.classList.add("title");
+    ttl.textContent= imgObj.title||"(Untitled)";
+    div.appendChild(ttl);
+
+    const rm=document.createElement("button");
     rm.classList.add("btn");
-    rm.textContent = "X";
-    rm.style.marginLeft = "10px";
-    rm.addEventListener("click", () => {
-      if (confirm("Remove this image?")) {
-        imgs.splice(idx,1);
-        saveToLocalStorage();
-        renderImageGallery();
+    rm.textContent="X";
+    rm.style.marginLeft="auto";
+    rm.addEventListener("click",()=>{
+      if(confirm(`Remove image "${imgObj.title||'(Untitled)'}"?`)){
+        arr.splice(idx,1);
+        saveToStorage();
+        renderImageGallery(cli);
       }
     });
     div.appendChild(rm);
@@ -1520,149 +1638,267 @@ function renderImageGallery() {
     imageGallery.appendChild(div);
   });
 }
+function handleImageFileChange(e){
+  const file= e.target.files[0];
+  if(!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert("Please select an image file.");
+    return;
+  }
+  if(file.size>5*1024*1024){
+    alert("Image file is too large (max 5MB).");
+    return;
+  }
+  const r=new FileReader();
+  r.onload=(evt)=>{
+    imagePreview.src= evt.target.result;
+    imagePreview.style.display="block";
+  };
+  r.readAsDataURL(file);
+}
+function handleImagePaste(e){
+  const items = e.clipboardData?.items||[];
+  for(let i=0; i<items.length;i++){
+    if(items[i].type.indexOf("image")===0){
+      const file= items[i].getAsFile();
+      if(file){
+        if(file.size>5*1024*1024){
+          alert("Pasted image too large (max 5MB).");
+          return;
+        }
+        const r=new FileReader();
+        r.onload=(ev)=>{
+          imagePreview.src= ev.target.result;
+          imagePreview.style.display="block";
+        };
+        r.readAsDataURL(file);
+        e.preventDefault();
+        return;
+      }
+    }
+  }
+}
+function saveImage(){
+  if(!imagePreview.src||!imagePreview.src.startsWith('data:image')){
+    alert("No valid image selected or pasted");
+    return;
+  }
+  if(!currentClient){alert("No client selected");return;}
+  const title= imageTitleInput.value.trim()||"(Untitled)";
+  allData[currentClient].images.push({ title, dataUrl:imagePreview.src });
+  try {
+    saveToStorage();
+    imageModal.style.display="none";
+    renderImageGallery(currentClient);
+  } catch(e){
+    console.error("Error saving image:", e);
+  }
+}
 
-// --------------------------------------------------
-// Report
-// --------------------------------------------------
-function generateReport() {
-  let html = `
-  <!DOCTYPE html>
-  <html><head><meta charset="UTF-8"/>
-    <title>RESET Tracker Report</title>
-    <style>
-      body { font-family:sans-serif; margin:20px; max-width:800px; }
-      h1,h2,h3 { margin-bottom:0.4em; }
-      table { border-collapse:collapse; width:100%; margin:1em 0; }
-      table, th, td { border:1px solid #999; }
-      th, td { padding:6px; vertical-align:top; }
-      th { background:#f0f0f0; }
-      .notes-box { background:#eef; border:1px solid #ccc; padding:6px; margin:6px 0; }
-      .gallery-img { max-width:200px; margin:5px; border:1px solid #ccc; }
-    </style>
+/***************************************************************
+  REPORT
+***************************************************************/
+function generateReport(){
+  if(!currentClient) {alert("No client selected");return;}
+  const cliData= allData[currentClient];
+  if(!cliData){alert("No data for this client.");return;}
+
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>RESET Tracker Report - ${escapeHtml(currentClient)}</title>
+  <style>
+    body { font-family:sans-serif; margin:20px; max-width:800px; }
+    h1,h2,h3 { margin-bottom:0.5em; }
+    table { width:100%; border-collapse:collapse; margin-top:0.5rem; }
+    table, th, td { border:1px solid #ccc; }
+    th, td { padding:6px; vertical-align:top; text-align:left; }
+    th { background:#f0f0f0; }
+    .completed-task td:not(:nth-last-child(1), :nth-last-child(2)){
+      text-decoration: line-through;
+      color: #999;
+    }
+    .notes { background:#f7faff; border:1px solid #ddd; padding:8px; margin:0.5rem 0; }
+    .gallery-img { max-height:150px; margin:5px; border:1px solid #ccc; }
+    .weekly-label { color:#09f; font-weight:bold; font-size:0.9em; }
+  </style>
   </head><body>
-    <h1>RESET Client Tracker Report</h1>
-    <p>Client: <strong>${escapeHtml(currentClient)}</strong></p>
-  `;
+  <h1>RESET Tracker Report - ${escapeHtml(currentClient)}</h1>
+  <p><em>Generated on ${new Date().toLocaleString()}</em></p>`;
+
+  // Big goal / links
+  html += `<h2>Client Info</h2>`;
+  html += `<p><strong>Big Goal:</strong> ${escapeHtml(cliData.bigGoal||"(Not set)")}</p>`;
+  html += `<p><strong>Canvas:</strong> ${cliData.links?.canvas ? `<a href="${escapeHtml(cliData.links.canvas)}" target="_blank">${escapeHtml(cliData.links.canvas)}</a>` : "(Not set)"}</p>`;
+  html += `<p><strong>Classroom:</strong> ${cliData.links?.classroom ? `<a href="${escapeHtml(cliData.links.classroom)}" target="_blank">${escapeHtml(cliData.links.classroom)}</a>` : "(Not set)"}</p>`;
 
   // Weekly tasks
-  const wt = allData[currentClient].weeklyTasks;
-  html += `<h2>Weekly Recurring Tasks</h2>`;
-  Object.keys(wt).forEach(day => {
-    const tasksArr = wt[day];
-    if (tasksArr.length>0) {
-      html += `<h3>${day[0].toUpperCase()+day.slice(1)}</h3><ul>`;
-      tasksArr.forEach(t => {
-        html += `<li>${escapeHtml(t.time)} - ${escapeHtml(t.activity)}</li>`;
+  html += `<h2>Weekly Tasks</h2>`;
+  const wks= cliData.weeklyTasks||{};
+  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+  let anyWeekly=false;
+  days.forEach(d=>{
+    const arr= wks[d]||[];
+    if(arr.length){
+      anyWeekly=true;
+      html+= `<h3>${d[0].toUpperCase()+d.slice(1)}</h3><ul>`;
+      arr.forEach(wt=>{
+        html+= `<li>[${escapeHtml(wt.time)}] ${escapeHtml(wt.activity)} ${wt.duration?`<small>(${escapeHtml(wt.duration)})</small>`:""}</li>`;
       });
-      html += `</ul>`;
+      html+=`</ul>`;
     }
   });
+  if(!anyWeekly) html+=`<p>(No weekly tasks)</p>`;
 
   // Images
-  const images = allData[currentClient].images || [];
-  if (images.length > 0) {
-    html += `<h2>Images</h2>`;
-    images.forEach(img => {
-      html += `<div><strong>${escapeHtml(img.title)}</strong><br/>
-               <img class="gallery-img" src="${img.dataUrl}" alt="img"></div>`;
+  const imgs= cliData.images||[];
+  if(imgs.length>0){
+    html+=`<h2>Images</h2>`;
+    imgs.forEach(img=>{
+      html+=`<div><strong>${escapeHtml(img.title||"")}</strong><br/><img src="${img.dataUrl}" class="gallery-img" alt="img"/></div>`;
     });
+  } else {
+    html+= `<h2>Images</h2><p>(No images)</p>`;
   }
 
-  // Daily records
-  const dateKeys = Object.keys(allData[currentClient]).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
-  if (dateKeys.length === 0) {
-    html += `<p>No daily records found.</p>`;
+  // Daily
+  const dateKeys= Object.keys(cliData).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+  if(!dateKeys.length){
+    html+= `<h2>Daily Records</h2><p>(No daily records)</p>`;
   } else {
-    dateKeys.forEach(d => {
-      const rec = allData[currentClient][d];
-      if (!rec) return;
-      html += `<h2>${d} - Day Rating: ${rec.dayRating && rec.dayRating!=="0" ? rec.dayRating+"/5" : "No rating"}</h2>`;
-      if (rec.dayNotes) {
-        html += `<div class="notes-box">${escapeHtml(rec.dayNotes).replace(/\n/g,"<br>")}</div>`;
+    html+= `<h2>Daily Records</h2>`;
+    dateKeys.forEach(d=>{
+      const rec= cliData[d];
+      if(!rec)return;
+      const dr= rec.dayRating&&rec.dayRating!=="0"? `${rec.dayRating}/5` : "--";
+      html+= `<h3>${d} (Day Rating: ${dr})</h3>`;
+      if(rec.dayNotes){
+        html+= `<div class="notes">${escapeHtml(rec.dayNotes).replace(/\n/g,"<br/>")}</div>`;
       }
-      // Merge daily + weekly tasks
-      const merged = [];
-      (rec.tasks||[]).forEach(t => merged.push({ ...t, _type:"daily" }));
-      const wd = getWeekdayFromDate(d);
-      (allData[currentClient].weeklyTasks[wd]||[]).forEach(wtk => {
-        const doneMap = rec.weeklyDone || {};
+      // merged tasks
+      const daily= rec.tasks||[];
+      const wd= getWeekday(d);
+      const wList= cliData.weeklyTasks[wd]||[];
+      const doneMap= rec.weeklyDone||{};
+      const merged=[];
+      daily.forEach(t=>{
+        merged.push({...t, _type:"daily"});
+      });
+      wList.forEach(wt=>{
         merged.push({
-          time: wtk.time,
-          duration: wtk.duration,
-          activity: wtk.activity,
-          completed: !!doneMap[wtk.id],
-          rating: "(Weekly)",
+          time: wt.time,
+          duration:wt.duration,
+          activity: wt.activity,
+          accountability: "(Weekly)",
+          completed: !!doneMap[wt.id],
           _type:"weekly"
         });
       });
-      if (merged.length === 0) {
-        html += `<p style="color:#999;">(No tasks for this day)</p>`;
+      if(!merged.length){
+        html+= `<p style="color:#999;">(No tasks)</p>`;
       } else {
-        // Sort by time
-        merged.sort((a,b) => convertTimeToMinutes(a.time)-convertTimeToMinutes(b.time));
-        html += `<table>
-          <thead>
-            <tr><th>Time</th><th>Activity</th><th>Done?</th><th>Rating</th></tr>
-          </thead><tbody>`;
-        merged.forEach(m => {
-          html += `<tr>
-            <td>${escapeHtml(m.time||"")} ${m.duration ? `<br><small>${escapeHtml(m.duration)}</small>`:""}
-                ${m._type==="weekly"?"<br>(Weekly)":""}</td>
-            <td>${escapeHtml(m.activity||"")}</td>
-            <td>${m.completed?"Yes":"No"}</td>
-            <td>${m._type==="daily" ? (m.rating&&m.rating!=="0"?m.rating+"/5":"--") : "(Weekly)"}</td>
+        merged.sort((a,b)=> timeToMin(a.time)-timeToMin(b.time));
+        html+= `<table><thead><tr><th>Time</th><th>Activity</th><th>Done?</th><th>Accountability</th></tr></thead><tbody>`;
+        let doneCount=0;
+        merged.forEach(m=>{
+          if(m.completed) doneCount++;
+          html+= `<tr class="${m.completed?'completed-task':''}">
+           <td>${escapeHtml(m.time||'--')}${m.duration?`<br><small>(${escapeHtml(m.duration)})</small>`:""}${m._type==="weekly"?'<br><span class="weekly-label">(Weekly)</span>':''}</td>
+           <td>${escapeHtml(m.activity||'')}</td>
+           <td>${m.completed?"Yes":"No"}</td>
+           <td>${escapeHtml(m.accountability||'--')}</td>
           </tr>`;
         });
-        html += `</tbody></table>`;
+        html+= `</tbody></table>`;
+        html+= `<p><strong>Completion:</strong> ${doneCount}/${merged.length}</p>`;
       }
     });
   }
 
-  html += `</body></html>`;
+  html+=`</body></html>`;
 
-  const w = window.open("", "_blank");
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
+  const reportWin= window.open("","_blank");
+  if(reportWin){
+    reportWin.document.open();
+    reportWin.document.write(html);
+    reportWin.document.close();
+  } else {
+    alert("Pop-up blocked. Please allow pop-ups for this site to view the report.");
+  }
 }
 
-// Basic html escaping
-function escapeHtml(str) {
-  if (!str) return "";
-  return str
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#39;");
+/***************************************************************
+  EXPORT
+***************************************************************/
+function exportData(){
+  if(!Object.keys(allData).length){
+    alert("No data to export.");
+    return;
+  }
+  try {
+    const str= JSON.stringify(allData,null,2);
+    const blob= new Blob([str],{type:"application/json"});
+    const url= URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    const dateStamp= new Date().toISOString().split('T')[0].replace(/-/g,'');
+    a.download=`resetTrackerData_${dateStamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e){
+    console.error("Export failed:", e);
+    alert("Could not generate export file.");
+  }
 }
 
-// --------------------------------------------------
-// Keyboard shortcuts
-// --------------------------------------------------
-function setupKeyboardShortcuts() {
-  document.addEventListener("keydown", e => {
-    // alt+a => add task
-    if (e.altKey && e.key.toLowerCase() === "a") {
-      e.preventDefault();
-      addNewTask();
-    }
-    // alt+d => toggle last row
-    if (e.altKey && e.key.toLowerCase() === "d") {
-      e.preventDefault();
-      const lastRow = taskTableBody.querySelector("tr:last-child");
-      if (lastRow) {
-        const chk = lastRow.querySelector("input[type='checkbox']");
-        chk.checked = !chk.checked;
-        chk.dispatchEvent(new Event("change"));
-      }
-    }
-    // alt+s => sort
-    if (e.altKey && e.key.toLowerCase() === "s") {
-      e.preventDefault();
-      sortTasksByTime();
-    }
-  });
+/***************************************************************
+  UTILS
+***************************************************************/
+function timeToMin(str){
+  const map={
+    "Before School":360,
+    "During Study Hall":600,
+    "During Lunch":720,
+    "Right After School":930,
+    "Before Dinner":1080,
+    "After Dinner":1200,
+    "Before Bed":1320
+  };
+  if(map[str]!==undefined) return map[str];
+  const match= str.match(/(\d{1,2}):(\d{2})\s?(AM|PM)/i);
+  if(match){
+    let hh= parseInt(match[1],10);
+    const mm= parseInt(match[2],10);
+    if(isNaN(hh)||isNaN(mm)) return 9999;
+    let ampm= match[3].toUpperCase();
+    if(ampm==="PM"&& hh<12) hh+=12;
+    if(ampm==="AM"&& hh===12) hh=0;
+    return hh*60+mm;
+  }
+  return 9990;
+}
+function getWeekday(ds){
+  try {
+    const date= new Date(ds+"T00:00:00Z");
+    const dayIndex= date.getUTCDay();
+    const weekdays=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+    return weekdays[dayIndex];
+  } catch(e){
+    return "sunday";
+  }
+}
+function formatDate(ds){
+  try {
+    const date= new Date(ds+"T00:00:00Z");
+    return date.toLocaleDateString(undefined, {timeZone:"UTC", weekday:"short", month:"short", day:"numeric"});
+  } catch(e){
+    return ds;
+  }
+}
+function escapeHtml(str){
+  if(!str)return "";
+  const div=document.createElement("div");
+  div.textContent=str;
+  return div.innerHTML;
 }
 </script>
 </body>
